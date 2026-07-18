@@ -1,0 +1,15 @@
+{
+  "name": "baoan-express-backend",
+  "version": "1.0.0",
+  "description": "Backend/server rieng cho he thong tra cuu & tinh cuoc Bao An Express - khong phu thuoc claude.ai",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "gen-secret": "node scripts/gen-secret.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}
