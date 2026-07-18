@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BẢO AN EXPRESS - HỆ THỐNG QUẢN LÝ & TÍNH CƯỚC TOÀN DIỆN</title>
+<style>
+:root {
+    --primary-color: #15803d; --primary-hover: #166534; --primary-light: #f0fdf4;
+    --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #475569;
+    --border-color: #cbd5e1; --accent-color: #dc2626; --accent-hover: #b91c1c;
+}
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin:0; padding:0; box-sizing:border-box; }
+header { background: linear-gradient(120deg,#15803d 0%,#0f766e 55%,#0369a1 100%); background-size:200% 200%; animation: gradientShift 10s ease infinite; color:#fff; padding:26px 20px; text-align:center; box-shadow:0 4px 14px -2px rgba(0,0,0,.25); }
+@keyframes gradientShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+header h1 { margin:0; font-size:26px; text-transform:uppercase; letter-spacing:.5px; text-shadow:0 2px 8px rgba(0,0,0,.25); }
+header p { margin:6px 0 0 0; font-size:14px; opacity:.95; }
+.header-stats { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:14px; }
+.header-stat-pill { background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.35); backdrop-filter:blur(4px); padding:6px 14px; border-radius:999px; font-size:12.5px; font-weight:600; }
+.main-layout { display:grid; grid-template-columns:350px 1fr; gap:25px; max-width:1600px; margin:25px auto; padding:0 20px; }
+.card { background:var(--card-bg); border-radius:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,.05),0 2px 4px -1px rgba(0,0,0,.06); border:1px solid #e2e8f0; padding:20px; height:fit-content; }
+.card-title { font-size:18px; font-weight:700; color:var(--primary-color); margin-top:0; margin-bottom:20px; display:flex; align-items:center; gap:8px; border-bottom:2px solid var(--primary-light); padding-bottom:10px; }
+.form-group { margin-bottom:18px; }
+label { display:block; font-weight:600; margin-bottom:6px; font-size:13px; color:var(--text-muted); }
+select, input[type="text"], input[type="number"], input[type="password"], textarea { width:100%; padding:10px; border:1px solid var(--border-color); border-radius:6px; font-size:14px; box-sizing:border-box; background:#fff; transition:all .2s; }
+select:focus, input:focus, textarea:focus { outline:none; border-color:var(--primary-color); box-shadow:0 0 0 3px rgba(21,128,61,.15); }
+.btn { padding:10px 16px; border:none; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; transition:all .2s; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+.btn-primary { background:var(--primary-color); color:#fff; } .btn-primary:hover { background:var(--primary-hover); }
+.btn-secondary { background:#475569; color:#fff; } .btn-secondary:hover { background:#334155; }
+.btn-accent { background:var(--accent-color); color:#fff; } .btn-accent:hover { background:var(--accent-hover); }
+.btn-success { background:#16a34a; color:#fff; } .btn-success:hover { background:#15803d; }
+.calc-result { background:var(--primary-light); border-radius:8px; padding:15px; margin-top:20px; border:1px solid #bbf7d0; }
+.calc-row { display:flex; justify-content:space-between; font-size:13px; margin-bottom:8px; color:var(--text-muted); }
+.calc-row.highlight { font-weight:600; color:var(--text-main); }
+.final-total-box { margin-top:15px; padding-top:12px; border-top:1px dashed #bbf7d0; }
+.final-title { font-size:16px; font-weight:700; color:var(--accent-color); }
+.final-val { font-size:24px; font-weight:800; color:var(--accent-color); text-align:right; display:block; }
+.filter-bar { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
+.route-search-input { padding:11px 14px; border:1.5px solid var(--border-color); border-radius:8px; font-size:14px; }
+.region-chips { display:flex; gap:8px; flex-wrap:wrap; }
+.region-chip { padding:6px 14px; border-radius:999px; border:1.5px solid var(--border-color); background:#fff; font-size:12.5px; font-weight:600; cursor:pointer; color:var(--text-muted); }
+.region-chip.active { background:var(--primary-color); border-color:var(--primary-color); color:#fff; }
+.tab-bar-container { display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
+.route-tabs { display:flex; flex-wrap:wrap; gap:8px; max-height:150px; overflow-y:auto; padding:4px; }
+.tab-btn { padding:7px 12px; border-radius:8px; border:1.5px solid var(--border-color); background:#fff; font-size:12.5px; font-weight:600; cursor:pointer; white-space:nowrap; }
+.tab-btn.active { background:var(--primary-color); color:#fff; border-color:var(--primary-color); }
+.tab-btn.no-accept-flag { border-color:#fecaca; color:var(--accent-color); }
+.action-controls { display:flex; gap:8px; flex-wrap:wrap; }
+.route-info-bar { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap; font-size:13px; color:var(--text-muted); }
+.table-responsive { overflow-x:auto; border:1px solid #e2e8f0; border-radius:8px; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th, td { border:1px solid #e2e8f0; padding:8px; text-align:center; }
+thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
+.th-delivery { background:#f0fdf4; font-weight:500; }
+.delete-zone-btn { background:var(--accent-color); color:#fff; border:none; border-radius:5px; padding:3px 8px; font-size:10.5px; cursor:pointer; margin-top:4px; }
+.footer-note { font-size:11px; color:var(--text-muted); margin-top:15px; text-align:center; }
+.modal { display:none; position:fixed; inset:0; background:rgba(15,23,42,.5); align-items:center; justify-content:center; z-index:100; }
+.modal-content { background:#fff; border-radius:12px; padding:24px; width:90%; max-width:420px; }
+.modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:20px; }
+.autocomplete-dropdown { position:absolute; top:100%; left:0; right:0; background:#fff; border:1.5px solid var(--primary-color); border-top:none; border-radius:0 0 8px 8px; max-height:220px; overflow-y:auto; z-index:50; box-shadow:0 8px 16px -4px rgba(0,0,0,.15); }
+.autocomplete-item { padding:9px 12px; font-size:13px; cursor:pointer; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center; }
+.autocomplete-item:hover { background:var(--primary-light); }
+.region-tag { font-size:10.5px; padding:2px 8px; border-radius:999px; color:#fff; font-weight:700; }
+.tag-bac { background:#0369a1; } .tag-trung { background:#b45309; } .tag-nam { background:#15803d; } .tag-taynguyen { background:#7c3aed; }
+.dimension-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+.dimension-grid input { text-align:center; }
+.weight-used-badge { display:inline-block; margin-top:6px; padding:4px 10px; border-radius:999px; font-size:11.5px; font-weight:700; background:#fef3c7; color:#92400e; border:1px solid #fde68a; }
+.unsaved-pill { display:none; align-items:center; gap:6px; background:#fff7ed; color:#9a3412; border:1.5px solid #fed7aa; padding:6px 13px; border-radius:999px; font-size:12px; font-weight:700; }
+.unsaved-pill.show { display:inline-flex; }
+.bulk-radio-row { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:4px; }
+.bulk-radio-row label { display:flex; align-items:center; gap:6px; font-weight:600; font-size:13px; color:var(--text-main); cursor:pointer; }
+.bulk-preview-box { background:var(--primary-light); border:1px solid #bbf7d0; border-radius:8px; padding:10px 14px; font-size:12.5px; color:#166534; margin-top:6px; }
+@media (max-width:900px) { .main-layout { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>🚚 Bảo An Express - Hệ Thống Tra Cứu &amp; Tính Cước Toàn Quốc</h1>
+    <p>Backend/server riêng - dữ liệu lưu trên server, mọi người mở link đều thấy cước mới nhất theo thời gian thực</p>
+    <div class="header-stats">
+        <span class="header-stat-pill" id="statRoutes">📍 -- tuyến</span>
+        <span class="header-stat-pill" id="statZones">🗺️ -- khu vực</span>
+        <span class="header-stat-pill" id="syncStatusPill">🔌 Đang kết nối server...</span>
+    </div>
+</header>
+
+<div class="main-layout">
+    <div class="card">
+        <div class="card-title">📋 Hộp Tính Cước Nhanh</div>
+
+        <div class="form-group" style="position:relative;">
+            <label>1. Chọn Tuyến Đường Gốc:</label>
+            <input type="text" id="calcRouteSearch" class="route-search-input" placeholder="🔎 Gõ để tìm tuyến (VD: Thái Nguyên, Huế...)" autocomplete="off" oninput="onCalcRouteSearchInput()" onfocus="onCalcRouteSearchInput()">
+            <div id="calcRouteDropdown" class="autocomplete-dropdown" style="display:none;"></div>
+            <select id="calcRoute" style="display:none;"></select>
+        </div>
+
+        <div class="form-group">
+            <label>2. Khu Vực / Hình Thức Giao Nhận:</label>
+            <select id="calcZone" onchange="runCalculation()"></select>
+        </div>
+
+        <div class="form-group">
+            <label>3. Cân Nặng Thực Tế (kg):</label>
+            <input type="number" id="calcWeight" value="1" min="0" step="0.1" oninput="runCalculation()">
+        </div>
+
+        <div class="form-group">
+            <label>4. Kích Thước Kiện Hàng (cm) - Tuỳ chọn để tính cân quy đổi:</label>
+            <div class="dimension-grid">
+                <input type="number" id="calcLength" placeholder="Dài" min="0" step="1" oninput="runCalculation()">
+                <input type="number" id="calcWidth" placeholder="Rộng" min="0" step="1" oninput="runCalculation()">
+                <input type="number" id="calcHeight" placeholder="Cao" min="0" step="1" oninput="runCalculation()">
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:5px;">Công thức: Cân quy đổi = Dài × Rộng × Cao / 5000. Hệ thống tự động lấy cân nặng LỚN HƠN giữa cân thực tế và cân quy đổi để tính cước.</div>
+        </div>
+
+        <div class="form-group" style="border-top:1px dashed var(--border-color); padding-top:14px;">
+            <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                <input type="checkbox" id="calcNeedPickup" style="width:auto;" onchange="runCalculation()"> Cộng thêm phí lấy hàng tận nơi
+            </label>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
+                <select id="pickupTierSelect" onchange="runCalculation()"></select>
+                <select id="pickupZoneType" onchange="runCalculation()">
+                    <option value="standard">HN/HP/QN &amp; tỉnh khác</option>
+                    <option value="remote">TP Lào Cai/Cao Bằng/Lạng Sơn/Hà Giang</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="calc-result">
+            <div class="calc-row"><span>Cân nặng dùng để tính cước:</span><span id="outWeightUsed" style="font-weight:bold;">-</span></div>
+            <div class="calc-row"><span>Thời gian giao dự kiến:</span><span id="outTime" style="font-weight:bold; color:var(--primary-color);">-</span></div>
+            <div class="calc-row highlight"><span>Cước cố định 10kg đầu:</span><span id="outBase">0 VND</span></div>
+            <div class="calc-row"><span>Số cân tính vượt (&gt;10kg):</span><span id="outOverWeight">0 kg</span></div>
+            <div class="calc-row"><span>Đơn giá vượt tương ứng:</span><span id="outUnitPrice">0 VND/kg</span></div>
+            <div class="calc-row highlight"><span>Thành tiền phần vượt:</span><span id="outOverFee">0 VND</span></div>
+            <div class="calc-row" style="border-top:1px solid #bbf7d0; padding-top:6px; margin-top:6px;"><span>Cước gốc cơ bản:</span><span id="outRawTotal">0 VND</span></div>
+            <div class="calc-row"><span id="outTaxLabel">Phụ thu (5%):</span><span id="outTax">0 VND</span></div>
+            <div class="calc-row" id="pickupFeeRow" style="display:none;"><span>Phí lấy hàng tận nơi:</span><span id="outPickupFee">0 VND</span></div>
+            <div class="final-total-box">
+                <div class="final-title">TỔNG CƯỚC CUỐI CÙNG:</div>
+                <div id="outFinal" class="final-val">0 VND</div>
+            </div>
+        </div>
+
+        <div id="noAcceptWarning" style="display:none; margin-top:20px; padding:16px; border-radius:10px; background:#fef2f2; border:1px solid #fecaca; text-align:center;">
+            <div style="font-size:28px;">🚫</div>
+            <div style="font-weight:800; color:var(--accent-color); font-size:15px; margin-top:4px;">KHU VỰC NÀY KHÔNG NHẬN VẬN CHUYỂN</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">Vui lòng liên hệ tổng đài để được tư vấn tuyến thay thế gần nhất.</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">⚙️ Cấu Hình Bảng Giá Hệ Thống</div>
+
+        <div id="syncStatusBanner" style="margin-bottom:14px; padding:10px 14px; border-radius:8px; font-size:12.5px; font-weight:600; background:#f0fdf4; color:#166534; border:1px solid #bbf7d0;">Đang tải dữ liệu từ server...</div>
+
+        <div class="form-group" style="display:flex; align-items:center; gap:10px; background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:10px 14px; margin-bottom:16px;">
+            <label style="margin:0; white-space:nowrap; color:#92400e;">🧮 Phụ thu (%) nhân với cước gốc:</label>
+            <input type="number" id="surchargePercentInput" step="0.5" min="0" style="width:90px; padding:6px 8px;" disabled onchange="updateSurchargePercent(this.value)">
+            <span style="font-size:11.5px; color:#92400e;">Áp dụng lên MỌI tuyến khi tính cước (thay cho mức 5% cố định cũ). Chỉ Admin sửa được, nhớ bấm "Lưu &amp; Đồng Bộ" để áp dụng.</span>
+        </div>
+
+        <div class="filter-bar">
+            <input type="text" id="routeSearchInput" class="route-search-input" placeholder="🔎 Tìm nhanh tên tuyến (VD: Lào Cai, Hà Nội, Bình Phước...)" oninput="renderRouteTabs()">
+            <div class="region-chips" id="regionChips"></div>
+        </div>
+
+        <div class="tab-bar-container">
+            <div class="route-tabs" id="routeTabs"></div>
+
+            <div class="action-controls" id="adminControls" style="display:none;">
+                <button class="btn btn-secondary" onclick="openRouteModal()">+ Thêm Tuyến Đường</button>
+                <button class="btn btn-secondary" onclick="addNewZoneToCurrentRoute()">+ Thêm Cột Vùng</button>
+                <button class="btn btn-primary" onclick="openBulkModal()">📊 Điều Chỉnh Giá Hàng Loạt</button>
+                <button class="btn btn-success" onclick="saveDataToServer()">💾 Lưu &amp; Đồng Bộ Bảng Giá</button>
+                <button class="btn btn-secondary" onclick="discardUnsavedChanges()">↩️ Hoàn Tác Thay Đổi Chưa Lưu</button>
+                <button class="btn btn-accent" onclick="resetToSeedData()">⏮️ Khôi Phục Bảng Giá Gốc Ban Đầu</button>
+                <button class="btn btn-secondary" onclick="logoutAdmin()">🔒 Đăng Xuất Admin</button>
+                <span class="unsaved-pill" id="unsavedPill">🟠 Có thay đổi chưa lưu</span>
+            </div>
+            <div class="action-controls" id="viewerControls">
+                <button class="btn btn-secondary" onclick="manualRefresh()">🔄 Làm Mới Cước Mới Nhất</button>
+                <button class="btn btn-primary" onclick="openLoginModal()">🔑 Đăng Nhập Admin</button>
+            </div>
+        </div>
+
+        <div class="route-info-bar">
+            <div><strong>Mô tả tuyến hiện tại:</strong> <span id="routeDesc">Vận chuyển tuyến đường</span></div>
+            <button class="btn btn-accent" style="padding:4px 10px; font-size:11px; display:none;" id="deleteRouteBtn" onclick="deleteCurrentRoute()">Xóa Tuyến Này</button>
+        </div>
+
+        <div class="table-responsive">
+            <table id="dynamicTable"><thead></thead><tbody id="tableBody"></tbody></table>
+        </div>
+        <p class="footer-note">* Đăng nhập Admin để chỉnh sửa Tên vùng, Quận huyện, TG phát và Đơn giá, sau đó bấm "💾 Lưu &amp; Đồng Bộ" - dữ liệu được lưu trên server riêng, mọi người mở link đều thấy cước mới gần như ngay lập tức (đẩy realtime qua server, có làm mới tự động dự phòng).</p>
+    </div>
+</div>
+
+<div class="main-layout" style="grid-template-columns:1fr; margin-top:0;">
+    <div class="card">
+        <div class="card-title">📦 Bảng Phí Lấy Hàng Tận Nơi (theo giá trị đơn hàng)</div>
+        <p style="font-size:12.5px; color:var(--text-muted); margin-top:-10px;">Áp dụng khi nhân viên đến lấy hàng tận nơi tại Hà Nội, Hải Phòng, Quảng Ninh và các tỉnh Miền Bắc khác. Cột "Khu vực xa" áp dụng riêng cho TP Lào Cai, Cao Bằng, Lạng Sơn, Hà Giang.</p>
+        <div class="table-responsive">
+            <table id="pickupFeeTable">
+                <thead><tr><th>Giá trị đơn hàng</th><th>HN/HP/QN &amp; tỉnh khác (đ)</th><th>Khu vực xa (đ)</th></tr></thead>
+                <tbody id="pickupFeeTableBody"></tbody>
+            </table>
+        </div>
+        <p class="footer-note" id="pickupFeeNote" style="text-align:left;"></p>
+        <div class="action-controls" id="pickupAdminControls" style="justify-content:flex-start; margin-top:10px; display:none;">
+            <button class="btn btn-success" onclick="saveDataToServer()">💾 Lưu &amp; Đồng Bộ Phí Lấy Hàng</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Đăng nhập Admin -->
+<div class="modal" id="loginModal">
+    <div class="modal-content">
+        <h3 style="margin-top:0; color:var(--primary-color);">🔑 Đăng Nhập Admin</h3>
+        <div class="form-group">
+            <label>Mật khẩu Admin:</label>
+            <input type="password" id="loginPasswordInput" placeholder="Nhập mật khẩu..." onkeydown="if(event.key==='Enter') submitLogin()">
+        </div>
+        <div id="loginError" style="color:var(--accent-color); font-size:12.5px; display:none;">Sai mật khẩu, vui lòng thử lại.</div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeLoginModal()">Hủy</button>
+            <button class="btn btn-primary" onclick="submitLogin()">Đăng Nhập</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Điều chỉnh giá hàng loạt -->
+<div class="modal" id="bulkModal">
+    <div class="modal-content" style="max-width:480px;">
+        <h3 style="margin-top:0; color:var(--primary-color);">📊 Điều Chỉnh Giá Hàng Loạt</h3>
+        <p style="font-size:12.5px; color:var(--text-muted); margin-top:-8px;">Dùng khi cần tăng/giảm cước theo đợt (ví dụ: giá xăng dầu thay đổi) thay vì sửa tay từng ô.</p>
+
+        <div class="form-group">
+            <label>Áp dụng cho:</label>
+            <div class="bulk-radio-row">
+                <label><input type="radio" name="bulkScope" value="current" checked onchange="updateBulkPreview()"> Chỉ tuyến đang chọn</label>
+                <label><input type="radio" name="bulkScope" value="all" onchange="updateBulkPreview()"> Toàn bộ hệ thống (tất cả tuyến)</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Áp dụng lên:</label>
+            <div class="bulk-radio-row">
+                <label><input type="checkbox" id="bulkApplyBase" checked onchange="updateBulkPreview()"> Cước cơ bản (10kg đầu)</label>
+                <label><input type="checkbox" id="bulkApplyRates" checked onchange="updateBulkPreview()"> Đơn giá/kg (các khung cân)</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Kiểu điều chỉnh:</label>
+            <div class="bulk-radio-row">
+                <label><input type="radio" name="bulkMode" value="percent" checked onchange="updateBulkPreview()"> Theo % (tăng dương / giảm âm)</label>
+                <label><input type="radio" name="bulkMode" value="fixed" onchange="updateBulkPreview()"> Theo số tiền cố định (đ)</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label id="bulkValueLabel">Giá trị điều chỉnh (VD: 5 nghĩa là tăng 5%, -5 là giảm 5%):</label>
+            <input type="number" id="bulkValue" step="0.5" placeholder="Ví dụ: 5" oninput="updateBulkPreview()">
+        </div>
+
+        <div class="bulk-preview-box" id="bulkPreviewBox">Nhập giá trị điều chỉnh để xem trước số khu vực bị ảnh hưởng.</div>
+
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeBulkModal()">Hủy</button>
+            <button class="btn btn-primary" onclick="applyBulkAdjustment()">Áp Dụng (chưa lưu)</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Thêm tuyến đường -->
+<div class="modal" id="routeModal">
+    <div class="modal-content">
+        <h3 style="margin-top:0; color:var(--primary-color);">Thêm Tuyến Đường Mới</h3>
+        <div class="form-group">
+            <label>Tên Tuyến Gốc (Ví dụ: Tuyến Hải Phòng):</label>
+            <input type="text" id="newRouteName" placeholder="Tuyến Quảng Ninh, Tuyến Hà Nội...">
+        </div>
+        <div class="form-group">
+            <label>Mô tả tuyến / Ghi chú:</label>
+            <textarea id="newRouteDesc" rows="2" placeholder="Nhận tại VP hoặc Giao tận nơi..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Thuộc miền:</label>
+            <select id="newRouteRegion">
+                <option value="Miền Bắc">Miền Bắc</option>
+                <option value="Miền Trung">Miền Trung</option>
+                <option value="Tây Nguyên">Tây Nguyên</option>
+                <option value="Miền Nam">Miền Nam</option>
+            </select>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeRouteModal()">Hủy</button>
+            <button class="btn btn-primary" onclick="submitCreateRoute()">Tạo Tuyến</button>
+        </div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
