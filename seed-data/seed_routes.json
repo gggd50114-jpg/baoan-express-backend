@@ -1,0 +1,3240 @@
+[
+  {
+    "id": "route_hni",
+    "region": "Miền Bắc",
+    "name": "Tuyến Hà Nội",
+    "desc": "Bảng cước vận chuyển đi Hà Nội, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "VP Nam Từ Liêm / VP Hai Bà Trưng / VP Thanh Xuân / VP Kho Nước Ngầm (Hoàng Mai) / VP Hà...",
+        "details": "Giao/nhận tại văn phòng",
+        "time": "Giao giờ hành chính hôm sau",
+        "base_rate": 40000,
+        "rates": [
+          2000,
+          2000,
+          1900,
+          1800,
+          1700,
+          1600
+        ]
+      },
+      {
+        "name": "Hoài Đức / Hoàn Kiếm / Đống Đa / Ba Đình / Hai Bà Trưng / Hoàng Mai / Thanh Trì | Thanh...",
+        "details": "Giao tận nơi",
+        "time": "Giao giờ hành chính hôm sau",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Ba Vì / Chương Mỹ / Phúc Thọ / Đan Phượng / Đông Anh / Mê Linh / Mỹ Đức / Phú Xuyên | Q...",
+        "details": "Giao tận nơi",
+        "time": "1 - 2 ngày",
+        "base_rate": 100000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_bckn",
+    "region": "Miền Bắc",
+    "name": "Tuyến Bắc Kạn",
+    "desc": "Bảng cước vận chuyển đi Bắc Kạn, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "Huyện Chợ Mới: Giao dọc QL3 / TP Bắc Kạn: Giao tận nơi / Huyện Bạch Thông (Thị trấn Phủ...",
+        "details": "Giao tận nơi",
+        "time": "2 ngày",
+        "base_rate": 90000,
+        "rates": [
+          3000,
+          3000,
+          2900,
+          2800,
+          2700,
+          2600
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_caobng",
+    "region": "Miền Bắc",
+    "name": "Tuyến Cao Bằng",
+    "desc": "Bảng cước vận chuyển đi Cao Bằng, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Cao Bằng: Giao tận nơi",
+        "details": "Giao tận nơi",
+        "time": "2 ngày",
+        "base_rate": 90000,
+        "rates": [
+          3000,
+          3000,
+          2900,
+          2800,
+          2700,
+          2600
+        ]
+      },
+      {
+        "name": "Thị trấn Đông Khê của huyện Thạch An: Giao tận nơi / Các xã khác của Huyện Thạch An: gi...",
+        "details": "Giao tận nơi",
+        "time": "2 ngày",
+        "base_rate": 100000,
+        "rates": [
+          3000,
+          3000,
+          2900,
+          2800,
+          2700,
+          2600
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_locai",
+    "region": "Miền Bắc",
+    "name": "Tuyến Lào Cai",
+    "desc": "Bảng cước vận chuyển đi Lào Cai, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "Phường Bắc Cường / Phường Bắc Lệnh / Phường Bình Minh / Phường Cốc Lếu / Phường Duyên H...",
+        "details": "Giao tận nơi",
+        "time": "2 ngày",
+        "base_rate": 90000,
+        "rates": [
+          3000,
+          3000,
+          2900,
+          2800,
+          2700,
+          2600
+        ]
+      },
+      {
+        "name": "Giao tận nơi tại TX Phố Lu / Giao tại nút giao cao tốc Phố Lu",
+        "details": "Huyện Bảo Thắng",
+        "time": "2 ngày",
+        "base_rate": 90000,
+        "rates": [
+          3000,
+          3000,
+          2900,
+          2800,
+          2700,
+          2600
+        ]
+      },
+      {
+        "name": "Xã Bảo Hà / Nút giao cao tốc Bảo Hà",
+        "details": "Huyện Bảo Yên",
+        "time": "2 ngày",
+        "base_rate": 90000,
+        "rates": [
+          3000,
+          3000,
+          2900,
+          2800,
+          2700,
+          2600
+        ]
+      },
+      {
+        "name": "Giao tại nút giao cao tốc Nội Bài Lào Cai",
+        "details": "Huyện Văn Bàn",
+        "time": "2 ngày",
+        "base_rate": 90000,
+        "rates": [
+          3000,
+          3000,
+          2900,
+          2800,
+          2700,
+          2600
+        ]
+      },
+      {
+        "name": "TX Sapa: giao tận nơi (Chỉ giao ở trung tâm Phường Sapa hoặc dọc QL4D, không giao ở các...",
+        "details": "TX Sapa",
+        "time": "2,5 ngày",
+        "base_rate": 100000,
+        "rates": [
+          3000,
+          3000,
+          2900,
+          2800,
+          2700,
+          2600
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_hgiang",
+    "region": "Miền Bắc",
+    "name": "Tuyến Hà Giang",
+    "desc": "Bảng cước vận chuyển đi Hà Giang, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "Phường Minh Khai / Phường Ngọc Hà / Phường Nguyễn Trãi / Phường Quang Trung / Phường Tr...",
+        "details": "Giao tận nơi",
+        "time": "2,5 ngày",
+        "base_rate": 90000,
+        "rates": [
+          3000,
+          3000,
+          2900,
+          2800,
+          2700,
+          2600
+        ]
+      },
+      {
+        "name": "Giao tận nơi Thị Trấn Vị Xuyên / Còn lại giao trên QL2",
+        "details": "Huyện Vị Xuyên",
+        "time": "2,5 ngày",
+        "base_rate": 90000,
+        "rates": [
+          3000,
+          3000,
+          2900,
+          2800,
+          2700,
+          2600
+        ]
+      },
+      {
+        "name": "Giao tận nơi Thị Trấn Việt Quang + Thị Trấn Tân Quang / Còn lại giao trên QL2",
+        "details": "Huyện Bắc Quang",
+        "time": "2,5 ngày",
+        "base_rate": 90000,
+        "rates": [
+          3000,
+          3000,
+          2900,
+          2800,
+          2700,
+          2600
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_hiphng",
+    "region": "Miền Bắc",
+    "name": "Tuyến Hải Phòng",
+    "desc": "Bảng cước vận chuyển đi Hải Phòng, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "VP Bến xe Thượng Lý: 11 Hùng Vương, Sở Dầu, Hồng Bàng, TP Hải Phòng",
+        "details": "Giao/nhận tại văn phòng",
+        "time": "Giao giờ hành chính hôm sau",
+        "base_rate": 40000,
+        "rates": [
+          2000,
+          2000,
+          1900,
+          1800,
+          1700,
+          1600
+        ]
+      },
+      {
+        "name": "Hồng Bàng / Lê Chân / Ngô Quyền / An Dương | Hải An / Dương Kinh / Kiến An / An Lão / T...",
+        "details": "Giao tận nơi",
+        "time": "Giao giờ hành chính hôm sau",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Đồ Sơn / Tiễn Lẵng / Vĩnh Bảo / Kiến Thụy / TT Cát Hải",
+        "details": "Giao tận nơi",
+        "time": "1 - 2 ngày",
+        "base_rate": 100000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_tuynquang",
+    "region": "Miền Bắc",
+    "name": "Tuyến Tuyên Quang",
+    "desc": "Bảng cước vận chuyển đi Tuyên Quang, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Tuyên Quang giao tận nơi",
+        "details": "Giao tận nơi",
+        "time": "2 ngày",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Thị trấn Sơn Nam: Giao dọc QL2C hoặc giao tận nơi / Thị trấn Sơn Dương: Giao dọc QL2C h...",
+        "details": "Giao tận nơi",
+        "time": "2 ngày",
+        "base_rate": 100000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      },
+      {
+        "name": "Giao tận nơi ở thị trấn Sơn Dương / Giao dọc QL 2C",
+        "details": "Huyện Sơn Dương",
+        "time": "2,5 ngày",
+        "base_rate": 90000,
+        "rates": [
+          2700,
+          2700,
+          2650,
+          2600,
+          2550,
+          2500
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_lngsn",
+    "region": "Miền Bắc",
+    "name": "Tuyến Lạng Sơn",
+    "desc": "Bảng cước vận chuyển đi Lạng Sơn, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Lạng Sơn: Giao/nhận tận nơi / Thị trấn Hữu Lũng: Giao/nhận tận nơi / Thị trấn Đồng M...",
+        "details": "Giao tận nơi",
+        "time": "1 - 2 ngày",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Thị trấn Na Sầm của huyện Văn Lẵng: Giao/nhận tận nơi / Các xã còn lại của Huyện Văn Lẵ...",
+        "details": "Giao tận nơi",
+        "time": "2 ngày",
+        "base_rate": 100000,
+        "rates": [
+          3000,
+          3000,
+          2900,
+          2800,
+          2700,
+          2600
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_hobnh",
+    "region": "Miền Bắc",
+    "name": "Tuyến Hoà Bình",
+    "desc": "Bảng cước vận chuyển đi Hoà Bình, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Hoà Bình: Giao tận nơi",
+        "details": "Giao tận nơi",
+        "time": "1 - 2 ngày",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Huyện Kỳ Sơn: Giao tận nơi",
+        "details": "Giao tận nơi",
+        "time": "1 - 2 ngày",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_ynbi",
+    "region": "Miền Bắc",
+    "name": "Tuyến Yên Bái",
+    "desc": "Bảng cước vận chuyển đi Yên Bái, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Yên Bái",
+        "details": "Giao tận nơi",
+        "time": "1 - 2 ngày",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Thị Trấn Mậu A",
+        "details": "Giao tận nơi",
+        "time": "1 - 2 ngày",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "IC12: Nút giao với đường Âu Cơ tại Minh Quân, Trấn Yên, Yên Bái đi thành phố Yên Bái, t...",
+        "details": "Giao tại các nút giao cao tốc, trạm thu phí",
+        "time": "1 - 2 ngày",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_thibnh",
+    "region": "Miền Bắc",
+    "name": "Tuyến Thái Bình",
+    "desc": "Bảng cước vận chuyển đi Thái Bình, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Thái Bình / Vũ Thư",
+        "details": "Giao tận nơi",
+        "time": "- Nhận trong giờ hành chính ngày hôm sau",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Hưng Hà / Đông Hưng",
+        "details": "Giao tận nơi",
+        "time": "Đang cập nhật",
+        "base_rate": 100000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      },
+      {
+        "name": "Tiền Hải / Quỳnh Côi / Thái thuỵ / Quỳnh Phụ / Kiến Xương",
+        "details": "Không nhận vận chuyển",
+        "time": "Không nhận vận chuyển",
+        "base_rate": 0,
+        "rates": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_hnam",
+    "region": "Miền Bắc",
+    "name": "Tuyến Hà Nam",
+    "desc": "Bảng cước vận chuyển đi Hà Nam, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "Phủ Lý / Duy Tiên (Đồng Văn)",
+        "details": "Giao tận nơi",
+        "time": "Nhận trong giờ hành chính ngày hôm sau",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Lý Nhân / Thanh Liêm / Bình Lục",
+        "details": "Giao tận nơi",
+        "time": "Đang cập nhật",
+        "base_rate": 95000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      },
+      {
+        "name": "Kim Bảng",
+        "details": "Giao tận nơi",
+        "time": "Đang cập nhật",
+        "base_rate": 100000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_bcninh",
+    "region": "Miền Bắc",
+    "name": "Tuyến Bắc Ninh",
+    "desc": "Bảng cước vận chuyển đi Bắc Ninh, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Bắc Ninh / TP Từ Sơn",
+        "details": "Giao tận nơi",
+        "time": "- Nhận trong giờ hành chính ngày hôm sau",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Quế Võ / Yên Phong / Tiên Du",
+        "details": "Giao tận nơi",
+        "time": "Đang cập nhật",
+        "base_rate": 95000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      },
+      {
+        "name": "Lương Tài / Gia Bình / Thuận Thành",
+        "details": "Giao tận nơi",
+        "time": "Đang cập nhật",
+        "base_rate": 100000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_bcgiang",
+    "region": "Miền Bắc",
+    "name": "Tuyến Bắc Giang",
+    "desc": "Bảng cước vận chuyển đi Bắc Giang, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Bắc Giang",
+        "details": "Giao tận nơi",
+        "time": "- Nhận trong giờ hành chính ngày hôm sau",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Việt Yên / Hiệp Hòa",
+        "details": "Giao tận nơi",
+        "time": "Đang cập nhật",
+        "base_rate": 100000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      },
+      {
+        "name": "Tân Yên / Lục Nam / Lạng Giang / Yên Dũng",
+        "details": "Không nhận vận chuyển",
+        "time": "Không nhận vận chuyển",
+        "base_rate": 0,
+        "rates": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "Chũ / Yên Thế / Sơn Động / Lục Ngạn",
+        "details": "Không nhận vận chuyển",
+        "time": "Không nhận vận chuyển",
+        "base_rate": 0,
+        "rates": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_thinguyn",
+    "region": "Miền Bắc",
+    "name": "Tuyến Thái Nguyên",
+    "desc": "Bảng cước vận chuyển đi Thái Nguyên, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Thái Nguyên / TP Sông Công / TP Phổ Yên",
+        "details": "Giao tận nơi",
+        "time": "Nhận trong giờ hành chính ngày hôm sau",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Thị trấn Đu của huyện Phú Lương: Giao tận nơi / Các xã khác của Huyện Phú Lương: Giao d...",
+        "details": "Giao tận nơi",
+        "time": "2 ngày",
+        "base_rate": 100000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      },
+      {
+        "name": "Đại Từ / Phú Lương",
+        "details": "Không nhận vận chuyển",
+        "time": "Không nhận vận chuyển",
+        "base_rate": 0,
+        "rates": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_ninhbnh",
+    "region": "Miền Bắc",
+    "name": "Tuyến Ninh Bình",
+    "desc": "Bảng cước vận chuyển đi Ninh Bình, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Hoa Lư / TP Ninh Bình",
+        "details": "Giao tận nơi",
+        "time": "- Nhận trong giờ hành chính ngày hôm sau",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Gia Viễn, Gián Khẩu",
+        "details": "Giao tận nơi",
+        "time": "Đang cập nhật",
+        "base_rate": 100000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_namnh",
+    "region": "Miền Bắc",
+    "name": "Tuyến Nam Định",
+    "desc": "Bảng cước vận chuyển đi Nam Định, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Nam Định / Mỹ Lộc",
+        "details": "Giao tận nơi",
+        "time": "- Nhận trong giờ hành chính ngày hôm sau",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Vụ Bản / Ý Yên",
+        "details": "Giao tận nơi",
+        "time": "Đang cập nhật",
+        "base_rate": 100000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      },
+      {
+        "name": "Giao Thuỷ / Hải Hậu / Trực Ninh / Xuân Trường / Nghĩa Hưng / Nam Trực",
+        "details": "Không nhận vận chuyển",
+        "time": "Không nhận vận chuyển",
+        "base_rate": 0,
+        "rates": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_hidng",
+    "region": "Miền Bắc",
+    "name": "Tuyến Hải Dương",
+    "desc": "Bảng cước vận chuyển đi Hải Dương, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Hải Dương / Chí Linh (Sao Đỏ)",
+        "details": "Giao tận nơi",
+        "time": "Giao trong giờ hành chính ngày hôm sau",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Kinh Môn / Bình Giang / Cẩm Giàng / Gia Lộc / Nam Sách / Kim Thành",
+        "details": "Giao tận nơi",
+        "time": "Đang cập nhật",
+        "base_rate": 95000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      },
+      {
+        "name": "Ninh Giang / Thanh Hà / Thanh Niệm / Tứ Kỳ",
+        "details": "Giao tận nơi",
+        "time": "Đang cập nhật",
+        "base_rate": 100000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_vnhphc",
+    "region": "Miền Bắc",
+    "name": "Tuyến Vĩnh Phúc",
+    "desc": "Bảng cước vận chuyển đi Vĩnh Phúc, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Phúc Yên / TP Vĩnh Yên / Bình Xuyên",
+        "details": "Giao tận nơi",
+        "time": "Nhận trong giờ hành chính ngày hôm sau",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Tam Dương / Vĩnh Tường / Yên Lạc",
+        "details": "Giao tận nơi",
+        "time": "Đang cập nhật",
+        "base_rate": 100000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      },
+      {
+        "name": "Sông Lô / Tam Đảo / Lập Thạch",
+        "details": "Không nhận vận chuyển",
+        "time": "Không nhận vận chuyển",
+        "base_rate": 0,
+        "rates": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_phth",
+    "region": "Miền Bắc",
+    "name": "Tuyến Phú Thọ",
+    "desc": "Bảng cước vận chuyển đi Phú Thọ, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Việt Trì / Phù Ninh / TX Phú Thọ",
+        "details": "Giao tận nơi",
+        "time": "Nhận trong giờ hành chính ngày hôm sau",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Cẩm Khê / Thanh Ba / Hạ Hòa / Lâm Thao / Đoan Hùng / Tam Nông",
+        "details": "Giao tận nơi",
+        "time": "1 - 2 ngày",
+        "base_rate": 100000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      },
+      {
+        "name": "Tân Sơn / Yên Lập / Thanh Sơn / Thanh Thủy",
+        "details": "Không nhận vận chuyển",
+        "time": "Không nhận vận chuyển",
+        "base_rate": 0,
+        "rates": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_hngyn",
+    "region": "Miền Bắc",
+    "name": "Tuyến Hưng Yên",
+    "desc": "Bảng cước vận chuyển đi Hưng Yên, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "Văn Giang / Mỹ Hào / Yên Mỹ / TP Hưng Yên",
+        "details": "Giao tận nơi",
+        "time": "Giao trong giờ hành chính ngày hôm sau",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Ân Thi / Khoái Châu / Kim Động / Văn Lâm",
+        "details": "Giao tận nơi",
+        "time": "Đang cập nhật",
+        "base_rate": 95000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      },
+      {
+        "name": "Phù Cừ / Tiên Lữ",
+        "details": "Giao tận nơi",
+        "time": "Đang cập nhật",
+        "base_rate": 100000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_qungninh",
+    "region": "Miền Bắc",
+    "name": "Tuyến Quảng Ninh",
+    "desc": "Bảng cước vận chuyển đi Quảng Ninh, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "VP Bảo An Hạ Long: 46 Đường 279, Giếng Đáy, Hạ Long, Quảng Ninh (gần bệnh viện Bãi Cháy)",
+        "details": "Giao/nhận tại văn phòng",
+        "time": "Nhận trong giờ hành chính ngày hôm sau",
+        "base_rate": 40000,
+        "rates": [
+          2000,
+          2000,
+          1900,
+          1800,
+          1700,
+          1600
+        ]
+      },
+      {
+        "name": "Hạ Long / Đông Triều / Bãi Cháy / Mạo Khê / Hoành Bồ",
+        "details": "Giao tận nơi",
+        "time": "Nhận trong giờ hành chính ngày hôm sau",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Quảng Yên / Uông Bí",
+        "details": "Giao tận nơi",
+        "time": "1- 2 ngày",
+        "base_rate": 80000,
+        "rates": [
+          2500,
+          2500,
+          2400,
+          2300,
+          2200,
+          2100
+        ]
+      },
+      {
+        "name": "Vân Đồn (Xã Thắng Lợi, Ngọc Vùng, Quan Lạn, Bản Sen, Minh Châu KHÔNG nhận chở) / Cẩm Phả",
+        "details": "Giao tận nơi",
+        "time": "1- 2 ngày",
+        "base_rate": 90000,
+        "rates": [
+          2750,
+          2750,
+          2650,
+          2550,
+          2450,
+          2350
+        ]
+      },
+      {
+        "name": "Móng Cái (Xã Hải Sơn, Bắc Sơn KHÔNG nhận chở) / Tiên Yên / Đầm Hà / Hải Hà (LƯU Ý: 2 xã...",
+        "details": "Giao tận nơi",
+        "time": "1- 2 ngày",
+        "base_rate": 90000,
+        "rates": [
+          3000,
+          3000,
+          2900,
+          2800,
+          2700,
+          2600
+        ]
+      },
+      {
+        "name": "Ba Chẽ giao trên QL 18",
+        "details": "Giao dọc quốc lộ",
+        "time": "Đang cập nhật",
+        "base_rate": 90000,
+        "rates": [
+          3000,
+          3000,
+          2900,
+          2800,
+          2700,
+          2600
+        ]
+      },
+      {
+        "name": "Bình Liêu",
+        "details": "Không nhận vận chuyển",
+        "time": "Không nhận vận chuyển",
+        "base_rate": 0,
+        "rates": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_hu",
+    "region": "Miền Trung",
+    "name": "Tuyến Huế",
+    "desc": "Bảng cước vận chuyển đi Huế, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "Hương Trà giao trên QL 1A / Tứ Hạ giao trên QL 1A / Phong Điền giao trên QL 1A / Mỹ Trá...",
+        "details": "Giao dọc quốc lộ",
+        "time": "1,5 - 2,5 ngày",
+        "base_rate": 70000,
+        "rates": [
+          5000,
+          4750,
+          4500,
+          4150,
+          3750,
+          3500
+        ]
+      },
+      {
+        "name": "Phường An Cựu / Phường An Đông / Phường An Hòa / Phường An Tây / Phường Hương Long / Ph...",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 130000,
+        "rates": [
+          5500,
+          5250,
+          5000,
+          4650,
+          4250,
+          4000
+        ]
+      },
+      {
+        "name": "Phường Hương Hồ / Phường Thuận An / Xã Hải Dương / Xã Hương Phong / Xã Hương Thọ / Phườ...",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 200000,
+        "rates": [
+          5750,
+          5500,
+          5250,
+          4900,
+          4500,
+          4250
+        ]
+      },
+      {
+        "name": "Xã Thủy Bằng / Xã Hương Thọ / Phường Hương An",
+        "details": "Không nhận vận chuyển",
+        "time": "Không nhận vận chuyển",
+        "base_rate": 0,
+        "rates": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "Phường Phú Bài / Phường Thủy Châu / Phường Thủy Dương / Phường Thủy Lương / Phường Thủy...",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 130000,
+        "rates": [
+          5500,
+          5250,
+          5000,
+          4650,
+          4250,
+          4000
+        ]
+      },
+      {
+        "name": "Xã Dương Hòa / Xã Phú Sơn / Thuỷ Bằng",
+        "details": "Không nhận vận chuyển",
+        "time": "Không nhận vận chuyển",
+        "base_rate": 0,
+        "rates": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "Thị trấn Phú Lộc: Giao tận nơi / Thị trấn Lăng Cô: Giao tận nơi / Trị trấn Lộc Tiến: Gi...",
+        "details": "Huyện Phú Lộc",
+        "time": "2 - 3 ngày",
+        "base_rate": 130000,
+        "rates": [
+          5500,
+          5250,
+          5000,
+          4650,
+          4250,
+          4000
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_nng",
+    "region": "Miền Trung",
+    "name": "Tuyến Đà Nẵng",
+    "desc": "Bảng cước vận chuyển đi Đà Nẵng, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "VP Đà Nẵng: 209 Trường Chính, Thanh Khê",
+        "details": "Giao/nhận tại văn phòng",
+        "time": "2 - 3 ngày",
+        "base_rate": 60000,
+        "rates": [
+          5000,
+          4750,
+          4500,
+          4150,
+          3750,
+          3500
+        ]
+      },
+      {
+        "name": "Quận Hải Châu / Quận Cẩm Lệ / Quận Thanh Khê / Quận Liên Chiểu / Quận Ngũ Hành Sơn / Qu...",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 100000,
+        "rates": [
+          5500,
+          5250,
+          5000,
+          4650,
+          4250,
+          4000
+        ]
+      },
+      {
+        "name": "Hòa Quý / Hòa Vang",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 130000,
+        "rates": [
+          5750,
+          5500,
+          5250,
+          4900,
+          4500,
+          4250
+        ]
+      },
+      {
+        "name": "Giao tận nơi tại Hội An",
+        "details": "Giao tận nơi",
+        "time": "1,5 - 2,5 ngày",
+        "base_rate": 150000,
+        "rates": [
+          6000,
+          5750,
+          5500,
+          5150,
+          4750,
+          4500
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_qungnamhian",
+    "region": "Miền Trung",
+    "name": "Tuyến Quảng Nam (Hội An)",
+    "desc": "Bảng cước vận chuyển đi Quảng Nam (Hội An), đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "Chu Lai / Núi Thành",
+        "details": "Giao dọc quốc lộ",
+        "time": "1,5 - 2,5 ngày",
+        "base_rate": 70000,
+        "rates": [
+          5000,
+          4750,
+          4500,
+          4150,
+          3750,
+          3500
+        ]
+      },
+      {
+        "name": "Điện Bàn / Thăng Bình / Vĩnh Điện / Hà Lam / TP Tam Kỳ / Duy Xuyên / Hội An",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 100000,
+        "rates": [
+          5500,
+          5250,
+          5000,
+          4650,
+          4250,
+          4000
+        ]
+      },
+      {
+        "name": "Quế Sơn / Phú Ninh",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 150000,
+        "rates": [
+          5750,
+          5500,
+          5250,
+          4900,
+          4500,
+          4250
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_qungngi",
+    "region": "Miền Trung",
+    "name": "Tuyến Quảng Ngãi",
+    "desc": "Bảng cước vận chuyển đi Quảng Ngãi, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "- Giao dọc QL 1A   - Tư Nghĩa QL 1A  - Sơn Tịnh QL 1A  - Giao tại VP Bảo An Quảng Ngãi",
+        "details": "Giao/nhận tại văn phòng",
+        "time": "1 - 2 ngày",
+        "base_rate": 70000,
+        "rates": [
+          5000,
+          4750,
+          4500,
+          4150,
+          3750,
+          3500
+        ]
+      },
+      {
+        "name": "TP Quảng Ngãi",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 100000,
+        "rates": [
+          5500,
+          5250,
+          5000,
+          4650,
+          4250,
+          4000
+        ]
+      },
+      {
+        "name": "Tư Nghĩa",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 150000,
+        "rates": [
+          5750,
+          5500,
+          5250,
+          4900,
+          4500,
+          4250
+        ]
+      },
+      {
+        "name": "Sơn Tịnh",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 200000,
+        "rates": [
+          6000,
+          5750,
+          5500,
+          5150,
+          4750,
+          4500
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_bnhnh",
+    "region": "Miền Trung",
+    "name": "Tuyến Bình Định",
+    "desc": "Bảng cước vận chuyển đi Bình Định, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "- Giao dọc QL 1A   - Giao tại VP Bảo An Quy Nhơn",
+        "details": "Giao/nhận tại văn phòng",
+        "time": "2 - 3 ngày",
+        "base_rate": 80000,
+        "rates": [
+          6000,
+          5750,
+          5500,
+          5150,
+          4750,
+          4500
+        ]
+      },
+      {
+        "name": "Đống Đa / Thị Nại / Quang Trung / Nguyễn Văn Cừ / Ngô Mây / Lê Hồng Phong / Lý Thường K...",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 120000,
+        "rates": [
+          6500,
+          6250,
+          6000,
+          5650,
+          5250,
+          5000
+        ]
+      },
+      {
+        "name": "Bùi Thị Xuân / Ghềnh Ráng / Nhơn Bình / Nhơn Phú",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 150000,
+        "rates": [
+          6750,
+          6500,
+          6250,
+          5900,
+          5500,
+          5250
+        ]
+      },
+      {
+        "name": "Nhơn Lý / Nhơn Hải / Nhơn Hội / Hải Cảng",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 200000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_kontum",
+    "region": "Tây Nguyên",
+    "name": "Tuyến Kon Tum (Chưa nhận)",
+    "desc": "Bảng cước vận chuyển đi Kon Tum, đồng bộ từ file Excel gốc. Tuyến này hiện CHƯA nhận vận chuyển (dữ liệu cước để tham khảo/chuẩn bị mở tuyến).",
+    "zones": [
+      {
+        "name": "Giao dọc QL 14 / Giao tại văn phòng TP Kon Tum",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 80000,
+        "rates": [
+          6000,
+          5750,
+          5500,
+          5150,
+          4750,
+          4500
+        ]
+      },
+      {
+        "name": "Giao tận nơi TP Kon Tum",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 120000,
+        "rates": [
+          6500,
+          6250,
+          6000,
+          5650,
+          5250,
+          5000
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_phyn",
+    "region": "Miền Trung",
+    "name": "Tuyến Phú Yên",
+    "desc": "Bảng cước vận chuyển đi Phú Yên, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "Giao dọc QL 1A / Giao tại VP Bảo An Tuy Hoà",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 80000,
+        "rates": [
+          6000,
+          5750,
+          5500,
+          5150,
+          4750,
+          4500
+        ]
+      },
+      {
+        "name": "Giao tận nơi ở Tuy Hoà, Đông Hoà",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 120000,
+        "rates": [
+          6500,
+          6250,
+          6000,
+          5650,
+          5250,
+          5000
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_khnhho",
+    "region": "Miền Trung",
+    "name": "Tuyến Khánh Hoà",
+    "desc": "Bảng cước vận chuyển đi Khánh Hoà, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "- Giao tại VP Nha Trang   - Giao dọc QL 1A",
+        "details": "Giao/nhận tại văn phòng",
+        "time": "2 - 3 ngày",
+        "base_rate": 80000,
+        "rates": [
+          6000,
+          5750,
+          5500,
+          5150,
+          4750,
+          4500
+        ]
+      },
+      {
+        "name": "TP Nha Trang, Diên Khánh",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 120000,
+        "rates": [
+          6500,
+          6250,
+          6000,
+          5650,
+          5250,
+          5000
+        ]
+      },
+      {
+        "name": "Vinh Lương (nên để giao trên QL 1A cho rẻ cước)",
+        "details": "Giao tận nơi — Nên tư vấn khách nhận trên QL 1A",
+        "time": "2 - 3 ngày",
+        "base_rate": 300000,
+        "rates": [
+          6850,
+          6600,
+          6350,
+          6000,
+          5600,
+          5350
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_gialaipleiku",
+    "region": "Tây Nguyên",
+    "name": "Tuyến Gia Lai Pleiku (Chưa nhận)",
+    "desc": "Bảng cước vận chuyển đi Gia Lai Pleiku, đồng bộ từ file Excel gốc. Tuyến này hiện CHƯA nhận vận chuyển (dữ liệu cước để tham khảo/chuẩn bị mở tuyến).",
+    "zones": [
+      {
+        "name": "Giao dọc QL 14 / Giao tại văn phòng TP Pleiku",
+        "details": "Giao/nhận tại văn phòng",
+        "time": "2 - 3 ngày",
+        "base_rate": 100000,
+        "rates": [
+          6500,
+          6250,
+          6000,
+          5650,
+          5250,
+          5000
+        ]
+      },
+      {
+        "name": "TP Pleiku giao tận nơi",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_klk",
+    "region": "Tây Nguyên",
+    "name": "Tuyến Đắk Lắk (Chưa nhận)",
+    "desc": "Bảng cước vận chuyển đi Đắk Lắk, đồng bộ từ file Excel gốc. Tuyến này hiện CHƯA nhận vận chuyển (dữ liệu cước để tham khảo/chuẩn bị mở tuyến).",
+    "zones": [
+      {
+        "name": "Giao dọc QL 14 / Giao tại văn phòng Buôn Ma Thuật",
+        "details": "Giao/nhận tại văn phòng",
+        "time": "2 - 3 ngày",
+        "base_rate": 100000,
+        "rates": [
+          6500,
+          6250,
+          6000,
+          5650,
+          5250,
+          5000
+        ]
+      },
+      {
+        "name": "TP Buôn Ma Thuật",
+        "details": "Giao tận nơi",
+        "time": "2 - 3 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_knng",
+    "region": "Tây Nguyên",
+    "name": "Tuyến Đắk Nông (Chưa nhận)",
+    "desc": "Bảng cước vận chuyển đi Đắk Nông, đồng bộ từ file Excel gốc. Tuyến này hiện CHƯA nhận vận chuyển (dữ liệu cước để tham khảo/chuẩn bị mở tuyến).",
+    "zones": [
+      {
+        "name": "Giao dọc QL 14 / Giao tại văn phòng Gia Nghĩa",
+        "details": "Giao/nhận tại văn phòng",
+        "time": "3 - 4 ngày",
+        "base_rate": 100000,
+        "rates": [
+          6500,
+          6250,
+          6000,
+          5650,
+          5250,
+          5000
+        ]
+      },
+      {
+        "name": "TP Gia Nghĩa",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_ngnai",
+    "region": "Miền Nam",
+    "name": "Tuyến Đồng Nai",
+    "desc": "Bảng cước vận chuyển đi Đồng Nai, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "Giao tại văn phòng Bảo An Đồng Nai / Xuân Lộc giao trên QL 1A",
+        "details": "Giao/nhận tại văn phòng",
+        "time": "3 - 4 ngày",
+        "base_rate": 100000,
+        "rates": [
+          6500,
+          6250,
+          6000,
+          5650,
+          5250,
+          5000
+        ]
+      },
+      {
+        "name": "TP Biên Hòa / Hố Nai / Nhơn Trạch / Long Thành",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Trảng Bom / Thống Nhất (Dầu Giây, Gia Kiệm) / Gia Tân / Tân Phú / Phú Cường / Định Quán...",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Vĩnh Cửu",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
+        "time": "4 - 5 ngày",
+        "base_rate": 400000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_vngtu",
+    "region": "Miền Nam",
+    "name": "Tuyến Vũng Tàu",
+    "desc": "Bảng cước vận chuyển đi Vũng Tàu, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "Thành phố Vũng Tàu / Thị xã Bà Rịa / Phú Mỹ / Mỹ Xuân / Tân Thành",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Long Điền / Long Hải",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Châu Đức / Đất Đỏ",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
+        "time": "4 - 5 ngày",
+        "base_rate": 300000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Xuyên Mộc",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
+        "time": "4 - 5 ngày",
+        "base_rate": 500000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_bnhdng",
+    "region": "Miền Nam",
+    "name": "Tuyến Bình Dương",
+    "desc": "Bảng cước vận chuyển đi Bình Dương, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "VP Thuận An + Dĩ An",
+        "details": "Giao/nhận tại văn phòng",
+        "time": "3 - 4 ngày",
+        "base_rate": 100000,
+        "rates": [
+          6500,
+          6250,
+          6000,
+          5650,
+          5250,
+          5000
+        ]
+      },
+      {
+        "name": "TP Thủ Dầu Một / TP Dĩ An / TP Thuận An",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "TP Tân Uyên / TX Bến Cát",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Huyện Bắc Tân Uyên / Huyện Bàu Bàng",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 250000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Dầu Tiếng / Huyện Phú Giáo",
+        "details": "Chạy nguyên chuyến xe tải đi giao — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
+        "time": "3 - 4 ngày",
+        "base_rate": 500000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_sign",
+    "region": "Miền Nam",
+    "name": "Tuyến Sài Gòn",
+    "desc": "Bảng cước vận chuyển đi Sài Gòn, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "Các VP HCM",
+        "details": "Giao/nhận tại văn phòng",
+        "time": "3 - 4 ngày",
+        "base_rate": 100000,
+        "rates": [
+          6500,
+          6250,
+          6000,
+          5650,
+          5250,
+          5000
+        ]
+      },
+      {
+        "name": "Quận 1 / Quận 3 / Quận 4 / Quận 5 / Quận 6 / Quận 8 / Quận 10 | Quận 11 / Quận 12 / Quậ...",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Cần Giờ",
+        "details": "Chạy nguyên chuyến xe tải đi giao — Cước về VP + 1,000,000 (hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao)",
+        "time": "3 - 4 ngày",
+        "base_rate": -1,
+        "rates": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_longan",
+    "region": "Miền Nam",
+    "name": "Tuyến Long An",
+    "desc": "Bảng cước vận chuyển đi Long An, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "Bến Lức / Tân An",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Đức Hoà / Thủ Thừa",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 150000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Cần Giuộc / Cần Đước / Châu Thành / Tân Trụ",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
+        "time": "3 - 4 ngày",
+        "base_rate": 400000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      },
+      {
+        "name": "Đức Huệ",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
+        "time": "4 - 5 ngày",
+        "base_rate": 400000,
+        "rates": [
+          7750,
+          7500,
+          7250,
+          6900,
+          6500,
+          6250
+        ]
+      },
+      {
+        "name": "Mộc Hoá / Kiến Tường / Tân Hưng / Thạnh Hoá / Vĩnh Hưng / Tân Thạnh",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
+        "time": "4 - 5 ngày",
+        "base_rate": 1000000,
+        "rates": [
+          8000,
+          7750,
+          7500,
+          7150,
+          6750,
+          6500
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_tingiang",
+    "region": "Miền Nam",
+    "name": "Tuyến Tiền Giang",
+    "desc": "Bảng cước vận chuyển đi Tiền Giang, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Mỹ Tho",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Châu Thành",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 150000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Chợ Gạo / Cai Lậy",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
+        "time": "4 - 5 ngày",
+        "base_rate": 250000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      },
+      {
+        "name": "Cái Bè",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
+        "time": "4 - 5 ngày",
+        "base_rate": 300000,
+        "rates": [
+          7750,
+          7500,
+          7250,
+          6900,
+          6500,
+          6250
+        ]
+      },
+      {
+        "name": "Tân Phước (Mỹ Phước) / Gò Công",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
+        "time": "4 - 5 ngày",
+        "base_rate": 500000,
+        "rates": [
+          7750,
+          7500,
+          7250,
+          6900,
+          6500,
+          6250
+        ]
+      },
+      {
+        "name": "Tân Phú Đông",
+        "details": "Không nhận vận chuyển",
+        "time": "Không nhận vận chuyển",
+        "base_rate": 0,
+        "rates": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_vnhlong",
+    "region": "Miền Nam",
+    "name": "Tuyến Vĩnh Long",
+    "desc": "Bảng cước vận chuyển đi Vĩnh Long, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Vĩnh Long",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "TX Bình Minh / Long Hồ",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 150000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Mang Thít / Bình Tân / Trà Ôn (KHÔNG giao ở 2 Cồn Lục Sĩ Thành, Phú Thành)",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 250000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      },
+      {
+        "name": "Vũng Liêm / Tam Bình",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
+        "time": "4 - 5 ngày",
+        "base_rate": 300000,
+        "rates": [
+          7750,
+          7500,
+          7250,
+          6900,
+          6500,
+          6250
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_lmng",
+    "region": "Tây Nguyên",
+    "name": "Tuyến Lâm Đồng",
+    "desc": "Bảng cước vận chuyển đi Lâm Đồng, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "Phường 1,2, 6, 8, 9,10, 11, 12.",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Phường 3, 4, 5, 7.",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 150000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Xã Tà Nung / Xã Trạm Hành / Xã Xuân Thọ / Xã Xuân Trường",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 200000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      },
+      {
+        "name": "Thị trấn Lạc Dương",
+        "details": "Giao tận nơi",
+        "time": "3 - 5 ngày",
+        "base_rate": 200000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Đạ Sar dọc QL 27C / Đạ Nhim dọc QL 27C / Đạ Chais dọc QL 27C",
+        "details": "Giao dọc quốc lộ",
+        "time": "4 - 5 ngày",
+        "base_rate": 200000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Đạ Ròn / Thạnh Mỹ / Lạc Lâm / Lạc Xuân / Đran",
+        "details": "Giao tận nơi",
+        "time": "3 - 5 ngày",
+        "base_rate": 200000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Hiệp An / Hiệp Thạnh / Liên Nghĩa / Liên Khương",
+        "details": "Giao tận nơi",
+        "time": "3 - 5 ngày",
+        "base_rate": 200000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Phường 1, 2 / B'Lao / Lộc Sơn / Lộc Tiến / Lộc Châu / Lộc Nga",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Đại Lào / Lộc Thanh / Lộc Phát / Đạm Bri",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 200000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Thị trấn Di Linh (huyện lỵ) / Xã Đinh Trang Hòa / Xã Hòa Ninh / Xã Liên Đầm / Xã Tân Châu",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 170000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Xã Bảo Thuận / Xã Đinh Lạc / Xã Đinh Trang Thượng / Xã Gia Bắc / Xã Gia Hiệp / Xã Gung ...",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 250000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Xã Hòa Nam / Xã Hòa Trung / Xã Sơn Điền / Xã Tam Bố / Xã Tân Lâm / Xã Tân Nghĩa / Xã Tâ...",
+        "details": "Giao tận nơi",
+        "time": "Đang cập nhật",
+        "base_rate": 250000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      },
+      {
+        "name": "Thị trấn Ma Đa Guôi / (huyện lỵ) / Thị trấn Đạ M'ri",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 170000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Xã Đạ Oai / Xã Đạ Ploa / Xã Đạ Tồn / Xã Đoàn Kết / Xã Hà Lâm / Xã Phước Lộc",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 250000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Đạ Tẻh (tất cả các xã) / Lâm Hà (tất cả các xã)",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện",
+        "time": "4 - 5 ngày",
+        "base_rate": 700000,
+        "rates": [
+          7500,
+          7300,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      },
+      {
+        "name": "Cát Tiên (tất cả các xã) / Đam Rông (tất cả các xã) / Bảo Lâm (tất cả các xã)",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện",
+        "time": "4 - 5 ngày",
+        "base_rate": 800000,
+        "rates": [
+          7500,
+          7300,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_cnth",
+    "region": "Miền Nam",
+    "name": "Tuyến Cần Thơ",
+    "desc": "Bảng cước vận chuyển đi Cần Thơ, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "VP Ninh Kiều: 326 Hoàng Quốc Việt, An Bình, Ninh Kiều",
+        "details": "Giao/nhận tại văn phòng",
+        "time": "3 - 4 ngày",
+        "base_rate": 100000,
+        "rates": [
+          6500,
+          6250,
+          6000,
+          5650,
+          5250,
+          5000
+        ]
+      },
+      {
+        "name": "Ninh Kiều / Cái Răng",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Phong Điền / Bình Thuỷ (Trà Nóc)",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 150000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Thốt Nốt / Ô Môn / Cầu Vàm Cổng / Vĩnh Thạch / Cờ Đỏ / Thới Lai",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 170000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_bntre",
+    "region": "Miền Nam",
+    "name": "Tuyến Bến Tre",
+    "desc": "Bảng cước vận chuyển đi Bến Tre, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Bến Tre",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Châu Thành",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 250000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Giồng Chôm / Mỏ Cày Bắc / Mỏ Cày Nam",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
+        "time": "4 - 5 ngày",
+        "base_rate": 300000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      },
+      {
+        "name": "Chợ Lách / Bình Đại / Ba Tri / Thạnh Phú",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
+        "time": "4 - 5 ngày",
+        "base_rate": 500000,
+        "rates": [
+          7750,
+          7500,
+          7250,
+          6900,
+          6500,
+          6250
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_tyninh",
+    "region": "Miền Nam",
+    "name": "Tuyến Tây Ninh",
+    "desc": "Bảng cước vận chuyển đi Tây Ninh, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "Trảng Bàng / Gò Dầu / Hoà Thành / TP Tây Ninh",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Bến Cầu / Dương Minh Châu",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 150000,
+        "rates": [
+          8250,
+          7750,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Châu Thành / Tân Biên / Tân Châu",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện",
+        "time": "4 - 5 ngày",
+        "base_rate": 300000,
+        "rates": [
+          8500,
+          8000,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_trvinh",
+    "region": "Miền Nam",
+    "name": "Tuyến Trà Vinh",
+    "desc": "Bảng cước vận chuyển đi Trà Vinh, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Trà Vinh",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Châu Thành",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 150000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Càng Long / Cầu Kè / Tiểu Cầu",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 250000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      },
+      {
+        "name": "Trà Cú / Duyên Hải",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
+        "time": "4 - 5 ngày",
+        "base_rate": 500000,
+        "rates": [
+          7750,
+          7500,
+          7250,
+          6900,
+          6500,
+          6250
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_angiang",
+    "region": "Miền Nam",
+    "name": "Tuyến An Giang",
+    "desc": "Bảng cước vận chuyển đi An Giang, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Long Xuyên",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 150000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Thoại Sơn (Phú Hoà, Núi Sập, Óc Eo)",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 250000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Châu Đốc / Châu Phú / Phú Tân / Tri Tôn / Châu Thành / Chợ Mới",
+        "details": "Nối tuyến giao tại chành xe",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          6500,
+          6300,
+          6000,
+          5650,
+          5250,
+          5000
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_hugiang",
+    "region": "Miền Nam",
+    "name": "Tuyến Hậu Giang",
+    "desc": "Bảng cước vận chuyển đi Hậu Giang, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Vị Thanh / Châu Thành A / Vị Thuỷ / Ngã 7",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 150000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Châu Thành / Phụng Hiệp",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 170000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Long Mỹ / Long Mỹ (Thị Xã)",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 250000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_sctrng",
+    "region": "Miền Nam",
+    "name": "Tuyến Sóc Trăng",
+    "desc": "Bảng cước vận chuyển đi Sóc Trăng, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Sóc Trăng",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 150000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Châu Thành / Mỹ Xuyên / Thạnh Trị / Ngã 5",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 170000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Mỹ Tú / Long Phú / Kế Sách",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 250000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      },
+      {
+        "name": "Trần Đề / Vĩnh Châu",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
+        "time": "4 - 5 ngày",
+        "base_rate": 500000,
+        "rates": [
+          7750,
+          7500,
+          7250,
+          6900,
+          6500,
+          6250
+        ]
+      },
+      {
+        "name": "Cù Lao Dung",
+        "details": "Không nhận vận chuyển",
+        "time": "Không nhận vận chuyển",
+        "base_rate": 0,
+        "rates": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_bcliu",
+    "region": "Miền Nam",
+    "name": "Tuyến Bạc Liêu",
+    "desc": "Bảng cước vận chuyển đi Bạc Liêu, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Bạc Liêu",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 150000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Vĩnh Lợi / Hoà Bình",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 200000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Giá Rai (Hộ Phòng) / Phước Long",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 250000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      },
+      {
+        "name": "Đông Hải",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 250000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      },
+      {
+        "name": "Hồng Dân",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
+        "time": "4 - 5 ngày",
+        "base_rate": 500000,
+        "rates": [
+          7750,
+          7500,
+          7250,
+          6900,
+          6500,
+          6250
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_kingiangphqu",
+    "region": "Miền Nam",
+    "name": "Tuyến Kiên Giang (Phú Quốc)",
+    "desc": "Bảng cước vận chuyển đi Kiên Giang (Phú Quốc), đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "Rạch Giá / Rạch Sỏi",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 150000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Tân Hiệp / Châu Thành (Minh Lương)",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 150000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Hòn Đất / Kiên Lương / Hà Tiên",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày",
+        "base_rate": 150000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Phú Quốc giao tận nơi (An Thới, Dương Đông, Bãi Thơm, Cửa Cạn, Cửa Dương, Dương Tơ, Gàn...",
+        "details": "Giao tận nơi",
+        "time": "4 - 5 ngày   (Không cam kết thời gian trên vì xe vận chuyển có thể bị gián đoạn khi đi qua phà gặp thời tiết xấu)",
+        "base_rate": 160000,
+        "rates": [
+          8500,
+          8250,
+          8000,
+          7650,
+          7250,
+          7000
+        ]
+      },
+      {
+        "name": "Giồng Riềng / Gò Quao",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện",
+        "time": "4 - 5 ngày",
+        "base_rate": 500000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      },
+      {
+        "name": "An Biên / An Minh / U Minh Thượng / Vĩnh Thuận",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện",
+        "time": "4 - 5 ngày",
+        "base_rate": 600000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      },
+      {
+        "name": "Giang Thành / Kiến Hải",
+        "details": "Không nhận vận chuyển",
+        "time": "Không nhận vận chuyển",
+        "base_rate": 0,
+        "rates": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_ngthp",
+    "region": "Miền Nam",
+    "name": "Tuyến Đồng Tháp",
+    "desc": "Bảng cước vận chuyển đi Đồng Tháp, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Cao Lãnh / Sa Đéc",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 150000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Châu Thành (Cái Tàu Hạ) / Lai Vung / Lấp Vò",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 170000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Hồng Ngự",
+        "details": "Nối tuyến giao tại chành xe",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          6500,
+          6300,
+          6000,
+          5650,
+          5250,
+          5000
+        ]
+      },
+      {
+        "name": "Thanh Bình / Tam Nông / Tháp Mười / Huyện Cao Lãnh",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do địa chỉ này xa Bảo An chạy nguyên chuyến xe tải đi giao không ghép được hàng khác",
+        "time": "4 - 5 ngày",
+        "base_rate": 500000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_cmau",
+    "region": "Miền Nam",
+    "name": "Tuyến Cà Mau",
+    "desc": "Bảng cước vận chuyển đi Cà Mau, đồng bộ từ file Excel gốc.",
+    "zones": [
+      {
+        "name": "TP Cà Mau",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 150000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Cái Nước",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do địa chỉ này xa Bảo An chạy nguyên chuyến xe tải đi giao không ghép được hàng khác",
+        "time": "3 - 4 ngày",
+        "base_rate": 500000,
+        "rates": [
+          7250,
+          7000,
+          6750,
+          6400,
+          6000,
+          5750
+        ]
+      },
+      {
+        "name": "Thới Bình / U Minh",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do địa chỉ này xa Bảo An chạy nguyên chuyến xe tải đi giao không ghép được hàng khác",
+        "time": "4 - 5 ngày",
+        "base_rate": 800000,
+        "rates": [
+          7500,
+          7250,
+          7000,
+          6650,
+          6250,
+          6000
+        ]
+      },
+      {
+        "name": "Năm Căn",
+        "details": "Nối tuyến giao tại chành xe",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          6500,
+          6300,
+          6000,
+          5650,
+          5250,
+          5000
+        ]
+      },
+      {
+        "name": "Trần Văn Thời / Phú Tân / Đầm Dơi",
+        "details": "Giao tận nơi — hàng ít nên gửi bưu điện do địa chỉ này xa Bảo An chạy nguyên chuyến xe tải đi giao không ghép được hàng khác",
+        "time": "4 - 5 ngày",
+        "base_rate": 1000000,
+        "rates": [
+          7750,
+          7500,
+          7250,
+          6900,
+          6500,
+          6250
+        ]
+      }
+    ]
+  },
+  {
+    "id": "route_hphn_qn_lienlinh",
+    "region": "Miền Trung",
+    "name": "Tuyến Liên Tỉnh: Hải Phòng - Hà Nội - Quảng Ninh đi Miền Trung & Bình Phước",
+    "desc": "Bảng cước vận chuyển liên tỉnh XUẤT PHÁT từ VP Hải Phòng, Hà Nội, Quảng Ninh, đi dọc QL1A tới Hà Tĩnh/Quảng Bình/Quảng Trị, Ninh Thuận/Bình Thuận, và tới Bình Phước (TP Đồng Xoài + các huyện). Gộp lại từ 3 tuyến cũ + bổ sung khu vực còn thiếu + sửa lỗi nhập liệu cước cơ bản, đồng bộ đúng theo file Excel gốc.",
+    "zones": [
+      {
+        "name": "Hà Tĩnh QL1A / Quảng Bình QL1A / Quảng Trị QL1A",
+        "details": "Giao dọc QL1A",
+        "time": "1 - 2 ngày",
+        "base_rate": 70000,
+        "rates": [
+          5000,
+          4750,
+          4500,
+          4150,
+          3750,
+          3500
+        ]
+      },
+      {
+        "name": "Ninh Thuận QL1A / Bình Thuận QL1A",
+        "details": "Giao dọc QL1A",
+        "time": "2 - 3 ngày",
+        "base_rate": 100000,
+        "rates": [
+          6500,
+          6250,
+          6000,
+          5650,
+          5250,
+          5000
+        ]
+      },
+      {
+        "name": "TP Đồng Xoài Bình Phước",
+        "details": "Giao tận nơi",
+        "time": "3 - 4 ngày",
+        "base_rate": 130000,
+        "rates": [
+          7000,
+          6750,
+          6500,
+          6150,
+          5750,
+          5500
+        ]
+      },
+      {
+        "name": "Các huyện Bình Phước: Phú Riềng / Bù Nho / Phước Bình / Bù Đăng",
+        "details": "Giao tận nơi",
+        "time": "3 - 5 ngày",
+        "base_rate": 200000,
+        "rates": [
+          7800,
+          7600,
+          7500,
+          7150,
+          6750,
+          6500
+        ]
+      },
+      {
+        "name": "Giao dọc QL 14 / Giao tại văn phòng Đồng Xoài",
+        "details": "Giao/nhận tại văn phòng",
+        "time": "3 - 4 ngày",
+        "base_rate": 100000,
+        "rates": [
+          6500,
+          6250,
+          6000,
+          5650,
+          5250,
+          5000
+        ]
+      }
+    ]
+  }
+]
