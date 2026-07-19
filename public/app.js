@@ -222,6 +222,61 @@ function logoutAdmin() {
     renderMainTable();
 }
 
+// ---------------- ĐỔI MẬT KHẨU ADMIN ----------------
+function openChangePasswordModal() {
+    document.getElementById("changePasswordError").style.display = "none";
+    document.getElementById("currentPasswordInput").value = "";
+    document.getElementById("newPasswordInput").value = "";
+    document.getElementById("confirmPasswordInput").value = "";
+    document.getElementById("changePasswordModal").style.display = "flex";
+    setTimeout(() => document.getElementById("currentPasswordInput").focus(), 50);
+}
+function closeChangePasswordModal() {
+    document.getElementById("changePasswordModal").style.display = "none";
+}
+function showChangePasswordError(msg) {
+    const el = document.getElementById("changePasswordError");
+    el.textContent = msg;
+    el.style.display = "block";
+}
+async function submitChangePassword() {
+    if (!isAdminMode || !adminToken) { alert("Bạn cần đăng nhập Admin."); return; }
+    const currentPassword = document.getElementById("currentPasswordInput").value;
+    const newPassword = document.getElementById("newPasswordInput").value;
+    const confirmPassword = document.getElementById("confirmPasswordInput").value;
+
+    if (!currentPassword || !newPassword) {
+        showChangePasswordError("Vui lòng nhập đầy đủ mật khẩu hiện tại và mật khẩu mới.");
+        return;
+    }
+    if (newPassword.length < 6) {
+        showChangePasswordError("Mật khẩu mới phải có ít nhất 6 ký tự.");
+        return;
+    }
+    if (newPassword !== confirmPassword) {
+        showChangePasswordError("Mật khẩu mới nhập lại không khớp.");
+        return;
+    }
+
+    try {
+        const res = await fetch("/api/change-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: "Bearer " + adminToken },
+            body: JSON.stringify({ currentPassword, newPassword })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            if (res.status === 401) logoutAdmin();
+            showChangePasswordError(data.error || "Đổi mật khẩu thất bại.");
+            return;
+        }
+        closeChangePasswordModal();
+        alert("✅ Đổi mật khẩu Admin thành công. Hãy ghi nhớ mật khẩu mới cho lần đăng nhập sau.");
+    } catch (e) {
+        showChangePasswordError("Không kết nối được server.");
+    }
+}
+
 function applyAdminUI() {
     document.getElementById("adminControls").style.display = isAdminMode ? "flex" : "none";
     document.getElementById("viewerControls").style.display = isAdminMode ? "none" : "flex";
