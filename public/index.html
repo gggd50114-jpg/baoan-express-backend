@@ -178,6 +178,7 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
                 <button class="btn btn-success" onclick="saveDataToServer()">💾 Lưu &amp; Đồng Bộ Bảng Giá</button>
                 <button class="btn btn-secondary" onclick="discardUnsavedChanges()">↩️ Hoàn Tác Thay Đổi Chưa Lưu</button>
                 <button class="btn btn-accent" onclick="resetToSeedData()">⏮️ Khôi Phục Bảng Giá Gốc Ban Đầu</button>
+                <button class="btn btn-secondary" onclick="openChangePasswordModal()">🔑 Đổi Mật Khẩu</button>
                 <button class="btn btn-secondary" onclick="logoutAdmin()">🔒 Đăng Xuất Admin</button>
                 <span class="unsaved-pill" id="unsavedPill">🟠 Có thay đổi chưa lưu</span>
             </div>
@@ -228,6 +229,30 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
         <div class="modal-actions">
             <button class="btn btn-secondary" onclick="closeLoginModal()">Hủy</button>
             <button class="btn btn-primary" onclick="submitLogin()">Đăng Nhập</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Đổi mật khẩu Admin -->
+<div class="modal" id="changePasswordModal">
+    <div class="modal-content">
+        <h3 style="margin-top:0; color:var(--primary-color);">🔑 Đổi Mật Khẩu Admin</h3>
+        <div class="form-group">
+            <label>Mật khẩu hiện tại:</label>
+            <input type="password" id="currentPasswordInput" placeholder="Nhập mật khẩu hiện tại...">
+        </div>
+        <div class="form-group">
+            <label>Mật khẩu mới (tối thiểu 6 ký tự):</label>
+            <input type="password" id="newPasswordInput" placeholder="Nhập mật khẩu mới...">
+        </div>
+        <div class="form-group">
+            <label>Nhập lại mật khẩu mới:</label>
+            <input type="password" id="confirmPasswordInput" placeholder="Nhập lại mật khẩu mới..." onkeydown="if(event.key==='Enter') submitChangePassword()">
+        </div>
+        <div id="changePasswordError" style="color:var(--accent-color); font-size:12.5px; display:none;"></div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeChangePasswordModal()">Hủy</button>
+            <button class="btn btn-primary" onclick="submitChangePassword()">Đổi Mật Khẩu</button>
         </div>
     </div>
 </div>
