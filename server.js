@@ -54,13 +54,22 @@ function broadcastUpdate() {
 }
 
 function sendJson(res, statusCode, obj) {
-    const body = JSON.stringify(obj);
-    res.writeHead(statusCode, {
-        "Content-Type": "application/json; charset=utf-8",
-        "Content-Length": Buffer.byteLength(body),
-        "Cache-Control": "no-store"
-    });
-    res.end(body);
+    // Nếu client đã ngắt kết nối / response đã đóng thì không còn gì để gửi nữa -
+    // cố gọi res.writeHead()/res.end() lúc này sẽ tự ném lỗi và (do handler là async,
+    // không ai bắt promise trả về) làm sập cả tiến trình Node (unhandled rejection).
+    if (res.writableEnded || res.destroyed) return;
+    try {
+        const body = JSON.stringify(obj);
+        res.writeHead(statusCode, {
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": Buffer.byteLength(body),
+            "Cache-Control": "no-store"
+        });
+        res.end(body);
+    } catch (e) {
+        // Kết nối có thể vừa bị đóng ngay giữa lúc đang ghi - bỏ qua, không để lỗi này
+        // thoát ra ngoài làm crash server.
+    }
 }
 
 function readBody(req, maxBytes = 5 * 1024 * 1024) {
@@ -252,12 +261,30 @@ const server = http.createServer(async (req, res) => {
 
         sendJson(res, 404, { error: "Không tìm thấy endpoint." });
     } catch (err) {
+        // Client tự ngắt kết nối giữa chừng (đóng tab, mất mạng...) - không phải lỗi
+        // thật sự của server, chỉ log nhẹ và bỏ qua, không cần trả response (không còn ai nhận).
+        if (err && (err.code === "ECONNRESET" || err.message === "aborted")) {
+            return;
+        }
         console.error(err);
         if (err.message === "JSON không hợp lệ" || err.message === "Payload quá lớn") {
             return sendJson(res, 400, { error: err.message });
         }
         sendJson(res, 500, { error: "Lỗi máy chủ: " + err.message });
     }
+});
+
+// ---- Lưới an toàn cấp tiến trình: không để 1 lỗi lẻ tẻ làm sập toàn bộ server ----
+// (ví dụ: request bị abort đúng lúc ghi response, lỗi bất đồng bộ không ai bắt kịp).
+// Chỉ log lại để theo dõi, KHÔNG thoát tiến trình - vì server này không giữ state
+// quan trọng trong bộ nhớ giữa các request (dữ liệu luôn đọc/ghi thẳng từ file).
+process.on("uncaughtException", (err) => {
+    if (err && (err.code === "ECONNRESET" || err.message === "aborted")) return;
+    console.error("⚠️  uncaughtException:", err);
+});
+process.on("unhandledRejection", (err) => {
+    if (err && (err.code === "ECONNRESET" || err.message === "aborted")) return;
+    console.error("⚠️  unhandledRejection:", err);
 });
 
 server.listen(PORT, () => {
