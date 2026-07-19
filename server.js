@@ -11,38 +11,41 @@ const { loadEnv } = require("./lib/env");
 loadEnv();
 
 const { readDb, writeDb, ensureDb, buildSeedData } = require("./lib/store");
-const { signToken, verifyToken, checkPassword, changePassword, ensureAdminStore } = require("./lib/auth");
+const { signToken, verifyToken, checkPassword, changePassword, emergencyResetPassword, ensureAdminStore } = require("./lib/auth");
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const PUBLIC_DIR = path.join(__dirname, "public");
 
 ensureDb();
 
-// ---- Giới hạn số lần đăng nhập sai (chống dò mật khẩu) ----
-const loginAttempts = new Map(); // ip -> { count, firstAt }
-const MAX_ATTEMPTS = 8;
-const WINDOW_MS = 10 * 60 * 1000; // 10 phút
-
-function isRateLimited(ip) {
-    const rec = loginAttempts.get(ip);
-    if (!rec) return false;
-    if (Date.now() - rec.firstAt > WINDOW_MS) {
-        loginAttempts.delete(ip);
-        return false;
-    }
-    return rec.count >= MAX_ATTEMPTS;
+// ---- Giới hạn số lần thử sai (chống dò mật khẩu / dò khóa khôi phục khẩn cấp) ----
+function createRateLimiter(maxAttempts, windowMs) {
+    const attempts = new Map(); // ip -> { count, firstAt }
+    return {
+        isLimited(ip) {
+            const rec = attempts.get(ip);
+            if (!rec) return false;
+            if (Date.now() - rec.firstAt > windowMs) {
+                attempts.delete(ip);
+                return false;
+            }
+            return rec.count >= maxAttempts;
+        },
+        recordFail(ip) {
+            const rec = attempts.get(ip);
+            if (!rec || Date.now() - rec.firstAt > windowMs) {
+                attempts.set(ip, { count: 1, firstAt: Date.now() });
+            } else {
+                rec.count++;
+            }
+        },
+        clear(ip) {
+            attempts.delete(ip);
+        }
+    };
 }
-function recordFailedLogin(ip) {
-    const rec = loginAttempts.get(ip);
-    if (!rec || Date.now() - rec.firstAt > WINDOW_MS) {
-        loginAttempts.set(ip, { count: 1, firstAt: Date.now() });
-    } else {
-        rec.count++;
-    }
-}
-function clearLoginAttempts(ip) {
-    loginAttempts.delete(ip);
-}
+const loginLimiter = createRateLimiter(8, 10 * 60 * 1000); // 8 lần / 10 phút
+const emergencyResetLimiter = createRateLimiter(5, 30 * 60 * 1000); // 5 lần / 30 phút (khóa dài hơn vì đây là "chìa khóa cuối")
 
 // ---- SSE: danh sách client đang lắng nghe để đẩy realtime khi admin lưu ----
 const sseClients = new Set();
@@ -160,17 +163,33 @@ const server = http.createServer(async (req, res) => {
         // ---------------- API: đăng nhập admin ----------------
         if (urlPath === "/api/login" && req.method === "POST") {
             const ip = getClientIp(req);
-            if (isRateLimited(ip)) {
+            if (loginLimiter.isLimited(ip)) {
                 return sendJson(res, 429, { error: "Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau 10 phút." });
             }
             const body = await readBody(req);
             if (!body.password || !checkPassword(body.password)) {
-                recordFailedLogin(ip);
+                loginLimiter.recordFail(ip);
                 return sendJson(res, 401, { error: "Sai mật khẩu Admin." });
             }
-            clearLoginAttempts(ip);
+            loginLimiter.clear(ip);
             const token = signToken({ role: "admin" });
             return sendJson(res, 200, { token, expiresInHours: 12 });
+        }
+
+        // ---------------- API: khôi phục khẩn cấp mật khẩu Admin (không cần mật khẩu cũ) ----------------
+        if (urlPath === "/api/emergency-reset-password" && req.method === "POST") {
+            const ip = getClientIp(req);
+            if (emergencyResetLimiter.isLimited(ip)) {
+                return sendJson(res, 429, { error: "Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau 30 phút." });
+            }
+            const body = await readBody(req);
+            const result = emergencyResetPassword(body.resetKey, body.newPassword);
+            if (!result.ok) {
+                emergencyResetLimiter.recordFail(ip);
+                return sendJson(res, 400, { error: result.error });
+            }
+            emergencyResetLimiter.clear(ip);
+            return sendJson(res, 200, { ok: true });
         }
 
         // ---------------- API: đổi mật khẩu Admin ----------------
