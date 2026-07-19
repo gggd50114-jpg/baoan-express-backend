@@ -11,7 +11,7 @@ const { loadEnv } = require("./lib/env");
 loadEnv();
 
 const { readDb, writeDb, ensureDb, buildSeedData } = require("./lib/store");
-const { signToken, verifyToken, checkPassword, changePassword, ensureAdminStore } = require("./lib/auth");
+const { signToken, verifyToken, checkPassword, changePassword, emergencyResetPassword, ensureAdminStore } = require("./lib/auth");
 const { validateRoutes, validatePickupFee, validateSurcharge } = require("./lib/validate");
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
@@ -19,31 +19,34 @@ const PUBLIC_DIR = path.join(__dirname, "public");
 
 ensureDb();
 
-// ---- Giới hạn số lần đăng nhập sai (chống dò mật khẩu) ----
-const loginAttempts = new Map(); // ip -> { count, firstAt }
-const MAX_ATTEMPTS = 8;
-const WINDOW_MS = 10 * 60 * 1000; // 10 phút
-
-function isRateLimited(ip) {
-    const rec = loginAttempts.get(ip);
-    if (!rec) return false;
-    if (Date.now() - rec.firstAt > WINDOW_MS) {
-        loginAttempts.delete(ip);
-        return false;
-    }
-    return rec.count >= MAX_ATTEMPTS;
+// ---- Giới hạn số lần thử sai (chống dò mật khẩu / dò khóa khôi phục khẩn cấp) ----
+function createRateLimiter(maxAttempts, windowMs) {
+    const attempts = new Map(); // ip -> { count, firstAt }
+    return {
+        isLimited(ip) {
+            const rec = attempts.get(ip);
+            if (!rec) return false;
+            if (Date.now() - rec.firstAt > windowMs) {
+                attempts.delete(ip);
+                return false;
+            }
+            return rec.count >= maxAttempts;
+        },
+        recordFail(ip) {
+            const rec = attempts.get(ip);
+            if (!rec || Date.now() - rec.firstAt > windowMs) {
+                attempts.set(ip, { count: 1, firstAt: Date.now() });
+            } else {
+                rec.count++;
+            }
+        },
+        clear(ip) {
+            attempts.delete(ip);
+        }
+    };
 }
-function recordFailedLogin(ip) {
-    const rec = loginAttempts.get(ip);
-    if (!rec || Date.now() - rec.firstAt > WINDOW_MS) {
-        loginAttempts.set(ip, { count: 1, firstAt: Date.now() });
-    } else {
-        rec.count++;
-    }
-}
-function clearLoginAttempts(ip) {
-    loginAttempts.delete(ip);
-}
+const loginLimiter = createRateLimiter(8, 10 * 60 * 1000); // 8 lần / 10 phút
+const emergencyResetLimiter = createRateLimiter(5, 30 * 60 * 1000); // 5 lần / 30 phút (khóa dài hơn vì đây là "chìa khóa cuối")
 
 // ---- SSE: danh sách client đang lắng nghe để đẩy realtime khi admin lưu ----
 const sseClients = new Set();
@@ -55,8 +58,7 @@ function broadcastUpdate() {
 
 function sendJson(res, statusCode, obj) {
     // Nếu client đã ngắt kết nối / response đã đóng thì không còn gì để gửi nữa -
-    // cố gọi res.writeHead()/res.end() lúc này sẽ tự ném lỗi và (do handler là async,
-    // không ai bắt promise trả về) làm sập cả tiến trình Node (unhandled rejection).
+    // cố gọi res.writeHead()/res.end() lúc này sẽ tự ném lỗi và làm sập tiến trình Node.
     if (res.writableEnded || res.destroyed) return;
     try {
         const body = JSON.stringify(obj);
@@ -67,8 +69,7 @@ function sendJson(res, statusCode, obj) {
         });
         res.end(body);
     } catch (e) {
-        // Kết nối có thể vừa bị đóng ngay giữa lúc đang ghi - bỏ qua, không để lỗi này
-        // thoát ra ngoài làm crash server.
+        // Kết nối có thể vừa bị đóng ngay giữa lúc đang ghi - bỏ qua, không để lỗi này crash server.
     }
 }
 
@@ -170,17 +171,33 @@ const server = http.createServer(async (req, res) => {
         // ---------------- API: đăng nhập admin ----------------
         if (urlPath === "/api/login" && req.method === "POST") {
             const ip = getClientIp(req);
-            if (isRateLimited(ip)) {
+            if (loginLimiter.isLimited(ip)) {
                 return sendJson(res, 429, { error: "Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau 10 phút." });
             }
             const body = await readBody(req);
             if (!body.password || !checkPassword(body.password)) {
-                recordFailedLogin(ip);
+                loginLimiter.recordFail(ip);
                 return sendJson(res, 401, { error: "Sai mật khẩu Admin." });
             }
-            clearLoginAttempts(ip);
+            loginLimiter.clear(ip);
             const token = signToken({ role: "admin" });
             return sendJson(res, 200, { token, expiresInHours: 12 });
+        }
+
+        // ---------------- API: khôi phục khẩn cấp mật khẩu Admin (không cần mật khẩu cũ) ----------------
+        if (urlPath === "/api/emergency-reset-password" && req.method === "POST") {
+            const ip = getClientIp(req);
+            if (emergencyResetLimiter.isLimited(ip)) {
+                return sendJson(res, 429, { error: "Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau 30 phút." });
+            }
+            const body = await readBody(req);
+            const result = emergencyResetPassword(body.resetKey, body.newPassword);
+            if (!result.ok) {
+                emergencyResetLimiter.recordFail(ip);
+                return sendJson(res, 400, { error: result.error });
+            }
+            emergencyResetLimiter.clear(ip);
+            return sendJson(res, 200, { ok: true });
         }
 
         // ---------------- API: đổi mật khẩu Admin ----------------
@@ -262,7 +279,7 @@ const server = http.createServer(async (req, res) => {
         sendJson(res, 404, { error: "Không tìm thấy endpoint." });
     } catch (err) {
         // Client tự ngắt kết nối giữa chừng (đóng tab, mất mạng...) - không phải lỗi
-        // thật sự của server, chỉ log nhẹ và bỏ qua, không cần trả response (không còn ai nhận).
+        // thật sự của server, chỉ bỏ qua, không cần trả response (không còn ai nhận).
         if (err && (err.code === "ECONNRESET" || err.message === "aborted")) {
             return;
         }
@@ -275,9 +292,6 @@ const server = http.createServer(async (req, res) => {
 });
 
 // ---- Lưới an toàn cấp tiến trình: không để 1 lỗi lẻ tẻ làm sập toàn bộ server ----
-// (ví dụ: request bị abort đúng lúc ghi response, lỗi bất đồng bộ không ai bắt kịp).
-// Chỉ log lại để theo dõi, KHÔNG thoát tiến trình - vì server này không giữ state
-// quan trọng trong bộ nhớ giữa các request (dữ liệu luôn đọc/ghi thẳng từ file).
 process.on("uncaughtException", (err) => {
     if (err && (err.code === "ECONNRESET" || err.message === "aborted")) return;
     console.error("⚠️  uncaughtException:", err);
