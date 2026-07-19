@@ -226,9 +226,37 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
             <input type="password" id="loginPasswordInput" placeholder="Nhập mật khẩu..." onkeydown="if(event.key==='Enter') submitLogin()">
         </div>
         <div id="loginError" style="color:var(--accent-color); font-size:12.5px; display:none;">Sai mật khẩu, vui lòng thử lại.</div>
+        <div style="margin-top:10px;">
+            <a href="#" style="font-size:12.5px; color:var(--text-muted);" onclick="event.preventDefault(); closeLoginModal(); openEmergencyResetModal();">Quên mật khẩu?</a>
+        </div>
         <div class="modal-actions">
             <button class="btn btn-secondary" onclick="closeLoginModal()">Hủy</button>
             <button class="btn btn-primary" onclick="submitLogin()">Đăng Nhập</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Khôi phục khẩn cấp mật khẩu Admin -->
+<div class="modal" id="emergencyResetModal">
+    <div class="modal-content">
+        <h3 style="margin-top:0; color:var(--primary-color);">🆘 Khôi Phục Khẩn Cấp Mật Khẩu Admin</h3>
+        <p style="font-size:12.5px; color:var(--text-muted); margin-top:-6px;">Chỉ dùng khi quên mật khẩu Admin. Cần "Khóa Khôi Phục Khẩn Cấp" (EMERGENCY_RESET_KEY) đã cấu hình sẵn trong biến môi trường của server — không phải mật khẩu Admin.</p>
+        <div class="form-group">
+            <label>Khóa Khôi Phục Khẩn Cấp:</label>
+            <input type="password" id="resetKeyInput" placeholder="Nhập EMERGENCY_RESET_KEY...">
+        </div>
+        <div class="form-group">
+            <label>Mật khẩu Admin mới (tối thiểu 6 ký tự):</label>
+            <input type="password" id="resetNewPasswordInput" placeholder="Nhập mật khẩu mới...">
+        </div>
+        <div class="form-group">
+            <label>Nhập lại mật khẩu mới:</label>
+            <input type="password" id="resetConfirmPasswordInput" placeholder="Nhập lại mật khẩu mới..." onkeydown="if(event.key==='Enter') submitEmergencyReset()">
+        </div>
+        <div id="emergencyResetError" style="color:var(--accent-color); font-size:12.5px; display:none;"></div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeEmergencyResetModal()">Hủy</button>
+            <button class="btn btn-primary" onclick="submitEmergencyReset()">Đặt Lại Mật Khẩu</button>
         </div>
     </div>
 </div>

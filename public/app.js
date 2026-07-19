@@ -222,6 +222,59 @@ function logoutAdmin() {
     renderMainTable();
 }
 
+// ---------------- KHÔI PHỤC KHẨN CẤP MẬT KHẨU ADMIN ----------------
+function openEmergencyResetModal() {
+    document.getElementById("emergencyResetError").style.display = "none";
+    document.getElementById("resetKeyInput").value = "";
+    document.getElementById("resetNewPasswordInput").value = "";
+    document.getElementById("resetConfirmPasswordInput").value = "";
+    document.getElementById("emergencyResetModal").style.display = "flex";
+    setTimeout(() => document.getElementById("resetKeyInput").focus(), 50);
+}
+function closeEmergencyResetModal() {
+    document.getElementById("emergencyResetModal").style.display = "none";
+}
+function showEmergencyResetError(msg) {
+    const el = document.getElementById("emergencyResetError");
+    el.textContent = msg;
+    el.style.display = "block";
+}
+async function submitEmergencyReset() {
+    const resetKey = document.getElementById("resetKeyInput").value;
+    const newPassword = document.getElementById("resetNewPasswordInput").value;
+    const confirmPassword = document.getElementById("resetConfirmPasswordInput").value;
+
+    if (!resetKey || !newPassword) {
+        showEmergencyResetError("Vui lòng nhập đầy đủ Khóa Khôi Phục và mật khẩu mới.");
+        return;
+    }
+    if (newPassword.length < 6) {
+        showEmergencyResetError("Mật khẩu mới phải có ít nhất 6 ký tự.");
+        return;
+    }
+    if (newPassword !== confirmPassword) {
+        showEmergencyResetError("Mật khẩu mới nhập lại không khớp.");
+        return;
+    }
+    try {
+        const res = await fetch("/api/emergency-reset-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ resetKey, newPassword })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            showEmergencyResetError(data.error || "Khôi phục thất bại.");
+            return;
+        }
+        closeEmergencyResetModal();
+        alert("✅ Đã đặt lại mật khẩu Admin thành công. Hãy đăng nhập bằng mật khẩu mới.");
+        openLoginModal();
+    } catch (e) {
+        showEmergencyResetError("Không kết nối được server.");
+    }
+}
+
 // ---------------- ĐỔI MẬT KHẨU ADMIN ----------------
 function openChangePasswordModal() {
     document.getElementById("changePasswordError").style.display = "none";
