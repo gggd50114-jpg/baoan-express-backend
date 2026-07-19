@@ -11,41 +11,39 @@ const { loadEnv } = require("./lib/env");
 loadEnv();
 
 const { readDb, writeDb, ensureDb, buildSeedData } = require("./lib/store");
-const { signToken, verifyToken, checkPassword, changePassword, emergencyResetPassword, ensureAdminStore } = require("./lib/auth");
+const { signToken, verifyToken, checkPassword, changePassword, ensureAdminStore } = require("./lib/auth");
+const { validateRoutes, validatePickupFee, validateSurcharge } = require("./lib/validate");
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const PUBLIC_DIR = path.join(__dirname, "public");
 
 ensureDb();
 
-// ---- Giới hạn số lần thử sai (chống dò mật khẩu / dò khóa khôi phục khẩn cấp) ----
-function createRateLimiter(maxAttempts, windowMs) {
-    const attempts = new Map(); // ip -> { count, firstAt }
-    return {
-        isLimited(ip) {
-            const rec = attempts.get(ip);
-            if (!rec) return false;
-            if (Date.now() - rec.firstAt > windowMs) {
-                attempts.delete(ip);
-                return false;
-            }
-            return rec.count >= maxAttempts;
-        },
-        recordFail(ip) {
-            const rec = attempts.get(ip);
-            if (!rec || Date.now() - rec.firstAt > windowMs) {
-                attempts.set(ip, { count: 1, firstAt: Date.now() });
-            } else {
-                rec.count++;
-            }
-        },
-        clear(ip) {
-            attempts.delete(ip);
-        }
-    };
+// ---- Giới hạn số lần đăng nhập sai (chống dò mật khẩu) ----
+const loginAttempts = new Map(); // ip -> { count, firstAt }
+const MAX_ATTEMPTS = 8;
+const WINDOW_MS = 10 * 60 * 1000; // 10 phút
+
+function isRateLimited(ip) {
+    const rec = loginAttempts.get(ip);
+    if (!rec) return false;
+    if (Date.now() - rec.firstAt > WINDOW_MS) {
+        loginAttempts.delete(ip);
+        return false;
+    }
+    return rec.count >= MAX_ATTEMPTS;
 }
-const loginLimiter = createRateLimiter(8, 10 * 60 * 1000); // 8 lần / 10 phút
-const emergencyResetLimiter = createRateLimiter(5, 30 * 60 * 1000); // 5 lần / 30 phút (khóa dài hơn vì đây là "chìa khóa cuối")
+function recordFailedLogin(ip) {
+    const rec = loginAttempts.get(ip);
+    if (!rec || Date.now() - rec.firstAt > WINDOW_MS) {
+        loginAttempts.set(ip, { count: 1, firstAt: Date.now() });
+    } else {
+        rec.count++;
+    }
+}
+function clearLoginAttempts(ip) {
+    loginAttempts.delete(ip);
+}
 
 // ---- SSE: danh sách client đang lắng nghe để đẩy realtime khi admin lưu ----
 const sseClients = new Set();
@@ -163,33 +161,17 @@ const server = http.createServer(async (req, res) => {
         // ---------------- API: đăng nhập admin ----------------
         if (urlPath === "/api/login" && req.method === "POST") {
             const ip = getClientIp(req);
-            if (loginLimiter.isLimited(ip)) {
+            if (isRateLimited(ip)) {
                 return sendJson(res, 429, { error: "Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau 10 phút." });
             }
             const body = await readBody(req);
             if (!body.password || !checkPassword(body.password)) {
-                loginLimiter.recordFail(ip);
+                recordFailedLogin(ip);
                 return sendJson(res, 401, { error: "Sai mật khẩu Admin." });
             }
-            loginLimiter.clear(ip);
+            clearLoginAttempts(ip);
             const token = signToken({ role: "admin" });
             return sendJson(res, 200, { token, expiresInHours: 12 });
-        }
-
-        // ---------------- API: khôi phục khẩn cấp mật khẩu Admin (không cần mật khẩu cũ) ----------------
-        if (urlPath === "/api/emergency-reset-password" && req.method === "POST") {
-            const ip = getClientIp(req);
-            if (emergencyResetLimiter.isLimited(ip)) {
-                return sendJson(res, 429, { error: "Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau 30 phút." });
-            }
-            const body = await readBody(req);
-            const result = emergencyResetPassword(body.resetKey, body.newPassword);
-            if (!result.ok) {
-                emergencyResetLimiter.recordFail(ip);
-                return sendJson(res, 400, { error: result.error });
-            }
-            emergencyResetLimiter.clear(ip);
-            return sendJson(res, 200, { ok: true });
         }
 
         // ---------------- API: đổi mật khẩu Admin ----------------
@@ -211,17 +193,33 @@ const server = http.createServer(async (req, res) => {
             if (!admin) return sendJson(res, 401, { error: "Bạn cần đăng nhập Admin (token hết hạn hoặc không hợp lệ)." });
 
             const body = await readBody(req);
-            if (!Array.isArray(body.routes)) {
-                return sendJson(res, 400, { error: "Dữ liệu 'routes' không hợp lệ." });
-            }
             const current = readDb();
+
+            // ---- Validate kỹ toàn bộ dữ liệu trước khi ghi, tránh làm hỏng db.json ----
+            const expectedRatesLength = Array.isArray(current.weightBrackets) ? current.weightBrackets.length : 0;
+
+            const routesCheck = validateRoutes(body.routes, expectedRatesLength);
+            if (!routesCheck.ok) {
+                return sendJson(res, 400, { error: routesCheck.error });
+            }
+
+            // pickupFee: nếu Admin có gửi lên thì bắt buộc phải hợp lệ (không âm thầm bỏ qua dữ liệu sai)
+            const pickupFeeCheck = validatePickupFee(body.pickupFee);
+            if (!pickupFeeCheck.ok) {
+                return sendJson(res, 400, { error: pickupFeeCheck.error });
+            }
+
+            // surcharge: tương tự, nếu gửi lên thì phải hợp lệ
+            const surchargeCheck = validateSurcharge(body.surcharge);
+            if (!surchargeCheck.ok) {
+                return sendJson(res, 400, { error: surchargeCheck.error });
+            }
+
             const next = {
-                routes: body.routes,
+                routes: routesCheck.value,
                 weightBrackets: current.weightBrackets, // khung cân cố định, không cho sửa qua API
-                pickupFee: body.pickupFee && Array.isArray(body.pickupFee.tiers) ? body.pickupFee : current.pickupFee,
-                surcharge: body.surcharge && typeof body.surcharge.percent === "number" && body.surcharge.percent >= 0
-                    ? { percent: body.surcharge.percent }
-                    : current.surcharge,
+                pickupFee: pickupFeeCheck.value !== undefined ? pickupFeeCheck.value : current.pickupFee,
+                surcharge: surchargeCheck.value !== undefined ? surchargeCheck.value : current.surcharge,
                 updatedAt: new Date().toISOString(),
                 updatedBy: "admin"
             };
