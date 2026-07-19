@@ -11,7 +11,7 @@ const { loadEnv } = require("./lib/env");
 loadEnv();
 
 const { readDb, writeDb, ensureDb, buildSeedData } = require("./lib/store");
-const { signToken, verifyToken, checkPassword } = require("./lib/auth");
+const { signToken, verifyToken, checkPassword, changePassword, ensureAdminStore } = require("./lib/auth");
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const PUBLIC_DIR = path.join(__dirname, "public");
@@ -173,6 +173,19 @@ const server = http.createServer(async (req, res) => {
             return sendJson(res, 200, { token, expiresInHours: 12 });
         }
 
+        // ---------------- API: đổi mật khẩu Admin ----------------
+        if (urlPath === "/api/change-password" && req.method === "POST") {
+            const admin = requireAdmin(req);
+            if (!admin) return sendJson(res, 401, { error: "Bạn cần đăng nhập Admin (token hết hạn hoặc không hợp lệ)." });
+
+            const body = await readBody(req);
+            const result = changePassword(body.currentPassword, body.newPassword);
+            if (!result.ok) {
+                return sendJson(res, 400, { error: result.error });
+            }
+            return sendJson(res, 200, { ok: true });
+        }
+
         // ---------------- API: admin lưu toàn bộ bảng giá + phí lấy hàng ----------------
         if (urlPath === "/api/data" && req.method === "PUT") {
             const admin = requireAdmin(req);
@@ -232,7 +245,9 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
     console.log(`🚚 Bảo An Express backend đang chạy tại http://localhost:${PORT}`);
-    if (!process.env.ADMIN_PASSWORD) {
+    // Di chuyển mật khẩu từ .env (nếu là lần chạy đầu) sang data/admin.json dạng đã băm
+    const adminStore = ensureAdminStore();
+    if (!adminStore) {
         console.warn("⚠️  CẢNH BÁO: Chưa đặt ADMIN_PASSWORD trong file .env — đăng nhập Admin sẽ luôn thất bại.");
     }
     if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 16) {
