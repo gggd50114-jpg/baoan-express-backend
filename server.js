@@ -11,7 +11,7 @@ const { loadEnv } = require("./lib/env");
 loadEnv();
 
 const { readDb, writeDb, ensureDb, buildSeedData } = require("./lib/store");
-const { signToken, verifyToken, checkPassword } = require("./lib/auth");
+const { signToken, verifyToken, checkPassword, checkEmergencyKey } = require("./lib/auth");
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const PUBLIC_DIR = path.join(__dirname, "public");
@@ -173,6 +173,25 @@ const server = http.createServer(async (req, res) => {
             return sendJson(res, 200, { token, expiresInHours: 12 });
         }
 
+        // ---------------- API: đăng nhập KHẨN CẤP (dùng khi Admin quên mật khẩu thường) ----------------
+        if (urlPath === "/api/emergency-login" && req.method === "POST") {
+            const ip = getClientIp(req);
+            if (isRateLimited(ip)) {
+                return sendJson(res, 429, { error: "Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau 10 phút." });
+            }
+            if (!process.env.EMERGENCY_RESET_KEY) {
+                return sendJson(res, 400, { error: "Server chưa được cấu hình mã khôi phục khẩn cấp (EMERGENCY_RESET_KEY)." });
+            }
+            const body = await readBody(req);
+            if (!body.emergencyKey || !checkEmergencyKey(body.emergencyKey)) {
+                recordFailedLogin(ip);
+                return sendJson(res, 401, { error: "Mã khôi phục khẩn cấp không đúng." });
+            }
+            clearLoginAttempts(ip);
+            const token = signToken({ role: "admin", via: "emergency" });
+            return sendJson(res, 200, { token, expiresInHours: 12 });
+        }
+
         // ---------------- API: admin lưu toàn bộ bảng giá + phí lấy hàng ----------------
         if (urlPath === "/api/data" && req.method === "PUT") {
             const admin = requireAdmin(req);
@@ -240,5 +259,8 @@ server.listen(PORT, () => {
     }
     if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 16) {
         console.warn("⚠️  CẢNH BÁO: Chưa đặt JWT_SECRET đủ mạnh (>=16 ký tự) trong file .env.");
+    }
+    if (!process.env.EMERGENCY_RESET_KEY) {
+        console.warn("ℹ️  Gợi ý: Đặt thêm EMERGENCY_RESET_KEY trong file .env để có cách đăng nhập Admin dự phòng nếu quên mật khẩu thường (không bắt buộc).");
     }
 });
