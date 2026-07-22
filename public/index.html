@@ -85,7 +85,7 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
     </div>
 </header>
 
-<div class="main-layout">
+<div class="main-layout" id="topLayout">
     <div class="card">
         <div class="card-title">📋 Hộp Tính Cước Nhanh</div>
 
@@ -152,9 +152,16 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
         </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="priceTableCard">
         <div class="card-title">⚙️ Cấu Hình Bảng Giá Hệ Thống</div>
 
+        <div id="viewerTableHiddenNotice" style="display:none; text-align:center; padding:20px 10px;">
+            <div style="font-size:34px;">📋</div>
+            <div style="font-weight:800; color:var(--primary-color); font-size:15px; margin-top:6px;">Vui lòng dùng Hộp Tính Cước Nhanh bên trái</div>
+            <div style="font-size:12.5px; color:var(--text-muted); margin-top:8px;">Chọn tuyến, khu vực và nhập cân nặng để xem cước ngay - hệ thống sẽ tự tính chính xác dựa trên bảng giá mới nhất.</div>
+        </div>
+
+        <div id="priceTableBody">
         <div id="syncStatusBanner" style="margin-bottom:14px; padding:10px 14px; border-radius:8px; font-size:12.5px; font-weight:600; background:#f0fdf4; color:#166534; border:1px solid #bbf7d0;">Đang tải dữ liệu từ server...</div>
 
         <div class="form-group" style="display:flex; align-items:center; gap:10px; background:#fffbeb; border:1px solid #fde68a; border-radius:8px; padding:10px 14px; margin-bottom:16px;">
@@ -172,13 +179,15 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
             <div class="route-tabs" id="routeTabs"></div>
 
             <div class="action-controls" id="adminControls" style="display:none;">
+                <label style="display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600; color:var(--text-main); background:#fff; border:1.5px solid var(--border-color); padding:8px 12px; border-radius:8px; cursor:pointer;" title="Khi tắt, người xem thường (chưa đăng nhập Admin) sẽ không thấy bảng giá chi tiết này - chỉ thấy hộp tính cước nhanh. Admin luôn thấy đầy đủ.">
+                    <input type="checkbox" id="showTableToggle" checked style="width:auto;" onchange="toggleShowTableToViewers(this.checked)"> 👁️ Cho người xem thấy bảng giá chi tiết
+                </label>
                 <button class="btn btn-secondary" onclick="openRouteModal()">+ Thêm Tuyến Đường</button>
                 <button class="btn btn-secondary" onclick="addNewZoneToCurrentRoute()">+ Thêm Cột Vùng</button>
                 <button class="btn btn-primary" onclick="openBulkModal()">📊 Điều Chỉnh Giá Hàng Loạt</button>
                 <button class="btn btn-success" onclick="saveDataToServer()">💾 Lưu &amp; Đồng Bộ Bảng Giá</button>
                 <button class="btn btn-secondary" onclick="discardUnsavedChanges()">↩️ Hoàn Tác Thay Đổi Chưa Lưu</button>
                 <button class="btn btn-accent" onclick="resetToSeedData()">⏮️ Khôi Phục Bảng Giá Gốc Ban Đầu</button>
-                <button class="btn btn-secondary" onclick="openChangePasswordModal()">🔑 Đổi Mật Khẩu</button>
                 <button class="btn btn-secondary" onclick="logoutAdmin()">🔒 Đăng Xuất Admin</button>
                 <span class="unsaved-pill" id="unsavedPill">🟠 Có thay đổi chưa lưu</span>
             </div>
@@ -197,10 +206,11 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
             <table id="dynamicTable"><thead></thead><tbody id="tableBody"></tbody></table>
         </div>
         <p class="footer-note">* Đăng nhập Admin để chỉnh sửa Tên vùng, Quận huyện, TG phát và Đơn giá, sau đó bấm "💾 Lưu &amp; Đồng Bộ" - dữ liệu được lưu trên server riêng, mọi người mở link đều thấy cước mới gần như ngay lập tức (đẩy realtime qua server, có làm mới tự động dự phòng).</p>
+        </div>
     </div>
 </div>
 
-<div class="main-layout" style="grid-template-columns:1fr; margin-top:0;">
+<div class="main-layout" style="grid-template-columns:1fr; margin-top:0;" id="pickupFeeSection">
     <div class="card">
         <div class="card-title">📦 Bảng Phí Lấy Hàng Tận Nơi (theo giá trị đơn hàng)</div>
         <p style="font-size:12.5px; color:var(--text-muted); margin-top:-10px;">Áp dụng khi nhân viên đến lấy hàng tận nơi tại Hà Nội, Hải Phòng, Quảng Ninh và các tỉnh Miền Bắc khác. Cột "Khu vực xa" áp dụng riêng cho TP Lào Cai, Cao Bằng, Lạng Sơn, Hà Giang.</p>
@@ -226,61 +236,9 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
             <input type="password" id="loginPasswordInput" placeholder="Nhập mật khẩu..." onkeydown="if(event.key==='Enter') submitLogin()">
         </div>
         <div id="loginError" style="color:var(--accent-color); font-size:12.5px; display:none;">Sai mật khẩu, vui lòng thử lại.</div>
-        <div style="margin-top:10px;">
-            <a href="#" style="font-size:12.5px; color:var(--text-muted);" onclick="event.preventDefault(); closeLoginModal(); openEmergencyResetModal();">Quên mật khẩu?</a>
-        </div>
         <div class="modal-actions">
             <button class="btn btn-secondary" onclick="closeLoginModal()">Hủy</button>
             <button class="btn btn-primary" onclick="submitLogin()">Đăng Nhập</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL: Khôi phục khẩn cấp mật khẩu Admin -->
-<div class="modal" id="emergencyResetModal">
-    <div class="modal-content">
-        <h3 style="margin-top:0; color:var(--primary-color);">🆘 Khôi Phục Khẩn Cấp Mật Khẩu Admin</h3>
-        <p style="font-size:12.5px; color:var(--text-muted); margin-top:-6px;">Chỉ dùng khi quên mật khẩu Admin. Cần "Khóa Khôi Phục Khẩn Cấp" (EMERGENCY_RESET_KEY) đã cấu hình sẵn trong biến môi trường của server — không phải mật khẩu Admin.</p>
-        <div class="form-group">
-            <label>Khóa Khôi Phục Khẩn Cấp:</label>
-            <input type="password" id="resetKeyInput" placeholder="Nhập EMERGENCY_RESET_KEY...">
-        </div>
-        <div class="form-group">
-            <label>Mật khẩu Admin mới (tối thiểu 6 ký tự):</label>
-            <input type="password" id="resetNewPasswordInput" placeholder="Nhập mật khẩu mới...">
-        </div>
-        <div class="form-group">
-            <label>Nhập lại mật khẩu mới:</label>
-            <input type="password" id="resetConfirmPasswordInput" placeholder="Nhập lại mật khẩu mới..." onkeydown="if(event.key==='Enter') submitEmergencyReset()">
-        </div>
-        <div id="emergencyResetError" style="color:var(--accent-color); font-size:12.5px; display:none;"></div>
-        <div class="modal-actions">
-            <button class="btn btn-secondary" onclick="closeEmergencyResetModal()">Hủy</button>
-            <button class="btn btn-primary" onclick="submitEmergencyReset()">Đặt Lại Mật Khẩu</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL: Đổi mật khẩu Admin -->
-<div class="modal" id="changePasswordModal">
-    <div class="modal-content">
-        <h3 style="margin-top:0; color:var(--primary-color);">🔑 Đổi Mật Khẩu Admin</h3>
-        <div class="form-group">
-            <label>Mật khẩu hiện tại:</label>
-            <input type="password" id="currentPasswordInput" placeholder="Nhập mật khẩu hiện tại...">
-        </div>
-        <div class="form-group">
-            <label>Mật khẩu mới (tối thiểu 6 ký tự):</label>
-            <input type="password" id="newPasswordInput" placeholder="Nhập mật khẩu mới...">
-        </div>
-        <div class="form-group">
-            <label>Nhập lại mật khẩu mới:</label>
-            <input type="password" id="confirmPasswordInput" placeholder="Nhập lại mật khẩu mới..." onkeydown="if(event.key==='Enter') submitChangePassword()">
-        </div>
-        <div id="changePasswordError" style="color:var(--accent-color); font-size:12.5px; display:none;"></div>
-        <div class="modal-actions">
-            <button class="btn btn-secondary" onclick="closeChangePasswordModal()">Hủy</button>
-            <button class="btn btn-primary" onclick="submitChangePassword()">Đổi Mật Khẩu</button>
         </div>
     </div>
 </div>
