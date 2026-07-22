@@ -7,6 +7,7 @@ let appData = [];
 let weightBrackets = [];
 let pickupFeeData = { note: "", tiers: [] };
 let surchargeData = { percent: 5 };
+let settingsData = { showTableToViewers: true };
 let currentRouteIndex = 0;
 let currentRegionFilter = "Tất cả";
 let adminToken = localStorage.getItem("baoan_admin_token") || null;
@@ -39,6 +40,7 @@ window.onload = async function () {
         if (!ok) { adminToken = null; localStorage.removeItem("baoan_admin_token"); }
     }
     applyAdminUI();
+    applyTableVisibility();
     renderRegionChips();
     renderRouteTabs();
     initCalculatorOptions();
@@ -57,6 +59,7 @@ async function loadFromServer() {
         weightBrackets = db.weightBrackets || [];
         pickupFeeData = db.pickupFee || { note: "", tiers: [] };
         surchargeData = db.surcharge || { percent: 5 };
+        settingsData = db.settings || { showTableToViewers: true };
         applySurchargeToUI();
         setSyncBanner(`🌐 Đã kết nối server. Cập nhật lần cuối: ${formatDateTime(db.updatedAt)}`, true);
         document.getElementById("syncStatusPill").textContent = "🟢 Server đang hoạt động";
@@ -72,6 +75,33 @@ function applySurchargeToUI() {
     if (input) input.value = surchargeData.percent;
     const label = document.getElementById("outTaxLabel");
     if (label) label.textContent = `Phụ thu (${surchargeData.percent}%):`;
+}
+
+// ---------------- ẨN/HIỆN BẢNG GIÁ CHI TIẾT CHO NGƯỜI XEM ----------------
+// Admin luôn thấy đầy đủ bảng giá + bảng phí lấy hàng để chỉnh sửa. Người
+// xem thường (chưa đăng nhập Admin) chỉ thấy 2 bảng này nếu Admin bật công
+// tắc "Cho người xem thấy bảng giá chi tiết"; nếu tắt, người xem chỉ thấy
+// hộp tính cước nhanh (gọn hơn, tránh lộ toàn bộ bảng giá công khai).
+function applyTableVisibility() {
+    const toggle = document.getElementById("showTableToggle");
+    if (toggle) toggle.checked = !!settingsData.showTableToViewers;
+
+    const body = document.getElementById("priceTableBody");
+    const notice = document.getElementById("viewerTableHiddenNotice");
+    const pickupSection = document.getElementById("pickupFeeSection");
+
+    const shouldShowToThisUser = isAdminMode || settingsData.showTableToViewers;
+
+    if (body) body.style.display = shouldShowToThisUser ? "block" : "none";
+    if (notice) notice.style.display = shouldShowToThisUser ? "none" : "block";
+    if (pickupSection) pickupSection.style.display = shouldShowToThisUser ? "grid" : "none";
+}
+
+function toggleShowTableToViewers(checked) {
+    if (!isAdminMode) return;
+    settingsData.showTableToViewers = checked;
+    markDirty();
+    applyTableVisibility();
 }
 
 function formatDateTime(iso) {
@@ -122,7 +152,8 @@ async function refreshSilently() {
             // công sức đang chỉnh), chỉ báo cho admin biết có bản mới đang chờ.
             const remoteChanged = JSON.stringify(db.routes) !== JSON.stringify(appData)
                 || JSON.stringify(db.pickupFee) !== JSON.stringify(pickupFeeData)
-                || JSON.stringify(db.surcharge) !== JSON.stringify(surchargeData);
+                || JSON.stringify(db.surcharge) !== JSON.stringify(surchargeData)
+                || JSON.stringify(db.settings) !== JSON.stringify(settingsData);
             if (remoteChanged) {
                 setSyncBanner("🟠 Có bản cập nhật mới trên server, nhưng bạn đang có thay đổi CHƯA LƯU. Hãy bấm \"Lưu & Đồng Bộ\" trước để không bị mất, sau đó làm mới sẽ lấy đúng bản mới nhất.", false);
             }
@@ -148,6 +179,10 @@ async function refreshSilently() {
             surchargeData = db.surcharge || surchargeData;
             applySurchargeToUI();
             runCalculation();
+        }
+        if (JSON.stringify(db.settings) !== JSON.stringify(settingsData)) {
+            settingsData = db.settings || settingsData;
+            applyTableVisibility();
         }
         weightBrackets = db.weightBrackets || weightBrackets;
         setSyncBanner(`🌐 Đã đồng bộ. Cập nhật lần cuối: ${formatDateTime(db.updatedAt)}`, true);
@@ -194,6 +229,7 @@ async function submitLogin() {
         isAdminMode = true;
         closeLoginModal();
         applyAdminUI();
+        applyTableVisibility();
         renderMainTable();
         alert("✅ Đăng nhập Admin thành công. Mọi thay đổi bạn lưu sẽ đồng bộ ngay tới tất cả mọi người có link.");
     } catch (e) {
@@ -219,115 +255,8 @@ function logoutAdmin() {
     clearDirty();
     localStorage.removeItem("baoan_admin_token");
     applyAdminUI();
+    applyTableVisibility();
     renderMainTable();
-}
-
-// ---------------- KHÔI PHỤC KHẨN CẤP MẬT KHẨU ADMIN ----------------
-function openEmergencyResetModal() {
-    document.getElementById("emergencyResetError").style.display = "none";
-    document.getElementById("resetKeyInput").value = "";
-    document.getElementById("resetNewPasswordInput").value = "";
-    document.getElementById("resetConfirmPasswordInput").value = "";
-    document.getElementById("emergencyResetModal").style.display = "flex";
-    setTimeout(() => document.getElementById("resetKeyInput").focus(), 50);
-}
-function closeEmergencyResetModal() {
-    document.getElementById("emergencyResetModal").style.display = "none";
-}
-function showEmergencyResetError(msg) {
-    const el = document.getElementById("emergencyResetError");
-    el.textContent = msg;
-    el.style.display = "block";
-}
-async function submitEmergencyReset() {
-    const resetKey = document.getElementById("resetKeyInput").value;
-    const newPassword = document.getElementById("resetNewPasswordInput").value;
-    const confirmPassword = document.getElementById("resetConfirmPasswordInput").value;
-
-    if (!resetKey || !newPassword) {
-        showEmergencyResetError("Vui lòng nhập đầy đủ Khóa Khôi Phục và mật khẩu mới.");
-        return;
-    }
-    if (newPassword.length < 6) {
-        showEmergencyResetError("Mật khẩu mới phải có ít nhất 6 ký tự.");
-        return;
-    }
-    if (newPassword !== confirmPassword) {
-        showEmergencyResetError("Mật khẩu mới nhập lại không khớp.");
-        return;
-    }
-    try {
-        const res = await fetch("/api/emergency-reset-password", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ resetKey, newPassword })
-        });
-        const data = await res.json();
-        if (!res.ok) {
-            showEmergencyResetError(data.error || "Khôi phục thất bại.");
-            return;
-        }
-        closeEmergencyResetModal();
-        alert("✅ Đã đặt lại mật khẩu Admin thành công. Hãy đăng nhập bằng mật khẩu mới.");
-        openLoginModal();
-    } catch (e) {
-        showEmergencyResetError("Không kết nối được server.");
-    }
-}
-
-// ---------------- ĐỔI MẬT KHẨU ADMIN ----------------
-function openChangePasswordModal() {
-    document.getElementById("changePasswordError").style.display = "none";
-    document.getElementById("currentPasswordInput").value = "";
-    document.getElementById("newPasswordInput").value = "";
-    document.getElementById("confirmPasswordInput").value = "";
-    document.getElementById("changePasswordModal").style.display = "flex";
-    setTimeout(() => document.getElementById("currentPasswordInput").focus(), 50);
-}
-function closeChangePasswordModal() {
-    document.getElementById("changePasswordModal").style.display = "none";
-}
-function showChangePasswordError(msg) {
-    const el = document.getElementById("changePasswordError");
-    el.textContent = msg;
-    el.style.display = "block";
-}
-async function submitChangePassword() {
-    if (!isAdminMode || !adminToken) { alert("Bạn cần đăng nhập Admin."); return; }
-    const currentPassword = document.getElementById("currentPasswordInput").value;
-    const newPassword = document.getElementById("newPasswordInput").value;
-    const confirmPassword = document.getElementById("confirmPasswordInput").value;
-
-    if (!currentPassword || !newPassword) {
-        showChangePasswordError("Vui lòng nhập đầy đủ mật khẩu hiện tại và mật khẩu mới.");
-        return;
-    }
-    if (newPassword.length < 6) {
-        showChangePasswordError("Mật khẩu mới phải có ít nhất 6 ký tự.");
-        return;
-    }
-    if (newPassword !== confirmPassword) {
-        showChangePasswordError("Mật khẩu mới nhập lại không khớp.");
-        return;
-    }
-
-    try {
-        const res = await fetch("/api/change-password", {
-            method: "POST",
-            headers: { "Content-Type": "application/json", Authorization: "Bearer " + adminToken },
-            body: JSON.stringify({ currentPassword, newPassword })
-        });
-        const data = await res.json();
-        if (!res.ok) {
-            if (res.status === 401) logoutAdmin();
-            showChangePasswordError(data.error || "Đổi mật khẩu thất bại.");
-            return;
-        }
-        closeChangePasswordModal();
-        alert("✅ Đổi mật khẩu Admin thành công. Hãy ghi nhớ mật khẩu mới cho lần đăng nhập sau.");
-    } catch (e) {
-        showChangePasswordError("Không kết nối được server.");
-    }
 }
 
 function applyAdminUI() {
@@ -617,7 +546,7 @@ async function saveDataToServer() {
         const res = await fetch("/api/data", {
             method: "PUT",
             headers: { "Content-Type": "application/json", Authorization: "Bearer " + adminToken },
-            body: JSON.stringify({ routes: appData, pickupFee: pickupFeeData, surcharge: surchargeData })
+            body: JSON.stringify({ routes: appData, pickupFee: pickupFeeData, surcharge: surchargeData, settings: settingsData })
         });
         const data = await res.json();
         if (!res.ok) {
@@ -693,9 +622,11 @@ async function discardUnsavedChanges() {
         weightBrackets = db.weightBrackets || [];
         pickupFeeData = db.pickupFee || { note: "", tiers: [] };
         surchargeData = db.surcharge || { percent: 5 };
+        settingsData = db.settings || { showTableToViewers: true };
         if (currentRouteIndex >= appData.length) currentRouteIndex = 0;
         clearDirty();
         applySurchargeToUI();
+        applyTableVisibility();
         renderRegionChips(); renderRouteTabs(); initCalculatorOptions(); renderMainTable(); renderPickupFeeTable(); updateHeaderStats();
         setSyncBanner(`🌐 Đã hoàn tác, lấy lại bản đang lưu trên server. Cập nhật lần cuối: ${formatDateTime(db.updatedAt)}`, true);
         alert("↩️ Đã hoàn tác các thay đổi chưa lưu.");
@@ -726,6 +657,7 @@ async function resetToSeedData() {
         }
         clearDirty();
         await loadFromServer();
+        applyTableVisibility();
         renderRegionChips(); renderRouteTabs(); initCalculatorOptions(); renderMainTable(); renderPickupFeeTable(); updateHeaderStats();
         alert("⏮️ Đã khôi phục về bảng giá gốc ban đầu và đồng bộ tới mọi người!");
     } catch (e) {
