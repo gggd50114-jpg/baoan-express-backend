@@ -142,8 +142,11 @@ function serveStatic(req, res) {
     let urlPath = decodeURIComponent(req.url.split("?")[0]);
     if (urlPath === "/") urlPath = "/index.html";
     const filePath = path.normalize(path.join(PUBLIC_DIR, urlPath));
-    // Chặn path traversal ra ngoài thư mục public
-    if (!filePath.startsWith(PUBLIC_DIR)) {
+    // Chặn path traversal ra ngoài thư mục public.
+    // Lưu ý: chỉ dùng startsWith(PUBLIC_DIR) là chưa đủ an toàn, vì nó cũng khớp với
+    // một thư mục anh em có tên chung tiền tố (vd PUBLIC_DIR + "-evil"). Phải đảm bảo
+    // filePath là chính PUBLIC_DIR hoặc nằm ngay dưới nó (có dấu phân cách theo sau).
+    if (filePath !== PUBLIC_DIR && !filePath.startsWith(PUBLIC_DIR + path.sep)) {
         res.writeHead(403);
         return res.end("Forbidden");
     }
