@@ -11,7 +11,8 @@ const { loadEnv } = require("./lib/env");
 loadEnv();
 
 const { readDb, writeDb, ensureDb, buildSeedData } = require("./lib/store");
-const { signToken, verifyToken, checkPassword, checkEmergencyKey } = require("./lib/auth");
+const { signToken, verifyToken, checkPassword, changePassword, emergencyResetPassword } = require("./lib/auth");
+const { validateRoutes, validatePickupFee, validateSurcharge } = require("./lib/validate");
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const PUBLIC_DIR = path.join(__dirname, "public");
@@ -44,6 +45,32 @@ function clearLoginAttempts(ip) {
     loginAttempts.delete(ip);
 }
 
+// ---- Giới hạn số lần thử khóa khôi phục khẩn cấp (khóa dài hơn vì đây là "chìa khóa cuối") ----
+const emergencyAttempts = new Map();
+const EMERGENCY_MAX_ATTEMPTS = 5;
+const EMERGENCY_WINDOW_MS = 30 * 60 * 1000; // 30 phút
+
+function isEmergencyRateLimited(ip) {
+    const rec = emergencyAttempts.get(ip);
+    if (!rec) return false;
+    if (Date.now() - rec.firstAt > EMERGENCY_WINDOW_MS) {
+        emergencyAttempts.delete(ip);
+        return false;
+    }
+    return rec.count >= EMERGENCY_MAX_ATTEMPTS;
+}
+function recordFailedEmergency(ip) {
+    const rec = emergencyAttempts.get(ip);
+    if (!rec || Date.now() - rec.firstAt > EMERGENCY_WINDOW_MS) {
+        emergencyAttempts.set(ip, { count: 1, firstAt: Date.now() });
+    } else {
+        rec.count++;
+    }
+}
+function clearEmergencyAttempts(ip) {
+    emergencyAttempts.delete(ip);
+}
+
 // ---- SSE: danh sách client đang lắng nghe để đẩy realtime khi admin lưu ----
 const sseClients = new Set();
 function broadcastUpdate() {
@@ -53,13 +80,16 @@ function broadcastUpdate() {
 }
 
 function sendJson(res, statusCode, obj) {
-    const body = JSON.stringify(obj);
-    res.writeHead(statusCode, {
-        "Content-Type": "application/json; charset=utf-8",
-        "Content-Length": Buffer.byteLength(body),
-        "Cache-Control": "no-store"
-    });
-    res.end(body);
+    if (res.writableEnded || res.destroyed) return;
+    try {
+        const body = JSON.stringify(obj);
+        res.writeHead(statusCode, {
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": Buffer.byteLength(body),
+            "Cache-Control": "no-store"
+        });
+        res.end(body);
+    } catch (e) { /* client đã ngắt kết nối giữa chừng - bỏ qua */ }
 }
 
 function readBody(req, maxBytes = 5 * 1024 * 1024) {
@@ -173,23 +203,33 @@ const server = http.createServer(async (req, res) => {
             return sendJson(res, 200, { token, expiresInHours: 12 });
         }
 
-        // ---------------- API: đăng nhập KHẨN CẤP (dùng khi Admin quên mật khẩu thường) ----------------
-        if (urlPath === "/api/emergency-login" && req.method === "POST") {
+        // ---------------- API: khôi phục khẩn cấp mật khẩu Admin (quên mật khẩu, không cần mật khẩu cũ) ----------------
+        if (urlPath === "/api/emergency-reset-password" && req.method === "POST") {
             const ip = getClientIp(req);
-            if (isRateLimited(ip)) {
-                return sendJson(res, 429, { error: "Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau 10 phút." });
-            }
-            if (!process.env.EMERGENCY_RESET_KEY) {
-                return sendJson(res, 400, { error: "Server chưa được cấu hình mã khôi phục khẩn cấp (EMERGENCY_RESET_KEY)." });
+            if (isEmergencyRateLimited(ip)) {
+                return sendJson(res, 429, { error: "Bạn nhập sai quá nhiều lần. Vui lòng thử lại sau 30 phút." });
             }
             const body = await readBody(req);
-            if (!body.emergencyKey || !checkEmergencyKey(body.emergencyKey)) {
-                recordFailedLogin(ip);
-                return sendJson(res, 401, { error: "Mã khôi phục khẩn cấp không đúng." });
+            const result = emergencyResetPassword(body.resetKey, body.newPassword);
+            if (!result.ok) {
+                recordFailedEmergency(ip);
+                return sendJson(res, 400, { error: result.error });
             }
-            clearLoginAttempts(ip);
-            const token = signToken({ role: "admin", via: "emergency" });
-            return sendJson(res, 200, { token, expiresInHours: 12 });
+            clearEmergencyAttempts(ip);
+            return sendJson(res, 200, { ok: true });
+        }
+
+        // ---------------- API: đổi mật khẩu Admin (đang đăng nhập, biết mật khẩu hiện tại) ----------------
+        if (urlPath === "/api/change-password" && req.method === "POST") {
+            const admin = requireAdmin(req);
+            if (!admin) return sendJson(res, 401, { error: "Bạn cần đăng nhập Admin (token hết hạn hoặc không hợp lệ)." });
+
+            const body = await readBody(req);
+            const result = changePassword(body.currentPassword, body.newPassword);
+            if (!result.ok) {
+                return sendJson(res, 400, { error: result.error });
+            }
+            return sendJson(res, 200, { ok: true });
         }
 
         // ---------------- API: admin lưu toàn bộ bảng giá + phí lấy hàng ----------------
@@ -198,17 +238,32 @@ const server = http.createServer(async (req, res) => {
             if (!admin) return sendJson(res, 401, { error: "Bạn cần đăng nhập Admin (token hết hạn hoặc không hợp lệ)." });
 
             const body = await readBody(req);
-            if (!Array.isArray(body.routes)) {
-                return sendJson(res, 400, { error: "Dữ liệu 'routes' không hợp lệ." });
-            }
             const current = readDb();
+
+            // ---- Validate kỹ toàn bộ dữ liệu trước khi ghi, tránh làm hỏng db.json ----
+            const expectedRatesLength = Array.isArray(current.weightBrackets) ? current.weightBrackets.length : 0;
+
+            const routesCheck = validateRoutes(body.routes, expectedRatesLength);
+            if (!routesCheck.ok) {
+                return sendJson(res, 400, { error: routesCheck.error });
+            }
+
+            const pickupFeeCheck = validatePickupFee(body.pickupFee);
+            if (!pickupFeeCheck.ok) {
+                return sendJson(res, 400, { error: pickupFeeCheck.error });
+            }
+
+            // Chặn phụ thu (%) âm hoặc vượt quá 100%
+            const surchargeCheck = validateSurcharge(body.surcharge);
+            if (!surchargeCheck.ok) {
+                return sendJson(res, 400, { error: surchargeCheck.error });
+            }
+
             const next = {
-                routes: body.routes,
+                routes: routesCheck.value,
                 weightBrackets: current.weightBrackets, // khung cân cố định, không cho sửa qua API
-                pickupFee: body.pickupFee && Array.isArray(body.pickupFee.tiers) ? body.pickupFee : current.pickupFee,
-                surcharge: body.surcharge && typeof body.surcharge.percent === "number" && body.surcharge.percent >= 0
-                    ? { percent: body.surcharge.percent }
-                    : current.surcharge,
+                pickupFee: pickupFeeCheck.value !== undefined ? pickupFeeCheck.value : current.pickupFee,
+                surcharge: surchargeCheck.value !== undefined ? surchargeCheck.value : current.surcharge,
                 settings: body.settings && typeof body.settings.showTableToViewers === "boolean"
                     ? { showTableToViewers: body.settings.showTableToViewers }
                     : current.settings,
@@ -244,12 +299,22 @@ const server = http.createServer(async (req, res) => {
 
         sendJson(res, 404, { error: "Không tìm thấy endpoint." });
     } catch (err) {
+        if (err && (err.code === "ECONNRESET" || err.message === "aborted")) return;
         console.error(err);
         if (err.message === "JSON không hợp lệ" || err.message === "Payload quá lớn") {
             return sendJson(res, 400, { error: err.message });
         }
         sendJson(res, 500, { error: "Lỗi máy chủ: " + err.message });
     }
+});
+
+process.on("uncaughtException", (err) => {
+    if (err && (err.code === "ECONNRESET" || err.message === "aborted")) return;
+    console.error("⚠️  uncaughtException:", err);
+});
+process.on("unhandledRejection", (err) => {
+    if (err && (err.code === "ECONNRESET" || err.message === "aborted")) return;
+    console.error("⚠️  unhandledRejection:", err);
 });
 
 server.listen(PORT, () => {
@@ -259,8 +324,5 @@ server.listen(PORT, () => {
     }
     if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 16) {
         console.warn("⚠️  CẢNH BÁO: Chưa đặt JWT_SECRET đủ mạnh (>=16 ký tự) trong file .env.");
-    }
-    if (!process.env.EMERGENCY_RESET_KEY) {
-        console.warn("ℹ️  Gợi ý: Đặt thêm EMERGENCY_RESET_KEY trong file .env để có cách đăng nhập Admin dự phòng nếu quên mật khẩu thường (không bắt buộc).");
     }
 });
