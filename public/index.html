@@ -91,30 +91,47 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 .bulk-preview-box { background:var(--primary-light); border:1px solid #bbf7d0; border-radius:8px; padding:10px 14px; font-size:12.5px; color:#166534; margin-top:6px; }
 @media (max-width:900px) { .main-layout { grid-template-columns:1fr; } }
 
-/* ============ BẢN ĐỒ HÀNH TRÌNH - MÁY BAY BAY ĐỘNG THEO TUYẾN ============ */
-.flight-map-wrap { max-width:1100px; margin:16px auto 0; padding:0 20px; }
-.flight-map-card { padding:16px 22px; }
-.flight-map { display:flex; align-items:center; gap:10px; }
-.flight-point { display:flex; flex-direction:column; align-items:center; gap:6px; flex-shrink:0; min-width:78px; }
-.flight-dot { width:13px; height:13px; border-radius:50%; background:var(--accent-color); box-shadow:0 0 0 5px rgba(220,38,38,.15); animation: dotPulse 1.8s ease-in-out infinite; }
-.flight-point.flight-dest .flight-dot { background:var(--primary-color); box-shadow:0 0 0 5px rgba(217,119,6,.18); }
+/* ============ BẢN ĐỒ HÀNH TRÌNH - ICON ĐỘNG THEO LOẠI TUYẾN (GẦN=🚚 / XA=✈️) ============ */
+.flight-map-wrap { max-width:1100px; margin:14px auto 0; padding:0 20px; }
+.flight-map-card { padding:12px 20px 14px; }
+.flight-map-card .card-title { font-size:14.5px; margin-bottom:2px; padding-bottom:6px; border-bottom:1.5px solid var(--primary-light); }
+.flight-map-hint { font-size:11px; color:var(--text-muted); margin:0 0 8px 2px; }
+.flight-map { display:flex; align-items:center; gap:8px; }
+.flight-point { display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0; min-width:66px; }
+.flight-dot { width:11px; height:11px; border-radius:50%; background:var(--accent-color); box-shadow:0 0 0 4px rgba(220,38,38,.15); animation: dotPulse 1.8s ease-in-out infinite; }
+.flight-point.flight-dest .flight-dot { background:var(--primary-color); box-shadow:0 0 0 4px rgba(217,119,6,.18); }
 @keyframes dotPulse { 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.25);} }
-.flight-label { font-size:12.5px; font-weight:800; color:var(--text-main); white-space:nowrap; text-align:center; }
-.flight-track { position:relative; flex:1; height:56px; overflow:hidden; }
+.flight-label { font-size:12px; font-weight:800; color:var(--text-main); white-space:nowrap; text-align:center; }
+.flight-mode-tag { font-size:9.5px; font-weight:700; padding:1px 7px; border-radius:999px; background:var(--primary-light); color:var(--primary-hover); }
+.flight-track { position:relative; flex:1; height:38px; overflow:hidden; }
 .flight-path-svg { position:absolute; inset:0; width:100%; height:100%; }
-.flight-path-svg path { fill:none; stroke:var(--tet-gold); stroke-width:2.5; stroke-dasharray:7 9; opacity:.55; animation: dashMove 1.1s linear infinite; }
+.flight-path-svg path { fill:none; stroke:var(--tet-gold); stroke-width:2.5; stroke-dasharray:7 9; opacity:.55; animation: dashMove 1.1s linear infinite; transition: d .3s ease; }
 @keyframes dashMove { to { stroke-dashoffset:-32; } }
-.flight-plane { position:absolute; top:50%; left:0%; font-size:24px; transform:translate(-50%,-50%) rotate(6deg); animation: flyPlane 3.2s ease-in-out infinite; filter:drop-shadow(0 3px 4px rgba(127,29,29,.35)); }
+.flight-plane { position:absolute; top:50%; left:0%; font-size:19px; transform:translate(-50%,-50%); filter:drop-shadow(0 2px 3px rgba(127,29,29,.35)); }
+.flight-plane.mode-plane { animation: flyPlane 3s ease-in-out infinite; }
+.flight-plane.mode-truck { font-size:18px; animation: flyTruck 2.4s linear infinite; }
 @keyframes flyPlane {
-    0%   { left:2%;  top:78%; transform:translate(-50%,-50%) rotate(6deg);  opacity:0; }
+    0%   { left:2%;  top:86%; transform:translate(-50%,-50%) rotate(8deg);  opacity:0; }
     10%  { opacity:1; }
-    50%  { left:50%; top:12%; transform:translate(-50%,-50%) rotate(0deg); }
+    50%  { left:50%; top:16%; transform:translate(-50%,-50%) rotate(0deg); }
     90%  { opacity:1; }
-    100% { left:98%; top:78%; transform:translate(-50%,-50%) rotate(-6deg); opacity:0; }
+    100% { left:98%; top:86%; transform:translate(-50%,-50%) rotate(-8deg); opacity:0; }
 }
-.flight-cloud { position:absolute; font-size:14px; opacity:.5; animation: cloudDrift 5s linear infinite; }
-@keyframes cloudDrift { from { transform:translateX(0); } to { transform:translateX(-14px); } }
-@media (max-width:640px) { .flight-label { font-size:11px; } .flight-point { min-width:58px; } }
+@keyframes flyTruck {
+    0%   { left:2%;  top:80%; transform:translate(-50%,-50%) rotate(0deg); opacity:0; }
+    8%   { opacity:1; }
+    50%  { left:50%; top:80%; }
+    92%  { opacity:1; }
+    100% { left:98%; top:80%; transform:translate(-50%,-50%) rotate(0deg); opacity:0; }
+}
+.flight-cloud { position:absolute; font-size:12px; opacity:.5; animation: cloudDrift 5s linear infinite; }
+.flight-cloud.hide-for-truck { display:none; }
+@keyframes cloudDrift { from { transform:translateX(0); } to { transform:translateX(-12px); } }
+@media (max-width:640px) {
+    .flight-label { font-size:10.5px; }
+    .flight-point { min-width:50px; }
+    .flight-mode-tag { display:none; }
+}
 
 /* ============ HIỆU ỨNG SỐNG ĐỘNG BỔ SUNG ============ */
 
@@ -183,23 +200,25 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 
 <div class="flight-map-wrap">
     <div class="card flight-map-card">
-        <div class="card-title" style="margin-bottom:10px; padding-bottom:8px;">🛫 Hành Trình Vận Chuyển Tuyến Đang Chọn</div>
+        <div class="card-title">🛫 Hành Trình Vận Chuyển Tuyến Đang Chọn</div>
+        <p class="flight-map-hint">🚚 Tuyến gần (Miền Bắc) chạy đường bộ &nbsp;·&nbsp; ✈️ Tuyến xa (Trung/Nam/Tây Nguyên) hiển thị bay nhanh</p>
         <div class="flight-map" id="flightMap">
             <div class="flight-point flight-origin">
                 <div class="flight-dot"></div>
                 <div class="flight-label">🏠 Hà Nội</div>
             </div>
             <div class="flight-track">
-                <svg class="flight-path-svg" viewBox="0 0 100 56" preserveAspectRatio="none">
-                    <path d="M4,44 Q50,4 96,44" />
+                <svg class="flight-path-svg" viewBox="0 0 100 40" preserveAspectRatio="none">
+                    <path id="flightPathLine" d="M4,32 Q50,4 96,32" />
                 </svg>
-                <div class="flight-cloud" style="top:14px; left:22%;">☁️</div>
-                <div class="flight-cloud" style="top:30px; left:68%; animation-delay:1.6s;">☁️</div>
-                <div class="flight-plane" id="flightPlane">✈️</div>
+                <div class="flight-cloud" id="flightCloud1" style="top:8px; left:22%;">☁️</div>
+                <div class="flight-cloud" id="flightCloud2" style="top:16px; left:68%; animation-delay:1.6s;">☁️</div>
+                <div class="flight-plane mode-plane" id="flightPlane">✈️</div>
             </div>
             <div class="flight-point flight-dest">
                 <div class="flight-dot"></div>
                 <div class="flight-label" id="flightDestLabel">📍 Điểm đến</div>
+                <div class="flight-mode-tag" id="flightModeTag">✈️ Tuyến xa</div>
             </div>
         </div>
     </div>
