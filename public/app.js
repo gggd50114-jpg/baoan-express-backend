@@ -482,22 +482,38 @@ function onCalcRouteChange() {
     runCalculation();
 }
 
-// ---------------- BẢN ĐỒ HÀNH TRÌNH (MÁY BAY BAY ĐỘNG THEO TUYẾN) ----------------
+// ---------------- BẢN ĐỒ HÀNH TRÌNH (ICON ĐỘNG THEO LOẠI TUYẾN GẦN/XA) ----------------
 function updateFlightMap(route) {
     const destLabelEl = document.getElementById("flightDestLabel");
+    const modeTagEl = document.getElementById("flightModeTag");
     const plane = document.getElementById("flightPlane");
-    if (!destLabelEl || !route) return;
+    const pathEl = document.getElementById("flightPathLine");
+    const cloud1 = document.getElementById("flightCloud1");
+    const cloud2 = document.getElementById("flightCloud2");
+    if (!destLabelEl || !plane || !route) return;
 
     // Lấy tên điểm đến từ tên tuyến, bỏ chữ "Tuyến " ở đầu (VD: "Tuyến Sài Gòn" -> "Sài Gòn")
     const destName = (route.name || "").replace(/^\s*Tuyến\s+/i, "").trim() || route.name;
     destLabelEl.textContent = `📍 ${destName}`;
 
-    // Khởi động lại animation bay mỗi khi đổi tuyến, để luôn thấy hiệu ứng "bay" ngay lập tức
-    if (plane) {
-        plane.style.animation = "none";
-        void plane.offsetWidth; // ép trình duyệt reflow để reset animation
-        plane.style.animation = "";
-    }
+    // Tuyến "gần" = Miền Bắc (cùng miền với kho Hà Nội) -> xe tải chạy đường bộ
+    // Tuyến "xa" = Miền Trung / Tây Nguyên / Miền Nam -> máy bay cho cảm giác nhanh, xa
+    const region = route.region || "";
+    const isNear = region.includes("Bắc");
+
+    plane.textContent = isNear ? "🚚" : "✈️";
+    plane.classList.toggle("mode-truck", isNear);
+    plane.classList.toggle("mode-plane", !isNear);
+
+    if (modeTagEl) modeTagEl.textContent = isNear ? "🚚 Tuyến gần" : "✈️ Tuyến xa";
+    if (pathEl) pathEl.setAttribute("d", isNear ? "M4,32 L96,32" : "M4,32 Q50,4 96,32");
+    if (cloud1) cloud1.classList.toggle("hide-for-truck", isNear);
+    if (cloud2) cloud2.classList.toggle("hide-for-truck", isNear);
+
+    // Khởi động lại animation bay/chạy mỗi khi đổi tuyến, để luôn thấy hiệu ứng ngay lập tức
+    plane.style.animation = "none";
+    void plane.offsetWidth; // ép trình duyệt reflow để reset animation
+    plane.style.animation = "";
 }
 
 // ---------------- BẢNG GIÁ ĐỘNG (CHỈNH SỬA ĐƯỢC KHI LÀ ADMIN) ----------------
