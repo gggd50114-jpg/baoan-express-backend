@@ -482,11 +482,30 @@ function onCalcRouteChange() {
     runCalculation();
 }
 
+// ---------------- BẢN ĐỒ HÀNH TRÌNH (MÁY BAY BAY ĐỘNG THEO TUYẾN) ----------------
+function updateFlightMap(route) {
+    const destLabelEl = document.getElementById("flightDestLabel");
+    const plane = document.getElementById("flightPlane");
+    if (!destLabelEl || !route) return;
+
+    // Lấy tên điểm đến từ tên tuyến, bỏ chữ "Tuyến " ở đầu (VD: "Tuyến Sài Gòn" -> "Sài Gòn")
+    const destName = (route.name || "").replace(/^\s*Tuyến\s+/i, "").trim() || route.name;
+    destLabelEl.textContent = `📍 ${destName}`;
+
+    // Khởi động lại animation bay mỗi khi đổi tuyến, để luôn thấy hiệu ứng "bay" ngay lập tức
+    if (plane) {
+        plane.style.animation = "none";
+        void plane.offsetWidth; // ép trình duyệt reflow để reset animation
+        plane.style.animation = "";
+    }
+}
+
 // ---------------- BẢNG GIÁ ĐỘNG (CHỈNH SỬA ĐƯỢC KHI LÀ ADMIN) ----------------
 function renderMainTable() {
     const route = appData[currentRouteIndex];
     if (!route) return;
     document.getElementById("routeDesc").textContent = route.desc;
+    updateFlightMap(route);
 
     const table = document.getElementById("dynamicTable");
     table.innerHTML = "";
