@@ -86,15 +86,24 @@ function applyTableVisibility() {
     const toggle = document.getElementById("showTableToggle");
     if (toggle) toggle.checked = !!settingsData.showTableToViewers;
 
-    const body = document.getElementById("priceTableBody");
-    const notice = document.getElementById("viewerTableHiddenNotice");
+    const topLayout = document.getElementById("topLayout");
+    const priceTableCard = document.getElementById("priceTableCard");
     const pickupSection = document.getElementById("pickupFeeSection");
+    const calcNote = document.getElementById("calcHiddenTableNote");
 
     const shouldShowToThisUser = isAdminMode || settingsData.showTableToViewers;
 
-    if (body) body.style.display = shouldShowToThisUser ? "block" : "none";
-    if (notice) notice.style.display = shouldShowToThisUser ? "none" : "block";
-    if (pickupSection) pickupSection.style.display = shouldShowToThisUser ? "grid" : "none";
+    if (shouldShowToThisUser) {
+        if (topLayout) topLayout.classList.remove("single-col");
+        if (priceTableCard) priceTableCard.style.display = "block";
+        if (pickupSection) pickupSection.style.display = "grid";
+        if (calcNote) calcNote.style.display = "none";
+    } else {
+        if (topLayout) topLayout.classList.add("single-col");
+        if (priceTableCard) priceTableCard.style.display = "none";
+        if (pickupSection) pickupSection.style.display = "none";
+        if (calcNote) calcNote.style.display = "block";
+    }
 }
 
 function toggleShowTableToViewers(checked) {
