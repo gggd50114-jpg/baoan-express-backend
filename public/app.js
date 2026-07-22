@@ -48,7 +48,32 @@ window.onload = async function () {
     renderPickupFeeTable();
     updateHeaderStats();
     connectRealtime();
+    revealCards();
 };
+
+// ---------------- HIỆU ỨNG XUẤT HIỆN LẦN LƯỢT CHO CÁC CARD ----------------
+function revealCards() {
+    const cards = document.querySelectorAll(".card");
+    cards.forEach((card, idx) => {
+        card.classList.add("card-enter");
+        setTimeout(() => card.classList.add("card-enter-active"), 60 + idx * 110);
+    });
+}
+
+// ---------------- HIỆU ỨNG GỢN SÓNG (RIPPLE) KHI BẤM NÚT ----------------
+document.addEventListener("click", function (e) {
+    const btn = e.target.closest(".btn, .tab-btn, .region-chip");
+    if (!btn) return;
+    const rect = btn.getBoundingClientRect();
+    const ripple = document.createElement("span");
+    const size = Math.max(rect.width, rect.height);
+    ripple.className = "ripple-effect";
+    ripple.style.width = ripple.style.height = size + "px";
+    ripple.style.left = (e.clientX - rect.left - size / 2) + "px";
+    ripple.style.top = (e.clientY - rect.top - size / 2) + "px";
+    btn.appendChild(ripple);
+    ripple.addEventListener("animationend", () => ripple.remove());
+});
 
 async function loadFromServer() {
     try {
@@ -390,7 +415,7 @@ function renderRouteTabs() {
         const btn = document.createElement("button");
         const noAccept = route.zones.length > 0 && route.zones.every(z => z.base_rate <= 0);
         btn.className = `tab-btn ${idx === currentRouteIndex ? "active" : ""} ${noAccept ? "no-accept-flag" : ""}`;
-        btn.innerHTML = `📍 ${route.name}`;
+        btn.innerHTML = `📍 ${escapeHtml(route.name)}`;
         btn.onclick = () => { currentRouteIndex = idx; renderRouteTabs(); renderMainTable(); initCalculatorOptions(); };
         container.appendChild(btn);
     });
@@ -423,7 +448,7 @@ function onCalcRouteSearchInput() {
         matches.forEach(item => {
             const div = document.createElement("div");
             div.className = "autocomplete-item";
-            div.innerHTML = `<span>📍 ${item.route.name}</span><span class="region-tag ${regionTagClass(item.route.region)}">${item.route.region || "Khác"}</span>`;
+            div.innerHTML = `<span>📍 ${escapeHtml(item.route.name)}</span><span class="region-tag ${regionTagClass(item.route.region)}">${escapeHtml(item.route.region || "Khác")}</span>`;
             div.onclick = () => selectCalcRoute(item.idx);
             dropdown.appendChild(div);
         });
@@ -532,8 +557,16 @@ function renderMainTable() {
 }
 
 function escapeAttr(str) {
-    return String(str ?? "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+    return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
 }
+// Bí danh dùng khi chèn dữ liệu không tin cậy (route.name, zone.name...) vào giữa nội dung HTML
+// (khác với việc chèn vào bên trong một thuộc tính value="...").
+const escapeHtml = escapeAttr;
 
 function updateZoneData(zoneIdx, key, val) {
     if (!isAdminMode) return;
@@ -614,16 +647,17 @@ async function saveDataToServer() {
         });
         const data = await res.json();
         if (!res.ok) {
-            alert("⚠️ " + (data.error || "Lưu thất bại."));
+            showToast("⚠️ " + (data.error || "Lưu thất bại."), "error");
             if (res.status === 401) { logoutAdmin(); }
             return;
         }
         setSyncBanner(`🌐 Đã lưu & đồng bộ. Cập nhật lần cuối: ${formatDateTime(data.updatedAt)}`, true);
         clearDirty();
-        alert("🎉 Đã lưu & ĐỒNG BỘ lên server! Mọi người mở link này sẽ thấy cước mới gần như ngay lập tức.");
+        showToast("🎉 Đã lưu & ĐỒNG BỘ! Mọi người mở link sẽ thấy cước mới gần như ngay lập tức.", "success");
+        launchConfetti();
         runCalculation();
     } catch (e) {
-        alert("⚠️ Không kết nối được server để lưu dữ liệu.");
+        showToast("⚠️ Không kết nối được server để lưu dữ liệu.", "error");
     }
 }
 
@@ -901,5 +935,71 @@ function runCalculation() {
     document.getElementById("outOverFee").textContent = formatMoney(overFee);
     document.getElementById("outRawTotal").textContent = formatMoney(rawTotal);
     document.getElementById("outTax").textContent = formatMoney(taxFee);
-    document.getElementById("outFinal").textContent = formatMoney(finalTotal);
+    animateFinalTotal(finalTotal);
+}
+
+// ---------------- HIỆU ỨNG SỐ ĐẾM CHẠY CHO TỔNG CƯỚC CUỐI CÙNG ----------------
+let _finalTotalAnimId = null;
+let _finalTotalPrevValue = 0;
+function animateFinalTotal(target) {
+    const el = document.getElementById("outFinal");
+    if (!el) return;
+    if (_finalTotalAnimId) cancelAnimationFrame(_finalTotalAnimId);
+    const start = _finalTotalPrevValue;
+    const startTime = performance.now();
+    const duration = 450;
+    function step(now) {
+        const t = Math.min(1, (now - startTime) / duration);
+        const eased = 1 - Math.pow(1 - t, 3); // ease-out
+        const value = start + (target - start) * eased;
+        el.textContent = formatMoney(Math.round(value));
+        if (t < 1) {
+            _finalTotalAnimId = requestAnimationFrame(step);
+        } else {
+            el.textContent = formatMoney(target);
+            _finalTotalPrevValue = target;
+            el.classList.remove("final-val-pop");
+            void el.offsetWidth; // reset animation
+            el.classList.add("final-val-pop");
+        }
+    }
+    _finalTotalAnimId = requestAnimationFrame(step);
+}
+
+// ---------------- TOAST THÔNG BÁO (thay cho alert() cứng nhắc) ----------------
+function showToast(message, type = "success") {
+    let container = document.getElementById("toastContainer");
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "toastContainer";
+        container.className = "toast-container";
+        document.body.appendChild(container);
+    }
+    const toast = document.createElement("div");
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add("toast-show"));
+    setTimeout(() => {
+        toast.classList.remove("toast-show");
+        setTimeout(() => toast.remove(), 300);
+    }, 3600);
+}
+
+// ---------------- PHÁO HOA MINI KHI LƯU THÀNH CÔNG ----------------
+function launchConfetti() {
+    const colors = ["#f59e0b", "#dc2626", "#15803d", "#fde68a", "#fff"];
+    const layer = document.createElement("div");
+    layer.className = "confetti-layer";
+    for (let i = 0; i < 24; i++) {
+        const piece = document.createElement("span");
+        piece.className = "confetti-piece";
+        piece.style.left = Math.random() * 100 + "%";
+        piece.style.background = colors[i % colors.length];
+        piece.style.animationDelay = (Math.random() * 0.3) + "s";
+        piece.style.animationDuration = (1.8 + Math.random() * 1.2) + "s";
+        layer.appendChild(piece);
+    }
+    document.body.appendChild(layer);
+    setTimeout(() => layer.remove(), 3200);
 }
