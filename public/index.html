@@ -90,6 +90,46 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 .bulk-radio-row label { display:flex; align-items:center; gap:6px; font-weight:600; font-size:13px; color:var(--text-main); cursor:pointer; }
 .bulk-preview-box { background:var(--primary-light); border:1px solid #bbf7d0; border-radius:8px; padding:10px 14px; font-size:12.5px; color:#166534; margin-top:6px; }
 @media (max-width:900px) { .main-layout { grid-template-columns:1fr; } }
+
+/* ============ HIỆU ỨNG SỐNG ĐỘNG BỔ SUNG ============ */
+
+/* Card xuất hiện lần lượt + nhấc nhẹ khi hover */
+.card { transition: transform .25s ease, box-shadow .25s ease; }
+.card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px -8px rgba(15,23,42,.15), 0 4px 8px -2px rgba(15,23,42,.08); }
+.card-enter { opacity: 0; transform: translateY(18px) scale(.98); }
+.card-enter-active { opacity: 1; transform: translateY(0) scale(1); transition: opacity .55s cubic-bezier(.16,1,.3,1), transform .55s cubic-bezier(.16,1,.3,1); }
+
+/* Nút, tab, chip: cần vị trí tương đối + ẩn tràn để chứa hiệu ứng ripple */
+.btn, .tab-btn, .region-chip { position: relative; overflow: hidden; transition: transform .15s ease, background .2s ease, box-shadow .2s ease; }
+.btn:active, .tab-btn:active, .region-chip:active { transform: scale(.95); }
+.btn:hover { box-shadow: 0 4px 12px -2px rgba(0,0,0,.2); transform: translateY(-1px); }
+.tab-btn:hover:not(.active) { border-color: var(--primary-color); color: var(--primary-color); }
+.tab-btn.active { animation: tabPop .3s ease; }
+@keyframes tabPop { 0%{ transform:scale(.9); } 60%{ transform:scale(1.05); } 100%{ transform:scale(1); } }
+.region-chip.active { animation: tabPop .3s ease; }
+
+.ripple-effect { position:absolute; border-radius:50%; background:rgba(255,255,255,.55); transform:scale(0); pointer-events:none; animation: rippleGrow .55s ease-out; }
+.region-chip .ripple-effect, .tab-btn:not(.active) .ripple-effect { background:rgba(21,128,61,.25); }
+@keyframes rippleGrow { to { transform:scale(2.4); opacity:0; } }
+
+/* Số tổng cước "nảy" nhẹ mỗi khi cập nhật, để mắt luôn bắt được sự thay đổi */
+.final-val-pop { animation: finalPop .4s cubic-bezier(.34,1.56,.64,1); }
+@keyframes finalPop { 0%{ transform:scale(1); } 40%{ transform:scale(1.12); color:var(--tet-gold); } 100%{ transform:scale(1); } }
+
+/* Toast thông báo (thay cho hộp alert() cứng nhắc mặc định của trình duyệt) */
+.toast-container { position:fixed; top:18px; left:50%; transform:translateX(-50%); z-index:999; display:flex; flex-direction:column; gap:8px; align-items:center; pointer-events:none; }
+.toast { pointer-events:auto; padding:12px 20px; border-radius:10px; font-size:13.5px; font-weight:600; color:#fff; box-shadow:0 8px 20px -6px rgba(0,0,0,.35); opacity:0; transform:translateY(-16px) scale(.96); transition: all .3s cubic-bezier(.34,1.56,.64,1); max-width:90vw; text-align:center; }
+.toast-show { opacity:1; transform:translateY(0) scale(1); }
+.toast-success { background:linear-gradient(120deg,#15803d,#16a34a); }
+.toast-error { background:linear-gradient(120deg,#b91c1c,#dc2626); }
+
+/* Pháo hoa mini khi lưu thành công */
+.confetti-layer { position:fixed; inset:0; pointer-events:none; z-index:998; overflow:hidden; }
+.confetti-piece { position:absolute; top:-10px; width:8px; height:14px; opacity:.9; border-radius:2px; animation-name: confettiFall; animation-timing-function: ease-in; animation-fill-mode: forwards; }
+@keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity:1; }
+    100% { transform: translateY(105vh) rotate(540deg); opacity:0; }
+}
 </style>
 </head>
 <body>
