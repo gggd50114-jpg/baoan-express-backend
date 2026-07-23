@@ -119,13 +119,14 @@ function applyTableVisibility() {
 
     const shouldShowToThisUser = isAdminMode || settingsData.showTableToViewers;
 
+    // Lưu ý: KHÔNG đổi bố cục của topLayout (quả địa cầu + hộp tính cước) dù bảng giá
+    // chi tiết đang ẩn hay hiện - giao diện lấp đầy màn hình theo tỉ lệ 1/3-2/3 phải
+    // giữ nguyên như nhau trong mọi trường hợp, chỉ ẩn/hiện phần bảng giá bên dưới.
     if (shouldShowToThisUser) {
-        if (topLayout) topLayout.classList.remove("single-col");
         if (priceTableCard) priceTableCard.style.display = "block";
         if (pickupSection) pickupSection.style.display = "grid";
         if (calcNote) calcNote.style.display = "none";
     } else {
-        if (topLayout) topLayout.classList.add("single-col");
         if (priceTableCard) priceTableCard.style.display = "none";
         if (pickupSection) pickupSection.style.display = "none";
         if (calcNote) calcNote.style.display = "block";
@@ -643,9 +644,18 @@ function updateVNGlobe(route) {
         .pointLabel("label")
         .pointResolution(24)
 
-        .labelsData([{ lat: dest.lat, lng: dest.lng, text: destName, color: "#fff7d6", size: 1 }])
-        .labelLat("lat").labelLng("lng").labelText("text").labelColor("color").labelSize("size")
-        .labelDotRadius(0.3).labelResolution(3).labelAltitude(0.015)
+        // Nhãn tên điểm đến: dùng phần tử HTML thật (không phải chữ vẽ lên texture canvas)
+        // để không bao giờ bị lỗi font/dấu tiếng Việt (vd. "Sài Gòn" hiển thị thành "S?i G?n").
+        .htmlElementsData([{ lat: dest.lat, lng: dest.lng, text: destName }])
+        .htmlElement((d) => {
+            const wrapper = document.createElement("div");
+            const label = document.createElement("div");
+            label.className = "globe-3d-label";
+            label.textContent = d.text;
+            wrapper.appendChild(label);
+            return wrapper;
+        })
+        .htmlAltitude(0.02)
 
         .arcsData([{ startLat: GLOBE_HQ.lat, startLng: GLOBE_HQ.lng, endLat: dest.lat, endLng: dest.lng }])
         .arcColor(() => ["#f59e0b", "#dc2626"])
