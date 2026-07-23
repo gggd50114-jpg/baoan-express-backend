@@ -482,46 +482,63 @@ function onCalcRouteChange() {
     runCalculation();
 }
 
-// ---------------- BẢN ĐỒ HÀNH TRÌNH (PHƯƠNG TIỆN BAY/CHẠY ĐỘNG THEO TỪNG TUYẾN) ----------------
-// Mỗi miền dùng 1 phương tiện + quỹ đạo khác nhau, mô phỏng khoảng cách thực tế từ Hà Nội:
-// - Miền Nam (VD: Sài Gòn): xa nhất -> MÁY BAY, bay vòng cung cao
-// - Tây Nguyên: khá xa -> XE KHÁCH ĐƯỜNG DÀI, vòng cung vừa
-// - Miền Trung: trung bình -> TÀU HỎA, bám thấp
-// - Miền Bắc: gần Hà Nội -> XE TẢI, chạy sát mặt đất
-const FLIGHT_TRANSPORT_BY_REGION = {
-    "Miền Nam":   { icon: "✈️", mode: "plane", path: "M4,44 Q50,4 96,44",  badge: "✈️ Đường hàng không", showClouds: true },
-    "Tây Nguyên": { icon: "🚌", mode: "coach", path: "M4,50 Q50,20 96,50", badge: "🚌 Xe khách đường dài", showClouds: true },
-    "Miền Trung": { icon: "🚆", mode: "train", path: "M4,50 Q50,36 96,50", badge: "🚆 Đường sắt", showClouds: false },
-    "Miền Bắc":   { icon: "🚚", mode: "truck", path: "M4,50 L96,50",       badge: "🚚 Xe tải đường bộ", showClouds: false }
+// ---------------- QUẢ ĐỊA CẦU XOAY - GHIM ĐỊNH VỊ TUYẾN ĐANG CHỌN ----------------
+// Toạ độ ghim (trên viewBox 200x200 của SVG địa cầu) ứng với từng miền,
+// mô phỏng vị trí tương đối theo bản đồ Việt Nam (Bắc ở trên, Nam ở dưới):
+const GLOBE_ORIGIN_POINT = { x: 100, y: 58 }; // Hà Nội - cố định
+const GLOBE_DEST_POINT_BY_REGION = {
+    "Miền Bắc":   { x: 78,  y: 80  },
+    "Miền Trung": { x: 118, y: 104 },
+    "Tây Nguyên": { x: 86,  y: 128 },
+    "Miền Nam":   { x: 112, y: 150 }
 };
-const FLIGHT_TRANSPORT_DEFAULT = FLIGHT_TRANSPORT_BY_REGION["Miền Nam"];
+const GLOBE_DEST_POINT_DEFAULT = GLOBE_DEST_POINT_BY_REGION["Miền Nam"];
 
-function updateFlightMap(route) {
-    const destLabelEl = document.getElementById("flightDestLabel");
-    const plane = document.getElementById("flightPlane");
-    const pathEl = document.getElementById("flightPathLine");
-    const badgeEl = document.getElementById("flightModeBadge");
-    const cloud1 = document.getElementById("flightCloud1");
-    const cloud2 = document.getElementById("flightCloud2");
+// Tính đường cong (cung) nối 2 điểm trên mặt địa cầu, để vẽ path SVG
+function buildGlobeArcPath(origin, dest) {
+    const mx = (origin.x + dest.x) / 2;
+    const my = (origin.y + dest.y) / 2;
+    const dx = dest.x - origin.x;
+    const dy = dest.y - origin.y;
+    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+    const nx = -dy / len, ny = dx / len; // vector pháp tuyến để bẻ cong path
+    const bulge = 16;
+    const cx = mx + nx * bulge, cy = my + ny * bulge;
+    return `M ${origin.x},${origin.y} Q ${cx},${cy} ${dest.x},${dest.y}`;
+}
+
+function updateGlobeMap(route) {
+    const destLabelEl = document.getElementById("globeDestLabel");
+    const destPin = document.getElementById("globeDestPin");
+    const destPinAnim = document.getElementById("globeDestPinAnim");
+    const arcEl = document.getElementById("globeRouteArc");
+    const globeBody = document.getElementById("globeBody");
     if (!destLabelEl || !route) return;
 
     // Lấy tên điểm đến từ tên tuyến, bỏ chữ "Tuyến " ở đầu (VD: "Tuyến Sài Gòn" -> "Sài Gòn")
     const destName = (route.name || "").replace(/^\s*Tuyến\s+/i, "").trim() || route.name;
     destLabelEl.textContent = `📍 ${destName}`;
 
-    // Chọn phương tiện phù hợp theo miền của tuyến
-    const transport = FLIGHT_TRANSPORT_BY_REGION[route.region] || FLIGHT_TRANSPORT_DEFAULT;
+    const destPoint = GLOBE_DEST_POINT_BY_REGION[route.region] || GLOBE_DEST_POINT_DEFAULT;
 
-    if (pathEl) pathEl.setAttribute("d", transport.path);
-    if (badgeEl) badgeEl.textContent = transport.badge;
-    if (cloud1) cloud1.classList.toggle("hide-cloud", !transport.showClouds);
-    if (cloud2) cloud2.classList.toggle("hide-cloud", !transport.showClouds);
+    // Di chuyển ghim đến vị trí mới
+    if (destPin) destPin.setAttribute("transform", `translate(${destPoint.x},${destPoint.y})`);
 
-    if (plane) {
-        plane.textContent = transport.icon;
-        plane.className = "flight-vehicle mode-" + transport.mode;
-        // Khởi động lại animation mỗi khi đổi tuyến, để luôn thấy hiệu ứng di chuyển ngay lập tức
-        void plane.offsetWidth; // ép trình duyệt reflow để reset animation
+    // Vẽ lại cung đường nối Hà Nội -> điểm đến mới
+    if (arcEl) arcEl.setAttribute("d", buildGlobeArcPath(GLOBE_ORIGIN_POINT, destPoint));
+
+    // Khởi động lại hiệu ứng "ghim rơi xuống" (pin drop) mỗi khi đổi tuyến
+    if (destPinAnim) {
+        destPinAnim.style.animation = "none";
+        void destPinAnim.offsetWidth; // ép trình duyệt reflow để reset animation
+        destPinAnim.style.animation = "";
+    }
+
+    // Khởi động hiệu ứng quả địa cầu xoay 1 vòng mỗi khi chọn tuyến mới
+    if (globeBody) {
+        globeBody.classList.remove("spin-burst");
+        void globeBody.offsetWidth; // ép trình duyệt reflow để reset animation
+        globeBody.classList.add("spin-burst");
     }
 }
 
@@ -530,7 +547,7 @@ function renderMainTable() {
     const route = appData[currentRouteIndex];
     if (!route) return;
     document.getElementById("routeDesc").textContent = route.desc;
-    updateFlightMap(route);
+    updateGlobeMap(route);
 
     const table = document.getElementById("dynamicTable");
     table.innerHTML = "";
