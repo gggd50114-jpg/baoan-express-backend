@@ -97,6 +97,22 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 .banner-globe-card .truck-drive { position:absolute; bottom:1px; left:-10%; font-size:15px; animation: driveTruck 6.5s linear infinite; filter:drop-shadow(0 2px 2px rgba(0,0,0,.5)); }
 @keyframes driveTruck { from{ left:-10%; } to{ left:104%; } }
 
+/* ============ THƯ VIỆN ẢNH "MỪNG XUÂN BÍNH NGỌ" (đồng bộ qua imgbb) ============ */
+.tet-gallery-section { border-top:1px dashed var(--tet-gold); padding-top:12px; }
+.tet-gallery-title { font-size:12.5px; font-weight:800; color:var(--tet-red-deep); margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+.tet-gallery-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
+.tet-gallery-empty { font-size:11.5px; color:var(--text-muted); text-align:center; padding:10px 0; }
+.tet-gallery-item { position:relative; border-radius:8px; overflow:hidden; aspect-ratio:1/1; border:2px solid var(--tet-gold-light); box-shadow:0 4px 10px -4px rgba(127,29,29,.3); cursor:pointer; background:#fff; }
+.tet-gallery-item img { width:100%; height:100%; object-fit:cover; display:block; }
+.tet-gallery-item .tet-gallery-del { position:absolute; top:3px; right:3px; width:20px; height:20px; border-radius:50%; background:rgba(127,29,29,.85); color:#fff; border:none; font-size:12px; line-height:20px; text-align:center; cursor:pointer; padding:0; }
+.tet-gallery-admin-box { margin-top:4px; padding:10px; border-radius:8px; background:#fffbeb; border:1px solid var(--tet-gold-light); }
+.tet-gallery-admin-box label { display:block; font-size:11px; font-weight:700; color:#92400e; margin-bottom:6px; }
+.tet-gallery-admin-box input[type="file"] { font-size:11px; width:100%; }
+.tet-gallery-upload-status { font-size:11px; margin-top:6px; min-height:14px; }
+.tet-lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:999; align-items:center; justify-content:center; padding:24px; cursor:zoom-out; }
+.tet-lightbox.show { display:flex; }
+.tet-lightbox img { max-width:100%; max-height:100%; border-radius:10px; box-shadow:0 10px 40px rgba(0,0,0,.5); }
+
 /* ============ QUẢ ĐỊA CẦU 3D THẬT - GHIM ĐỊNH VỊ TUYẾN ĐANG CHỌN ============ */
 .globe-card-inner { border-top:1px dashed var(--border-color); padding-top:12px; }
 .globe-title { font-size:13.5px; font-weight:800; color:var(--primary-color); margin:0 0 8px; display:flex; align-items:center; gap:6px; }
@@ -172,27 +188,13 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
     0% { transform: translateY(0) rotate(0deg); opacity:1; }
     100% { transform: translateY(105vh) rotate(540deg); opacity:0; }
 }
-
-/* ============ ĐỔI ẢNH MỪNG XUÂN (ADMIN, ĐỒNG BỘ QUA IMGBB) ============ */
-.banner-edit-btn { position:absolute; top:8px; right:8px; z-index:3; padding:6px 12px; font-size:11.5px; font-weight:700; border:1px solid rgba(255,255,255,.5); border-radius:999px; background:rgba(15,23,42,.55); color:#fde68a; cursor:pointer; backdrop-filter:blur(3px); transition:all .15s; }
-.banner-edit-btn:hover { background:rgba(220,38,38,.7); transform:translateY(-1px); }
-.image-upload-slot { display:flex; align-items:center; gap:12px; margin-bottom:6px; }
-.image-preview-thumb { width:64px; height:64px; object-fit:cover; border-radius:8px; border:1.5px solid var(--border-color); background:#f8fafc; flex-shrink:0; }
-.image-preview-thumb.round { border-radius:50%; }
-.image-upload-slot-actions { display:flex; flex-direction:column; gap:6px; flex:1; }
-.image-upload-slot-actions input[type="file"] { font-size:12px; }
-.imgbb-key-help { font-size:11.5px; color:var(--primary-color); text-decoration:underline; }
-.image-upload-status { font-size:12.5px; min-height:18px; margin-top:4px; color:var(--text-muted); }
-.image-upload-status.uploading { color:#b45309; }
-.image-upload-status.ok { color:#15803d; font-weight:600; }
-.image-upload-status.error { color:var(--accent-color); font-weight:600; }
 </style>
 </head>
 <body>
 
 <header>
     <button class="header-admin-btn" onclick="openLoginModal()" title="Đăng nhập Admin">🔑</button>
-    <div class="header-logo-badge"><img id="headerLogoImg" src="assets/tet-logo.jpg" alt="Bảo An Express - Xuân Bính Ngọ"></div>
+    <div class="header-logo-badge"><img src="assets/tet-logo.jpg" alt="Bảo An Express - Xuân Bính Ngọ"></div>
     <h1>🚚 Bảo An Express - Hệ Thống Tra Cứu &amp; Tính Cước Toàn Quốc</h1>
     <p>🧧 Mừng Xuân Bính Ngọ - Backend/server riêng, mọi người mở link đều thấy cước mới nhất theo thời gian thực</p>
     <div class="header-stats">
@@ -205,12 +207,21 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 <div class="main-layout top-pair-layout" id="topLayout">
     <div class="card banner-globe-card">
         <div class="hero-banner-inner">
-            <img id="heroBannerImg" src="assets/tet-banner.jpg" alt="Bảo An Express - Mừng Xuân Bính Ngọ">
+            <img src="assets/tet-banner.jpg" alt="Bảo An Express - Mừng Xuân Bính Ngọ">
             <div class="hero-shine"></div>
-            <button type="button" class="banner-edit-btn" id="bannerEditBtn" style="display:none;" onclick="openImageModal()" title="Đổi ảnh mừng Xuân Bính Ngọ (đồng bộ qua ImgBB)">🖼️ Đổi ảnh</button>
         </div>
         <div class="truck-road">
             <div class="truck-drive">🚚</div>
+        </div>
+
+        <div class="tet-gallery-section">
+            <div class="tet-gallery-title">🧧 Ảnh Mừng Xuân Bính Ngọ</div>
+            <div class="tet-gallery-grid" id="tetGalleryGrid"><div class="tet-gallery-empty">Chưa có ảnh nào.</div></div>
+            <div class="tet-gallery-admin-box" id="tetGalleryAdminBox" style="display:none;">
+                <label>📤 Admin tải thêm ảnh (tự động đồng bộ qua imgbb cho mọi người xem):</label>
+                <input type="file" id="tetGalleryFileInput" accept="image/*" onchange="uploadTetGalleryImage(this)">
+                <div class="tet-gallery-upload-status" id="tetGalleryUploadStatus"></div>
+            </div>
         </div>
 
         <div class="globe-card-inner">
@@ -372,6 +383,10 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 </div>
 
 <!-- MODAL: Đăng nhập Admin -->
+<div class="tet-lightbox" id="tetLightbox" onclick="closeTetLightbox()">
+    <img id="tetLightboxImg" src="" alt="Ảnh Mừng Xuân Bính Ngọ">
+</div>
+
 <div class="modal" id="loginModal">
     <div class="modal-content">
         <h3 style="margin-top:0; color:var(--primary-color);">🔑 Đăng Nhập Admin</h3>
@@ -483,48 +498,6 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
         <div class="modal-actions">
             <button class="btn btn-secondary" onclick="closeRouteModal()">Hủy</button>
             <button class="btn btn-primary" onclick="submitCreateRoute()">Tạo Tuyến</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL: Đổi ảnh mừng Xuân (upload qua ImgBB, đồng bộ cho mọi người xem) -->
-<div class="modal" id="imageModal">
-    <div class="modal-content" style="max-width:480px;">
-        <h3 style="margin-top:0; color:var(--primary-color);">🖼️ Đổi Ảnh Mừng Xuân Bính Ngọ</h3>
-        <p style="font-size:12.5px; color:var(--text-muted); margin-top:-8px;">Ảnh sẽ được tải lên <strong>ImgBB</strong> (dịch vụ lưu ảnh miễn phí) rồi đồng bộ ngay cho <strong>mọi người</strong> mở trang này xem.</p>
-
-        <div class="form-group">
-            <label>API Key ImgBB (miễn phí, chỉ lưu trên máy bạn - không gửi lên server):</label>
-            <input type="password" id="imgbbApiKeyInput" placeholder="Dán API Key vào đây..." oninput="onImgbbKeyInput(this.value)">
-            <div style="margin-top:6px;"><a href="https://api.imgbb.com/" target="_blank" rel="noopener noreferrer" class="imgbb-key-help">Lấy API Key miễn phí tại api.imgbb.com ↗</a></div>
-        </div>
-
-        <div class="form-group" style="border-top:1px dashed var(--border-color); padding-top:14px;">
-            <label>Ảnh Banner lớn (Mừng Xuân Bính Ngọ):</label>
-            <div class="image-upload-slot">
-                <img id="bannerPreviewImg" class="image-preview-thumb" src="assets/tet-banner.jpg" alt="Xem trước ảnh banner">
-                <div class="image-upload-slot-actions">
-                    <input type="file" accept="image/*" id="bannerFileInput" onchange="onPickImage('banner', this.files[0])">
-                    <button class="btn btn-secondary" style="align-self:flex-start;" onclick="resetImage('banner')">↩️ Dùng ảnh mặc định</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>Ảnh Logo tròn (góc trên header):</label>
-            <div class="image-upload-slot">
-                <img id="logoPreviewImg" class="image-preview-thumb round" src="assets/tet-logo.jpg" alt="Xem trước ảnh logo">
-                <div class="image-upload-slot-actions">
-                    <input type="file" accept="image/*" id="logoFileInput" onchange="onPickImage('logo', this.files[0])">
-                    <button class="btn btn-secondary" style="align-self:flex-start;" onclick="resetImage('logo')">↩️ Dùng ảnh mặc định</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="imageUploadStatus" class="image-upload-status"></div>
-
-        <div class="modal-actions">
-            <button class="btn btn-secondary" onclick="closeImageModal()">Đóng</button>
         </div>
     </div>
 </div>
