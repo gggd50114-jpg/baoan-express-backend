@@ -86,6 +86,7 @@ async function loadFromServer() {
         pickupFeeData = db.pickupFee || { note: "", tiers: [] };
         surchargeData = db.surcharge || { percent: 5 };
         settingsData = db.settings || { showTableToViewers: true };
+        tetGalleryData = (db.settings && db.settings.tetGallery) || [];
         applySurchargeToUI();
         setSyncBanner(`🌐 Đã kết nối server. Cập nhật lần cuối: ${formatDateTime(db.updatedAt)}`, true);
         document.getElementById("syncStatusPill").textContent = "🟢 Server đang hoạt động";
@@ -182,6 +183,15 @@ async function refreshSilently() {
         const res = await fetch("/api/data", { cache: "no-store" });
         if (!res.ok) return;
         const db = await res.json();
+
+        // Thư viện ảnh Mừng Xuân lưu ngay khi tải lên (không đi qua nút "Lưu & Đồng
+        // Bộ" bảng giá), nên luôn đồng bộ phần này dù admin đang có thay đổi bảng
+        // giá chưa lưu dở - tránh làm mất đồng bộ ảnh giữa các thiết bị/trình duyệt.
+        const remoteGallery = (db.settings && db.settings.tetGallery) || [];
+        if (JSON.stringify(remoteGallery) !== JSON.stringify(tetGalleryData)) {
+            tetGalleryData = remoteGallery;
+            renderTetGallery();
+        }
 
         if (isAdminMode && hasUnsavedChanges) {
             // Có thay đổi đang sửa dở chưa lưu: KHÔNG ghi đè dữ liệu (tránh mất
@@ -358,6 +368,109 @@ function applyAdminUI() {
     if (delBtn) delBtn.style.display = isAdminMode ? "inline-flex" : "none";
     const surchargeInput = document.getElementById("surchargePercentInput");
     if (surchargeInput) surchargeInput.disabled = !isAdminMode;
+    const galleryAdminBox = document.getElementById("tetGalleryAdminBox");
+    if (galleryAdminBox) galleryAdminBox.style.display = isAdminMode ? "block" : "none";
+    renderTetGallery();
+}
+
+// ---------------- THƯ VIỆN ẢNH "MỪNG XUÂN BÍNH NGỌ" (tải lên & đồng bộ qua imgbb) ----------------
+let tetGalleryData = [];
+
+function renderTetGallery() {
+    const grid = document.getElementById("tetGalleryGrid");
+    if (!grid) return;
+    if (!tetGalleryData.length) {
+        grid.innerHTML = '<div class="tet-gallery-empty">Chưa có ảnh nào. ' + (isAdminMode ? "Hãy tải ảnh lên bên dưới!" : "") + "</div>";
+        return;
+    }
+    grid.innerHTML = tetGalleryData.map((img) => `
+        <div class="tet-gallery-item">
+            <img src="${escapeHtml(img.thumbUrl || img.url)}" alt="${escapeHtml(img.caption || 'Ảnh Mừng Xuân Bính Ngọ')}" loading="lazy" onclick="openTetLightbox('${escapeHtml(img.url)}')">
+            ${isAdminMode ? `<button class="tet-gallery-del" title="Xóa ảnh" onclick="event.stopPropagation(); deleteTetGalleryImage('${img.id}')">✕</button>` : ""}
+        </div>
+    `).join("");
+}
+
+function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function openTetLightbox(url) {
+    document.getElementById("tetLightboxImg").src = url;
+    document.getElementById("tetLightbox").classList.add("show");
+}
+function closeTetLightbox() {
+    document.getElementById("tetLightbox").classList.remove("show");
+}
+
+function setTetUploadStatus(text, isError) {
+    const el = document.getElementById("tetGalleryUploadStatus");
+    if (!el) return;
+    el.textContent = text;
+    el.style.color = isError ? "#991b1b" : "#166534";
+}
+
+async function uploadTetGalleryImage(inputEl) {
+    if (!isAdminMode || !adminToken) { alert("Bạn cần đăng nhập Admin."); return; }
+    const file = inputEl.files && inputEl.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+        setTetUploadStatus("⚠️ Chỉ chấp nhận file ảnh.", true);
+        inputEl.value = "";
+        return;
+    }
+    if (file.size > 6 * 1024 * 1024) {
+        setTetUploadStatus("⚠️ Ảnh quá lớn (giới hạn khoảng 6MB).", true);
+        inputEl.value = "";
+        return;
+    }
+
+    setTetUploadStatus("⏳ Đang tải ảnh lên imgbb...", false);
+    try {
+        const base64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(new Error("Không đọc được file ảnh."));
+            reader.readAsDataURL(file);
+        });
+
+        const res = await fetch("/api/tet-gallery/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: "Bearer " + adminToken },
+            body: JSON.stringify({ imageBase64: base64 })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            setTetUploadStatus("❌ " + (data.error || "Tải ảnh thất bại."), true);
+            return;
+        }
+        tetGalleryData = data.gallery || tetGalleryData;
+        renderTetGallery();
+        setTetUploadStatus("✅ Đã tải ảnh lên và đồng bộ cho mọi người xem!", false);
+    } catch (e) {
+        setTetUploadStatus("❌ Không kết nối được server.", true);
+    } finally {
+        inputEl.value = "";
+    }
+}
+
+async function deleteTetGalleryImage(id) {
+    if (!isAdminMode || !adminToken) { alert("Bạn cần đăng nhập Admin."); return; }
+    if (!confirm("Xóa ảnh này khỏi thư viện Mừng Xuân? (đã đồng bộ cho mọi người thì sẽ mất luôn)")) return;
+    try {
+        const res = await fetch("/api/tet-gallery/delete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: "Bearer " + adminToken },
+            body: JSON.stringify({ id })
+        });
+        const data = await res.json();
+        if (!res.ok) { alert(data.error || "Xóa ảnh thất bại."); return; }
+        tetGalleryData = data.gallery || [];
+        renderTetGallery();
+    } catch (e) {
+        alert("Không kết nối được server.");
+    }
 }
 
 function updateSurchargePercent(val) {
