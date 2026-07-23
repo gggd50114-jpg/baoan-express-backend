@@ -33,6 +33,7 @@ window.addEventListener("beforeunload", function (e) {
 
 // ---------------- KHỞI CHẠY ----------------
 window.onload = async function () {
+    initVNGlobe();
     await loadFromServer();
     if (adminToken) {
         const ok = await checkTokenValid();
@@ -479,67 +480,169 @@ function onCalcRouteChange() {
         opt.value = idx; opt.textContent = zone.name;
         zoneSelect.appendChild(opt);
     });
+    updateVNGlobe(appData[routeIdx]); // ghim luôn quả địa cầu theo tuyến vừa chọn ở hộp tính cước nhanh
     runCalculation();
 }
 
-// ---------------- QUẢ ĐỊA CẦU XOAY - GHIM ĐỊNH VỊ TUYẾN ĐANG CHỌN ----------------
-// Toạ độ ghim (trên viewBox 200x200 của SVG địa cầu) ứng với từng miền,
-// mô phỏng vị trí tương đối theo bản đồ Việt Nam (Bắc ở trên, Nam ở dưới):
-const GLOBE_ORIGIN_POINT = { x: 100, y: 58 }; // Hà Nội - cố định
-const GLOBE_DEST_POINT_BY_REGION = {
-    "Miền Bắc":   { x: 78,  y: 80  },
-    "Miền Trung": { x: 118, y: 104 },
-    "Tây Nguyên": { x: 86,  y: 128 },
-    "Miền Nam":   { x: 112, y: 150 }
+// ---------------- QUẢ ĐỊA CẦU 3D THẬT (globe.gl / three.js) - GHIM ĐỊNH VỊ TUYẾN ĐANG CHỌN ----------------
+// Toạ độ thật (lat/lng) của kho tổng và từng tỉnh/thành theo route id, để ghim đúng vị trí thật trên quả địa cầu.
+const GLOBE_HQ = { lat: 21.0285, lng: 105.8542, name: "Hà Nội (Kho tổng)" };
+const GLOBE_ROUTE_COORDS = {
+    route_hni:            { lat: 21.0285, lng: 105.8542 },
+    route_bckn:           { lat: 22.1477, lng: 105.8348 },
+    route_caobng:         { lat: 22.6666, lng: 106.2639 },
+    route_locai:          { lat: 22.4809, lng: 103.9755 },
+    route_hgiang:         { lat: 22.8025, lng: 104.9784 },
+    route_hiphng:         { lat: 20.8449, lng: 106.6881 },
+    route_tuynquang:      { lat: 21.8233, lng: 105.2280 },
+    route_lngsn:          { lat: 21.8530, lng: 106.7610 },
+    route_hobnh:          { lat: 20.8156, lng: 105.3373 },
+    route_ynbi:           { lat: 21.7168, lng: 104.8986 },
+    route_thibnh:         { lat: 20.4463, lng: 106.3365 },
+    route_hnam:           { lat: 20.5835, lng: 105.9230 },
+    route_bcninh:         { lat: 21.1861, lng: 106.0763 },
+    route_bcgiang:        { lat: 21.2731, lng: 106.1946 },
+    route_thinguyn:       { lat: 21.5942, lng: 105.8480 },
+    route_ninhbnh:        { lat: 20.2506, lng: 105.9744 },
+    route_namnh:          { lat: 20.4388, lng: 106.1621 },
+    route_hidng:          { lat: 20.9373, lng: 106.3145 },
+    route_vnhphc:         { lat: 21.3608, lng: 105.5474 },
+    route_phth:           { lat: 21.4208, lng: 105.2306 },
+    route_hngyn:          { lat: 20.6464, lng: 106.0511 },
+    route_qungninh:       { lat: 20.9527, lng: 107.0700 },
+    route_hu:             { lat: 16.4637, lng: 107.5909 },
+    route_nng:            { lat: 16.0544, lng: 108.2022 },
+    route_qungnamhian:    { lat: 15.8801, lng: 108.3380 },
+    route_qungngi:        { lat: 15.1214, lng: 108.8044 },
+    route_bnhnh:          { lat: 13.7757, lng: 109.2237 },
+    route_kontum:         { lat: 14.3497, lng: 108.0005 },
+    route_phyn:           { lat: 13.0882, lng: 109.0929 },
+    route_khnhho:         { lat: 12.2388, lng: 109.1967 },
+    route_gialaipleiku:   { lat: 13.9833, lng: 108.0000 },
+    route_klk:            { lat: 12.6667, lng: 108.0500 },
+    route_knng:           { lat: 12.2646, lng: 107.6098 },
+    route_ngnai:          { lat: 10.9574, lng: 106.8426 },
+    route_vngtu:          { lat: 10.3460, lng: 107.0843 },
+    route_bnhdng:         { lat: 10.9804, lng: 106.6519 },
+    route_sign:           { lat: 10.7769, lng: 106.7009 },
+    route_longan:         { lat: 10.5333, lng: 106.4167 },
+    route_tingiang:       { lat: 10.3600, lng: 106.3600 },
+    route_vnhlong:        { lat: 10.2397, lng: 105.9722 },
+    route_lmng:           { lat: 11.9404, lng: 108.4583 },
+    route_cnth:           { lat: 10.0452, lng: 105.7469 },
+    route_bntre:          { lat: 10.2433, lng: 106.3756 },
+    route_tyninh:         { lat: 11.3100, lng: 106.0983 },
+    route_trvinh:         { lat: 9.9349,  lng: 106.3452 },
+    route_angiang:        { lat: 10.5216, lng: 105.1259 },
+    route_hugiang:        { lat: 9.7845,  lng: 105.4700 },
+    route_sctrng:         { lat: 9.6025,  lng: 105.9739 },
+    route_bcliu:          { lat: 9.2940,  lng: 105.7215 },
+    route_kingiangphqu:   { lat: 10.2270, lng: 103.9670 },
+    route_ngthp:          { lat: 10.4938, lng: 105.6882 },
+    route_cmau:           { lat: 9.1768,  lng: 105.1524 },
+    route_hphn_qn_lienlinh:{ lat: 11.5357, lng: 106.9078 }
 };
-const GLOBE_DEST_POINT_DEFAULT = GLOBE_DEST_POINT_BY_REGION["Miền Nam"];
+const GLOBE_DEST_DEFAULT = { lat: 16.0, lng: 108.0 };
 
-// Tính đường cong (cung) nối 2 điểm trên mặt địa cầu, để vẽ path SVG
-function buildGlobeArcPath(origin, dest) {
-    const mx = (origin.x + dest.x) / 2;
-    const my = (origin.y + dest.y) / 2;
-    const dx = dest.x - origin.x;
-    const dy = dest.y - origin.y;
-    const len = Math.sqrt(dx * dx + dy * dy) || 1;
-    const nx = -dy / len, ny = dx / len; // vector pháp tuyến để bẻ cong path
-    const bulge = 16;
-    const cx = mx + nx * bulge, cy = my + ny * bulge;
-    return `M ${origin.x},${origin.y} Q ${cx},${cy} ${dest.x},${dest.y}`;
+let vnGlobe = null;
+let vnGlobeReady = false;
+let vnGlobeResumeTimer = null;
+
+function initVNGlobe() {
+    const el = document.getElementById("globeContainer");
+    const overlay = document.getElementById("globeLoadingOverlay");
+    if (!el || typeof Globe === "undefined") return; // thư viện 3D chưa tải xong / lỗi mạng -> bỏ qua an toàn
+
+    const rect = el.getBoundingClientRect();
+    const size = Math.max(rect.width || 260, 180);
+
+    vnGlobe = Globe()(el)
+        .width(size)
+        .height(size)
+        .backgroundColor("rgba(0,0,0,0)")
+        .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
+        .bumpImageUrl("https://unpkg.com/three-globe/example/img/earth-topology.png")
+        .showAtmosphere(true)
+        .atmosphereColor("#fbbf24")
+        .atmosphereAltitude(0.2)
+        .pointOfView({ lat: 16, lng: 106, altitude: 2.1 }, 0)
+        .onGlobeReady(() => {
+            vnGlobeReady = true;
+            if (overlay) overlay.classList.add("hidden");
+        });
+
+    // Xoay nhẹ tự động khi không thao tác, tắt zoom bằng lăn chuột để tránh lỗi cuộn trang, vẫn kéo xoay được bằng tay
+    const controls = vnGlobe.controls();
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.6;
+    controls.enableZoom = false;
+
+    // Phòng khi ảnh tải quá lâu / mạng chậm: vẫn ẩn overlay sau tối đa 4s để không che khuất quả cầu mãi
+    setTimeout(() => { if (overlay) overlay.classList.add("hidden"); }, 4000);
+
+    window.addEventListener("resize", () => {
+        if (!vnGlobe) return;
+        const r = el.getBoundingClientRect();
+        const s = Math.max(r.width || 260, 180);
+        vnGlobe.width(s).height(s);
+    });
 }
 
-function updateGlobeMap(route) {
+function updateVNGlobe(route) {
     const destLabelEl = document.getElementById("globeDestLabel");
-    const destPin = document.getElementById("globeDestPin");
-    const destPinAnim = document.getElementById("globeDestPinAnim");
-    const arcEl = document.getElementById("globeRouteArc");
-    const globeBody = document.getElementById("globeBody");
     if (!destLabelEl || !route) return;
 
     // Lấy tên điểm đến từ tên tuyến, bỏ chữ "Tuyến " ở đầu (VD: "Tuyến Sài Gòn" -> "Sài Gòn")
     const destName = (route.name || "").replace(/^\s*Tuyến\s+/i, "").trim() || route.name;
     destLabelEl.textContent = `📍 ${destName}`;
+    destLabelEl.classList.remove("pop");
+    void destLabelEl.offsetWidth;
+    destLabelEl.classList.add("pop");
 
-    const destPoint = GLOBE_DEST_POINT_BY_REGION[route.region] || GLOBE_DEST_POINT_DEFAULT;
+    if (!vnGlobe) return; // thư viện 3D chưa sẵn sàng (vd. mất mạng CDN) -> chỉ cập nhật chữ, không lỗi trang
 
-    // Di chuyển ghim đến vị trí mới
-    if (destPin) destPin.setAttribute("transform", `translate(${destPoint.x},${destPoint.y})`);
+    const dest = GLOBE_ROUTE_COORDS[route.id] || GLOBE_DEST_DEFAULT;
 
-    // Vẽ lại cung đường nối Hà Nội -> điểm đến mới
-    if (arcEl) arcEl.setAttribute("d", buildGlobeArcPath(GLOBE_ORIGIN_POINT, destPoint));
+    vnGlobe
+        .pointsData([
+            { lat: GLOBE_HQ.lat, lng: GLOBE_HQ.lng, size: 0.55, color: "#fde68a", label: GLOBE_HQ.name },
+            { lat: dest.lat, lng: dest.lng, size: 0.85, color: "#dc2626", label: "📍 " + destName }
+        ])
+        .pointAltitude(0.012)
+        .pointColor("color")
+        .pointRadius("size")
+        .pointLabel("label")
+        .pointResolution(24)
 
-    // Khởi động lại hiệu ứng "ghim rơi xuống" (pin drop) mỗi khi đổi tuyến
-    if (destPinAnim) {
-        destPinAnim.style.animation = "none";
-        void destPinAnim.offsetWidth; // ép trình duyệt reflow để reset animation
-        destPinAnim.style.animation = "";
-    }
+        .labelsData([{ lat: dest.lat, lng: dest.lng, text: destName, color: "#fff7d6", size: 1 }])
+        .labelLat("lat").labelLng("lng").labelText("text").labelColor("color").labelSize("size")
+        .labelDotRadius(0.3).labelResolution(3).labelAltitude(0.015)
 
-    // Khởi động hiệu ứng quả địa cầu xoay 1 vòng mỗi khi chọn tuyến mới
-    if (globeBody) {
-        globeBody.classList.remove("spin-burst");
-        void globeBody.offsetWidth; // ép trình duyệt reflow để reset animation
-        globeBody.classList.add("spin-burst");
-    }
+        .arcsData([{ startLat: GLOBE_HQ.lat, startLng: GLOBE_HQ.lng, endLat: dest.lat, endLng: dest.lng }])
+        .arcColor(() => ["#f59e0b", "#dc2626"])
+        .arcDashLength(0.5)
+        .arcDashGap(0.35)
+        .arcDashAnimateTime(1600)
+        .arcStroke(0.55)
+        .arcAltitudeAutoScale(0.4)
+
+        // Vòng sóng "ghim" lan toả tại điểm đến - mô phỏng hiệu ứng ghim định vị đang được chọn
+        .ringsData([{ lat: dest.lat, lng: dest.lng }])
+        .ringColor(() => (t) => `rgba(220,38,38,${1 - t})`)
+        .ringMaxRadius(3.4)
+        .ringPropagationSpeed(2.6)
+        .ringRepeatPeriod(900);
+
+    // Tạm dừng tự xoay, lượn camera bay tới đúng điểm đến vừa chọn (hiệu ứng "bay tới nơi")
+    const controls = vnGlobe.controls();
+    controls.autoRotate = false;
+    vnGlobe.pointOfView({ lat: dest.lat, lng: dest.lng, altitude: 1.6 }, 1400);
+
+    // Sau vài giây, cho quả địa cầu tự xoay nhẹ trở lại để vẫn "sống động"
+    if (vnGlobeResumeTimer) clearTimeout(vnGlobeResumeTimer);
+    vnGlobeResumeTimer = setTimeout(() => {
+        if (vnGlobe) vnGlobe.controls().autoRotate = true;
+    }, 4500);
 }
 
 // ---------------- BẢNG GIÁ ĐỘNG (CHỈNH SỬA ĐƯỢC KHI LÀ ADMIN) ----------------
@@ -547,7 +650,7 @@ function renderMainTable() {
     const route = appData[currentRouteIndex];
     if (!route) return;
     document.getElementById("routeDesc").textContent = route.desc;
-    updateGlobeMap(route);
+    updateVNGlobe(route);
 
     const table = document.getElementById("dynamicTable");
     table.innerHTML = "";
