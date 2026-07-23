@@ -554,7 +554,8 @@ function initVNGlobe() {
     if (!el || typeof Globe === "undefined") return; // thư viện 3D chưa tải xong / lỗi mạng -> bỏ qua an toàn
 
     const rect = el.getBoundingClientRect();
-    const size = Math.max(rect.width || 260, 180);
+    const size = Math.min(Math.max(rect.width || 260, 180), 260);
+    el.style.height = size + "px"; // đảm bảo khung luôn là hình vuông đúng bằng canvas 3D, không bị cắt/lệch
 
     vnGlobe = Globe()(el)
         .width(size)
@@ -583,7 +584,8 @@ function initVNGlobe() {
     window.addEventListener("resize", () => {
         if (!vnGlobe) return;
         const r = el.getBoundingClientRect();
-        const s = Math.max(r.width || 260, 180);
+        const s = Math.min(Math.max(r.width || 260, 180), 260);
+        el.style.height = s + "px";
         vnGlobe.width(s).height(s);
     });
 }
