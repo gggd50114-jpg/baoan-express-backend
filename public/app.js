@@ -76,13 +76,6 @@ document.addEventListener("click", function (e) {
     ripple.addEventListener("animationend", () => ripple.remove());
 });
 
-let currentBannerUrl = null;
-function applyBannerImage(url) {
-    const img = document.getElementById("heroBannerImg");
-    if (!img) return;
-    img.src = url || "assets/tet-banner.jpg"; // không có ảnh tuỳ chỉnh -> dùng ảnh mặc định có sẵn
-}
-
 async function loadFromServer() {
     try {
         const res = await fetch("/api/data");
@@ -93,8 +86,6 @@ async function loadFromServer() {
         pickupFeeData = db.pickupFee || { note: "", tiers: [] };
         surchargeData = db.surcharge || { percent: 5 };
         settingsData = db.settings || { showTableToViewers: true };
-        currentBannerUrl = db.bannerImageUrl || null;
-        applyBannerImage(currentBannerUrl);
         applySurchargeToUI();
         setSyncBanner(`🌐 Đã kết nối server. Cập nhật lần cuối: ${formatDateTime(db.updatedAt)}`, true);
         document.getElementById("syncStatusPill").textContent = "🟢 Server đang hoạt động";

@@ -87,10 +87,6 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 .banner-globe-card { padding:14px; display:flex; flex-direction:column; gap:14px; }
 .banner-globe-card .hero-banner-inner { position:relative; border-radius:12px; overflow:hidden; box-shadow:0 8px 20px -6px rgba(127,29,29,.3); animation: floatY 4s ease-in-out infinite; }
 .banner-globe-card .hero-banner-inner img { width:100%; display:block; max-height:150px; object-fit:cover; object-position:center 30%; }
-.banner-admin-upload { position:absolute; right:8px; bottom:8px; z-index:2; }
-.banner-upload-btn { font-size:11px; font-weight:700; padding:6px 10px; border-radius:8px; border:1px solid rgba(255,255,255,.4); background:rgba(15,23,42,.65); color:#fde68a; cursor:pointer; backdrop-filter:blur(3px); transition:all .15s; }
-.banner-upload-btn:hover { background:rgba(220,38,38,.75); border-color:var(--tet-gold); transform:translateY(-1px); }
-.banner-upload-btn:disabled { opacity:.6; cursor:wait; }
 .hero-shine { position:absolute; top:0; left:-60%; width:35%; height:100%; background:linear-gradient(120deg, transparent, rgba(255,255,255,.4), transparent); transform:skewX(-20deg); animation: shineSweep 3.4s ease-in-out infinite; }
 @keyframes shineSweep { 0%{ left:-60%; } 55%{ left:120%; } 100%{ left:120%; } }
 @keyframes floatY { 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-5px);} }
@@ -179,12 +175,8 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 <div class="main-layout top-pair-layout" id="topLayout">
     <div class="card banner-globe-card">
         <div class="hero-banner-inner">
-            <img id="heroBannerImg" src="assets/tet-banner.jpg" alt="Bảo An Express - Mừng Xuân Bính Ngọ">
+            <img src="assets/tet-banner.jpg" alt="Bảo An Express - Mừng Xuân Bính Ngọ">
             <div class="hero-shine"></div>
-            <div class="banner-admin-upload" id="bannerAdminUpload" style="display:none;">
-                <button type="button" class="banner-upload-btn" onclick="document.getElementById('bannerFileInput').click()">📤 Đổi ảnh banner</button>
-                <input type="file" id="bannerFileInput" accept="image/*" style="display:none;" onchange="handleBannerFileSelected(event)">
-            </div>
         </div>
         <div class="truck-road">
             <div class="truck-drive">🚚</div>
