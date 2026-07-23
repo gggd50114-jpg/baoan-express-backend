@@ -104,6 +104,10 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 @keyframes starsTwinkle { 0%,100%{ opacity:.55; } 50%{ opacity:.95; } }
 #globeContainer { width:100%; max-width:380px; height:380px; margin:0 auto; position:relative; z-index:1; cursor:grab; }
 #globeContainer:active { cursor:grabbing; }
+.globe-zoom-controls { position:absolute; top:10px; right:10px; z-index:3; display:flex; flex-direction:column; gap:6px; }
+.globe-zoom-btn { width:28px; height:28px; border-radius:8px; border:1.5px solid rgba(255,255,255,.3); background:rgba(15,23,42,.55); color:#fde68a; font-size:16px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(3px); transition:all .15s; line-height:1; }
+.globe-zoom-btn:hover { background:rgba(220,38,38,.55); border-color:var(--tet-gold); transform:scale(1.08); }
+.globe-zoom-btn:active { transform:scale(.92); }
 .globe-loading-overlay { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; color:var(--tet-gold-light); font-size:12px; font-weight:700; background:radial-gradient(ellipse at 50% 30%, #0b1330 0%, #05070f 65%, #000 100%); z-index:2; transition:opacity .5s ease; }
 .globe-loading-overlay.hidden { opacity:0; pointer-events:none; }
 .globe-spinner { width:34px; height:34px; border-radius:50%; border:3px solid rgba(245,158,11,.25); border-top-color:var(--tet-gold); animation: globeSpin .8s linear infinite; }
@@ -181,12 +185,17 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
             <p class="globe-title">🌐 Định Vị Tuyến Đang Chọn (Quả Địa Cầu 3D)</p>
             <div class="globe-wrap">
                 <div id="globeContainer"></div>
+                <div class="globe-zoom-controls">
+                    <button type="button" class="globe-zoom-btn" onclick="vnGlobeZoomIn()" title="Phóng to">+</button>
+                    <button type="button" class="globe-zoom-btn" onclick="vnGlobeZoomOut()" title="Thu nhỏ">−</button>
+                </div>
                 <div class="globe-loading-overlay" id="globeLoadingOverlay">
                     <div class="globe-spinner"></div>
                     <span>Đang tải quả địa cầu 3D...</span>
                 </div>
             </div>
             <div class="globe-dest-label" id="globeDestLabel">📍 Điểm đến</div>
+            <div style="text-align:center; font-size:10.5px; color:var(--text-muted); margin-top:3px;">🔍 Cuộn chuột / chụm 2 ngón hoặc bấm +/− để phóng to • Kéo để xoay</div>
         </div>
     </div>
 
