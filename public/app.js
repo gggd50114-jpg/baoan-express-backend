@@ -482,21 +482,46 @@ function onCalcRouteChange() {
     runCalculation();
 }
 
-// ---------------- BẢN ĐỒ HÀNH TRÌNH (MÁY BAY BAY ĐỘNG THEO TUYẾN) ----------------
+// ---------------- BẢN ĐỒ HÀNH TRÌNH (PHƯƠNG TIỆN BAY/CHẠY ĐỘNG THEO TỪNG TUYẾN) ----------------
+// Mỗi miền dùng 1 phương tiện + quỹ đạo khác nhau, mô phỏng khoảng cách thực tế từ Hà Nội:
+// - Miền Nam (VD: Sài Gòn): xa nhất -> MÁY BAY, bay vòng cung cao
+// - Tây Nguyên: khá xa -> XE KHÁCH ĐƯỜNG DÀI, vòng cung vừa
+// - Miền Trung: trung bình -> TÀU HỎA, bám thấp
+// - Miền Bắc: gần Hà Nội -> XE TẢI, chạy sát mặt đất
+const FLIGHT_TRANSPORT_BY_REGION = {
+    "Miền Nam":   { icon: "✈️", mode: "plane", path: "M4,44 Q50,4 96,44",  badge: "✈️ Đường hàng không", showClouds: true },
+    "Tây Nguyên": { icon: "🚌", mode: "coach", path: "M4,50 Q50,20 96,50", badge: "🚌 Xe khách đường dài", showClouds: true },
+    "Miền Trung": { icon: "🚆", mode: "train", path: "M4,50 Q50,36 96,50", badge: "🚆 Đường sắt", showClouds: false },
+    "Miền Bắc":   { icon: "🚚", mode: "truck", path: "M4,50 L96,50",       badge: "🚚 Xe tải đường bộ", showClouds: false }
+};
+const FLIGHT_TRANSPORT_DEFAULT = FLIGHT_TRANSPORT_BY_REGION["Miền Nam"];
+
 function updateFlightMap(route) {
     const destLabelEl = document.getElementById("flightDestLabel");
     const plane = document.getElementById("flightPlane");
+    const pathEl = document.getElementById("flightPathLine");
+    const badgeEl = document.getElementById("flightModeBadge");
+    const cloud1 = document.getElementById("flightCloud1");
+    const cloud2 = document.getElementById("flightCloud2");
     if (!destLabelEl || !route) return;
 
     // Lấy tên điểm đến từ tên tuyến, bỏ chữ "Tuyến " ở đầu (VD: "Tuyến Sài Gòn" -> "Sài Gòn")
     const destName = (route.name || "").replace(/^\s*Tuyến\s+/i, "").trim() || route.name;
     destLabelEl.textContent = `📍 ${destName}`;
 
-    // Khởi động lại animation bay mỗi khi đổi tuyến, để luôn thấy hiệu ứng "bay" ngay lập tức
+    // Chọn phương tiện phù hợp theo miền của tuyến
+    const transport = FLIGHT_TRANSPORT_BY_REGION[route.region] || FLIGHT_TRANSPORT_DEFAULT;
+
+    if (pathEl) pathEl.setAttribute("d", transport.path);
+    if (badgeEl) badgeEl.textContent = transport.badge;
+    if (cloud1) cloud1.classList.toggle("hide-cloud", !transport.showClouds);
+    if (cloud2) cloud2.classList.toggle("hide-cloud", !transport.showClouds);
+
     if (plane) {
-        plane.style.animation = "none";
+        plane.textContent = transport.icon;
+        plane.className = "flight-vehicle mode-" + transport.mode;
+        // Khởi động lại animation mỗi khi đổi tuyến, để luôn thấy hiệu ứng di chuyển ngay lập tức
         void plane.offsetWidth; // ép trình duyệt reflow để reset animation
-        plane.style.animation = "";
     }
 }
 
