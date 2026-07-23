@@ -12,10 +12,50 @@ loadEnv();
 
 const { readDb, writeDb, ensureDb, buildSeedData } = require("./lib/store");
 const { signToken, verifyToken, checkPassword, changePassword, emergencyResetPassword } = require("./lib/auth");
-const { validateRoutes, validatePickupFee, validateSurcharge, validateSettings } = require("./lib/validate");
+const { validateRoutes, validatePickupFee, validateSurcharge } = require("./lib/validate");
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const PUBLIC_DIR = path.join(__dirname, "public");
+
+// ---- Thư viện ảnh "Mừng Xuân Bính Ngọ": Admin tải ảnh lên, server đẩy lên
+// imgbb.com (lưu trữ ảnh miễn phí) rồi chỉ lưu LINK ảnh vào db.json - không
+// lưu file ảnh trực tiếp trên server (tránh phình dung lượng ổ đĩa/host free).
+const MAX_TET_GALLERY_IMAGES = 24;
+const MAX_UPLOAD_BYTES = 8 * 1024 * 1024; // ~8MB (đủ cho ảnh base64 ~5-6MB gốc)
+
+async function uploadToImgbb(base64Data) {
+    if (!process.env.IMGBB_API_KEY) {
+        const err = new Error("Server chưa cấu hình IMGBB_API_KEY trong file .env - liên hệ người quản trị kỹ thuật.");
+        err.code = "NO_IMGBB_KEY";
+        throw err;
+    }
+    // Bỏ phần tiền tố "data:image/xxx;base64," nếu client gửi kèm (đúng chuẩn Data URL)
+    const commaIdx = base64Data.indexOf(",");
+    const pureBase64 = base64Data.startsWith("data:") && commaIdx !== -1
+        ? base64Data.slice(commaIdx + 1)
+        : base64Data;
+
+    const params = new URLSearchParams();
+    params.append("key", process.env.IMGBB_API_KEY);
+    params.append("image", pureBase64);
+
+    const imgbbRes = await fetch("https://api.imgbb.com/1/upload", {
+        method: "POST",
+        body: params
+    });
+    const imgbbJson = await imgbbRes.json().catch(() => null);
+    if (!imgbbRes.ok || !imgbbJson || !imgbbJson.success) {
+        const msg = (imgbbJson && imgbbJson.error && imgbbJson.error.message) || "imgbb từ chối ảnh (có thể sai định dạng hoặc quá dung lượng).";
+        const err = new Error("Tải ảnh lên imgbb thất bại: " + msg);
+        err.code = "IMGBB_UPLOAD_FAILED";
+        throw err;
+    }
+    return {
+        url: imgbbJson.data.url,
+        thumbUrl: (imgbbJson.data.thumb && imgbbJson.data.thumb.url) || imgbbJson.data.url,
+        deleteUrl: imgbbJson.data.delete_url || null
+    };
+}
 
 ensureDb();
 
@@ -262,18 +302,14 @@ const server = http.createServer(async (req, res) => {
                 return sendJson(res, 400, { error: surchargeCheck.error });
             }
 
-            // settings: gồm cờ ẩn/hiện bảng giá + URL ảnh banner/logo Tết (nếu Admin đã đổi qua ImgBB)
-            const settingsCheck = validateSettings(body.settings, current.settings);
-            if (!settingsCheck.ok) {
-                return sendJson(res, 400, { error: settingsCheck.error });
-            }
-
             const next = {
                 routes: routesCheck.value,
                 weightBrackets: current.weightBrackets, // khung cân cố định, không cho sửa qua API
                 pickupFee: pickupFeeCheck.value !== undefined ? pickupFeeCheck.value : current.pickupFee,
                 surcharge: surchargeCheck.value !== undefined ? surchargeCheck.value : current.surcharge,
-                settings: settingsCheck.value,
+                settings: body.settings && typeof body.settings.showTableToViewers === "boolean"
+                    ? { showTableToViewers: body.settings.showTableToViewers }
+                    : current.settings,
                 updatedAt: new Date().toISOString(),
                 updatedBy: "admin"
             };
@@ -291,6 +327,62 @@ const server = http.createServer(async (req, res) => {
             writeDb(seed);
             broadcastUpdate();
             return sendJson(res, 200, { ok: true, updatedAt: seed.updatedAt });
+        }
+
+        // ---------------- API: Admin tải thêm 1 ảnh vào thư viện "Mừng Xuân Bính Ngọ" (đồng bộ qua imgbb) ----------------
+        if (urlPath === "/api/tet-gallery/upload" && req.method === "POST") {
+            const admin = requireAdmin(req);
+            if (!admin) return sendJson(res, 401, { error: "Bạn cần đăng nhập Admin (token hết hạn hoặc không hợp lệ)." });
+
+            const current = readDb();
+            if (current.settings.tetGallery.length >= MAX_TET_GALLERY_IMAGES) {
+                return sendJson(res, 400, { error: `Đã đạt giới hạn tối đa ${MAX_TET_GALLERY_IMAGES} ảnh. Hãy xóa bớt ảnh cũ trước khi thêm ảnh mới.` });
+            }
+
+            let body;
+            try {
+                body = await readBody(req, MAX_UPLOAD_BYTES);
+            } catch (e) {
+                return sendJson(res, 400, { error: e.message === "Payload quá lớn" ? "Ảnh quá lớn (giới hạn khoảng 6MB/ảnh)." : e.message });
+            }
+            if (!body.imageBase64 || typeof body.imageBase64 !== "string") {
+                return sendJson(res, 400, { error: "Thiếu dữ liệu ảnh (imageBase64)." });
+            }
+
+            let uploaded;
+            try {
+                uploaded = await uploadToImgbb(body.imageBase64);
+            } catch (e) {
+                return sendJson(res, 502, { error: e.message });
+            }
+
+            const entry = {
+                id: crypto.randomBytes(8).toString("hex"),
+                url: uploaded.url,
+                thumbUrl: uploaded.thumbUrl,
+                caption: typeof body.caption === "string" ? body.caption.slice(0, 200) : "",
+                uploadedAt: new Date().toISOString()
+            };
+            const next = { ...current, settings: { ...current.settings, tetGallery: [...current.settings.tetGallery, entry] }, updatedAt: new Date().toISOString(), updatedBy: "admin" };
+            writeDb(next);
+            broadcastUpdate();
+            return sendJson(res, 200, { ok: true, image: entry, gallery: next.settings.tetGallery });
+        }
+
+        // ---------------- API: Admin xóa 1 ảnh khỏi thư viện "Mừng Xuân Bính Ngọ" ----------------
+        if (urlPath === "/api/tet-gallery/delete" && req.method === "POST") {
+            const admin = requireAdmin(req);
+            if (!admin) return sendJson(res, 401, { error: "Bạn cần đăng nhập Admin (token hết hạn hoặc không hợp lệ)." });
+
+            const body = await readBody(req);
+            if (!body.id) return sendJson(res, 400, { error: "Thiếu id ảnh cần xóa." });
+
+            const current = readDb();
+            const nextGallery = current.settings.tetGallery.filter((img) => img.id !== body.id);
+            const next = { ...current, settings: { ...current.settings, tetGallery: nextGallery }, updatedAt: new Date().toISOString(), updatedBy: "admin" };
+            writeDb(next);
+            broadcastUpdate();
+            return sendJson(res, 200, { ok: true, gallery: next.settings.tetGallery });
         }
 
         // ---------------- API: kiểm tra token còn hạn không (để giữ trạng thái đăng nhập khi F5) ----------------
@@ -331,5 +423,8 @@ server.listen(PORT, () => {
     }
     if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 16) {
         console.warn("⚠️  CẢNH BÁO: Chưa đặt JWT_SECRET đủ mạnh (>=16 ký tự) trong file .env.");
+    }
+    if (!process.env.IMGBB_API_KEY) {
+        console.warn("⚠️  CẢNH BÁO: Chưa đặt IMGBB_API_KEY trong file .env — tính năng tải ảnh 'Mừng Xuân Bính Ngọ' sẽ báo lỗi. Lấy key miễn phí tại https://api.imgbb.com/");
     }
 });
