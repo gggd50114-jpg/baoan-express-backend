@@ -572,11 +572,25 @@ function initVNGlobe() {
             if (overlay) overlay.classList.add("hidden");
         });
 
-    // Xoay nhẹ tự động khi không thao tác, tắt zoom bằng lăn chuột để tránh lỗi cuộn trang, vẫn kéo xoay được bằng tay
+    // Xoay nhẹ tự động khi không thao tác. Bật zoom bằng cuộn chuột / chụm 2 ngón (mobile),
+    // giới hạn khoảng cách zoom để không zoom lọt vào trong lòng đất hoặc ra quá xa mất hình.
     const controls = vnGlobe.controls();
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.6;
-    controls.enableZoom = false;
+    controls.enableZoom = true;
+    controls.minDistance = 135;   // zoom gần nhất - vẫn thấy rõ bề mặt, không lọt vào trong
+    controls.maxDistance = 520;   // zoom xa nhất - không bị trôi mất hình ra ngoài khung
+    controls.zoomSpeed = 0.7;
+
+    // Khi người dùng kéo/zoom bằng tay thì tạm dừng tự xoay, xoay lại sau vài giây ngừng thao tác
+    controls.addEventListener("start", () => {
+        controls.autoRotate = false;
+        if (vnGlobeResumeTimer) clearTimeout(vnGlobeResumeTimer);
+    });
+    controls.addEventListener("end", () => {
+        if (vnGlobeResumeTimer) clearTimeout(vnGlobeResumeTimer);
+        vnGlobeResumeTimer = setTimeout(() => { if (vnGlobe) vnGlobe.controls().autoRotate = true; }, 4500);
+    });
 
     // Phòng khi ảnh tải quá lâu / mạng chậm: vẫn ẩn overlay sau tối đa 4s để không che khuất quả cầu mãi
     setTimeout(() => { if (overlay) overlay.classList.add("hidden"); }, 4000);
@@ -589,6 +603,19 @@ function initVNGlobe() {
         vnGlobe.width(s).height(s);
     });
 }
+
+// Zoom bằng nút bấm (+/-): giữ nguyên hướng nhìn hiện tại, chỉ thay đổi khoảng cách camera
+function vnGlobeZoomBy(factor) {
+    if (!vnGlobe) return;
+    const cur = vnGlobe.pointOfView();
+    const nextAltitude = Math.max(0.35, Math.min(4, cur.altitude * factor));
+    vnGlobe.controls().autoRotate = false;
+    if (vnGlobeResumeTimer) clearTimeout(vnGlobeResumeTimer);
+    vnGlobe.pointOfView({ lat: cur.lat, lng: cur.lng, altitude: nextAltitude }, 300);
+    vnGlobeResumeTimer = setTimeout(() => { if (vnGlobe) vnGlobe.controls().autoRotate = true; }, 4500);
+}
+function vnGlobeZoomIn() { vnGlobeZoomBy(0.7); }
+function vnGlobeZoomOut() { vnGlobeZoomBy(1.4); }
 
 function updateVNGlobe(route) {
     const destLabelEl = document.getElementById("globeDestLabel");
