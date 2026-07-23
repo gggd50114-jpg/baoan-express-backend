@@ -579,9 +579,15 @@ function initVNGlobe() {
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.6;
     controls.enableZoom = true;
-    controls.minDistance = 135;   // zoom gần nhất - vẫn thấy rõ bề mặt, không lọt vào trong
+    controls.minDistance = 100.6; // cho phép zoom rất sát bề mặt - để "tan chảy" mượt sang bản đồ phẳng chi tiết
     controls.maxDistance = 520;   // zoom xa nhất - không bị trôi mất hình ra ngoài khung
-    controls.zoomSpeed = 0.7;
+    controls.zoomSpeed = 0.75;
+
+    // Theo dõi liên tục độ cao camera (dù zoom bằng cuộn chuột, chụm tay hay kéo) để đồng bộ
+    // hiệu ứng "tan chảy" sang bản đồ phẳng chi tiết - giống cách Google Maps/Google Earth
+    // hiển thị thêm chi tiết (đường, tên địa danh) khi camera tiến gần mặt đất.
+    controls.addEventListener("change", () => vnGlobeUpdateZoomVisual());
+    setInterval(() => { if (vnGlobeReady) vnGlobeUpdateZoomVisual(); }, 220);
 
     // Khi người dùng kéo/zoom bằng tay thì tạm dừng tự xoay, xoay lại sau vài giây ngừng thao tác
     controls.addEventListener("start", () => {
@@ -602,21 +608,148 @@ function initVNGlobe() {
         const s = Math.min(Math.max(r.width || 260, 180), 380);
         el.style.height = s + "px";
         vnGlobe.width(s).height(s);
+        if (vnFlatMap) vnFlatMap.invalidateSize();
     });
 }
 
 // Zoom bằng nút bấm (+/-): giữ nguyên hướng nhìn hiện tại, chỉ thay đổi khoảng cách camera
+// (khi đã "tan chảy" hẳn sang bản đồ phẳng thì +/- sẽ điều khiển zoom của bản đồ phẳng thay vì quả cầu)
 function vnGlobeZoomBy(factor) {
     if (!vnGlobe) return;
     const cur = vnGlobe.pointOfView();
-    const nextAltitude = Math.max(0.35, Math.min(4, cur.altitude * factor));
+    const nextAltitude = Math.max(0.015, Math.min(4, cur.altitude * factor));
     vnGlobe.controls().autoRotate = false;
     if (vnGlobeResumeTimer) clearTimeout(vnGlobeResumeTimer);
     vnGlobe.pointOfView({ lat: cur.lat, lng: cur.lng, altitude: nextAltitude }, 300);
     vnGlobeResumeTimer = setTimeout(() => { if (vnGlobe) vnGlobe.controls().autoRotate = true; }, 4500);
+    setTimeout(() => vnGlobeUpdateZoomVisual(), 60);
 }
-function vnGlobeZoomIn() { vnGlobeZoomBy(0.7); }
-function vnGlobeZoomOut() { vnGlobeZoomBy(1.4); }
+function vnGlobeZoomIn() {
+    if (vnFlatMapInteractive && vnFlatMap) { vnFlatMap.zoomIn(); return; }
+    vnGlobeZoomBy(0.7);
+}
+function vnGlobeZoomOut() {
+    if (vnFlatMapInteractive && vnFlatMap) { vnFlatMap.zoomOut(); return; }
+    vnGlobeZoomBy(1.4);
+}
+
+// ---------------- HIỆU ỨNG "TAN CHẢY" TỪ QUẢ ĐỊA CẦU 3D SANG BẢN ĐỒ PHẲNG CHI TIẾT ----------------
+// Mô phỏng đúng cảm giác zoom của Google Maps/Google Earth: càng phóng to (camera càng
+// tiến gần mặt đất), quả địa cầu càng mờ dần và một bản đồ phẳng THẬT (tile OpenStreetMap
+// với tên đường, tên địa danh thật) hiện rõ dần lên, đến khi chiếm trọn khung và nhận thao
+// tác chuột/chạm y như Google Maps. Zoom ra lại (hoặc bấm nút quay lại) sẽ trả về quả cầu 3D.
+const GM_FADE_START_ALT = 0.55; // độ cao camera bắt đầu mờ dần sang bản đồ phẳng
+const GM_FADE_FULL_ALT  = 0.14; // độ cao camera đã "sang hẳn" bản đồ phẳng, chiếm trọn khung
+const GM_EXIT_LEAFLET_ZOOM = 3; // zoom bản đồ phẳng xuống dưới mức này -> tự động quay lại quả cầu
+
+let vnFlatMap = null;
+let vnFlatMapMarker = null;
+let vnFlatMapInteractive = false;
+let vnFlatMapCenter = { lat: GLOBE_DEST_DEFAULT.lat, lng: GLOBE_DEST_DEFAULT.lng };
+let vnGlobeVisualPending = false;
+
+function initFlatMapIfNeeded() {
+    if (vnFlatMap || typeof L === "undefined") return;
+    const el = document.getElementById("globeFlatMap");
+    if (!el) return;
+    vnFlatMap = L.map(el, {
+        zoomControl: false,
+        attributionControl: true,
+        scrollWheelZoom: true,
+        fadeAnimation: true,
+        worldCopyJump: true
+    }).setView([vnFlatMapCenter.lat, vnFlatMapCenter.lng], 5);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18,
+        attribution: "© OpenStreetMap"
+    }).addTo(vnFlatMap);
+
+    vnFlatMapMarker = L.marker([vnFlatMapCenter.lat, vnFlatMapCenter.lng]).addTo(vnFlatMap);
+
+    // Nếu người dùng zoom bản đồ phẳng ra quá xa (muốn quay lại góc nhìn toàn cầu) -> tự chuyển về quả cầu 3D
+    vnFlatMap.on("zoomend", () => {
+        if (vnFlatMapInteractive && vnFlatMap.getZoom() <= GM_EXIT_LEAFLET_ZOOM) {
+            vnGlobeExitFlatMap();
+        }
+    });
+}
+
+// Đọc độ cao camera hiện tại của quả cầu và cập nhật độ mờ/hiển thị của lớp bản đồ phẳng tương ứng
+function vnGlobeUpdateZoomVisual() {
+    if (!vnGlobe || vnFlatMapInteractive) return; // đã ở hẳn chế độ bản đồ phẳng thì không cần tính lại theo camera quả cầu nữa
+    if (vnGlobeVisualPending) return;
+    vnGlobeVisualPending = true;
+    requestAnimationFrame(() => {
+        vnGlobeVisualPending = false;
+        const cur = vnGlobe.pointOfView();
+        const alt = cur.altitude;
+        const globeEl = document.getElementById("globeContainer");
+        const flatEl = document.getElementById("globeFlatMap");
+        const hintEl = document.getElementById("globeZoomHint");
+        if (!globeEl || !flatEl) return;
+
+        const t = Math.max(0, Math.min(1, (GM_FADE_START_ALT - alt) / (GM_FADE_START_ALT - GM_FADE_FULL_ALT)));
+
+        if (t > 0.02) {
+            initFlatMapIfNeeded();
+            flatEl.classList.add("active");
+            flatEl.style.opacity = t.toFixed(3);
+            globeEl.classList.add("gm-fading");
+            globeEl.style.opacity = String(1 - t * 0.6);
+            if (vnFlatMap) {
+                const zoomLevel = 4 + t * 11; // 4 (khu vực) -> 15 (chi tiết đường phố, toà nhà)
+                vnFlatMap.setView([vnFlatMapCenter.lat, vnFlatMapCenter.lng], zoomLevel, { animate: false });
+                setTimeout(() => { if (vnFlatMap) vnFlatMap.invalidateSize(); }, 0);
+            }
+        } else {
+            flatEl.classList.remove("active");
+            flatEl.style.opacity = "0";
+            globeEl.classList.remove("gm-fading");
+            globeEl.style.opacity = "1";
+        }
+
+        if (hintEl) {
+            hintEl.textContent = alt > 1.3 ? "🌐 Toàn cầu" : (alt > GM_FADE_START_ALT ? "🗺️ Khu vực" : (t < 1 ? "🔍 Đang phóng vào bản đồ chi tiết..." : "📍 Bản đồ chi tiết"));
+            hintEl.classList.add("show");
+            clearTimeout(vnGlobeUpdateZoomVisual._hintTimer);
+            vnGlobeUpdateZoomVisual._hintTimer = setTimeout(() => hintEl.classList.remove("show"), 1800);
+        }
+
+        if (t >= 1 && !vnFlatMapInteractive) vnGlobeEnterFlatMap();
+    });
+}
+
+// Đã zoom đủ sâu: chuyển hẳn quyền điều khiển chuột/chạm sang bản đồ phẳng chi tiết (như Google Maps)
+function vnGlobeEnterFlatMap() {
+    vnFlatMapInteractive = true;
+    const globeEl = document.getElementById("globeContainer");
+    const flatEl = document.getElementById("globeFlatMap");
+    const exitBtn = document.getElementById("globeFlatMapExit");
+    if (globeEl) { globeEl.style.pointerEvents = "none"; globeEl.style.opacity = "0.001"; }
+    if (flatEl) { flatEl.classList.add("interactive"); flatEl.style.opacity = "1"; }
+    if (exitBtn) exitBtn.classList.add("show");
+    if (vnGlobe) vnGlobe.controls().autoRotate = false;
+    initFlatMapIfNeeded();
+    if (vnFlatMap) setTimeout(() => vnFlatMap.invalidateSize(), 60);
+}
+
+// Quay lại quả địa cầu 3D (bấm nút "Quay lại quả địa cầu" hoặc tự động khi zoom bản đồ phẳng ra xa)
+function vnGlobeExitFlatMap() {
+    vnFlatMapInteractive = false;
+    const globeEl = document.getElementById("globeContainer");
+    const flatEl = document.getElementById("globeFlatMap");
+    const exitBtn = document.getElementById("globeFlatMapExit");
+    if (globeEl) { globeEl.style.pointerEvents = "auto"; globeEl.style.opacity = "1"; globeEl.classList.remove("gm-fading"); }
+    if (flatEl) { flatEl.classList.remove("interactive", "active"); flatEl.style.opacity = "0"; }
+    if (exitBtn) exitBtn.classList.remove("show");
+    if (vnGlobe) {
+        vnGlobe.controls().autoRotate = false;
+        vnGlobe.pointOfView({ lat: vnFlatMapCenter.lat, lng: vnFlatMapCenter.lng, altitude: 0.85 }, 700);
+        if (vnGlobeResumeTimer) clearTimeout(vnGlobeResumeTimer);
+        vnGlobeResumeTimer = setTimeout(() => { if (vnGlobe) vnGlobe.controls().autoRotate = true; }, 4500);
+    }
+}
 
 function updateVNGlobe(route) {
     const destLabelEl = document.getElementById("globeDestLabel");
@@ -632,6 +765,12 @@ function updateVNGlobe(route) {
     if (!vnGlobe) return; // thư viện 3D chưa sẵn sàng (vd. mất mạng CDN) -> chỉ cập nhật chữ, không lỗi trang
 
     const dest = GLOBE_ROUTE_COORDS[route.id] || GLOBE_DEST_DEFAULT;
+
+    // Đổi tuyến -> cập nhật điểm đến cho bản đồ phẳng, và nếu đang ở chế độ bản đồ phẳng chi tiết thì quay lại quả cầu 3D trước
+    vnFlatMapCenter = { lat: dest.lat, lng: dest.lng };
+    if (vnFlatMapInteractive) vnGlobeExitFlatMap();
+    if (vnFlatMapMarker) vnFlatMapMarker.setLatLng([dest.lat, dest.lng]);
+    if (vnFlatMap && !vnFlatMapInteractive) vnFlatMap.setView([dest.lat, dest.lng], vnFlatMap.getZoom(), { animate: false });
 
     vnGlobe
         .pointsData([
