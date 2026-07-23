@@ -12,7 +12,7 @@ loadEnv();
 
 const { readDb, writeDb, ensureDb, buildSeedData } = require("./lib/store");
 const { signToken, verifyToken, checkPassword, changePassword, emergencyResetPassword } = require("./lib/auth");
-const { validateRoutes, validatePickupFee, validateSurcharge } = require("./lib/validate");
+const { validateRoutes, validatePickupFee, validateSurcharge, validateSettings } = require("./lib/validate");
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const PUBLIC_DIR = path.join(__dirname, "public");
@@ -262,14 +262,18 @@ const server = http.createServer(async (req, res) => {
                 return sendJson(res, 400, { error: surchargeCheck.error });
             }
 
+            // settings: gồm cờ ẩn/hiện bảng giá + URL ảnh banner/logo Tết (nếu Admin đã đổi qua ImgBB)
+            const settingsCheck = validateSettings(body.settings, current.settings);
+            if (!settingsCheck.ok) {
+                return sendJson(res, 400, { error: settingsCheck.error });
+            }
+
             const next = {
                 routes: routesCheck.value,
                 weightBrackets: current.weightBrackets, // khung cân cố định, không cho sửa qua API
                 pickupFee: pickupFeeCheck.value !== undefined ? pickupFeeCheck.value : current.pickupFee,
                 surcharge: surchargeCheck.value !== undefined ? surchargeCheck.value : current.surcharge,
-                settings: body.settings && typeof body.settings.showTableToViewers === "boolean"
-                    ? { showTableToViewers: body.settings.showTableToViewers }
-                    : current.settings,
+                settings: settingsCheck.value,
                 updatedAt: new Date().toISOString(),
                 updatedBy: "admin"
             };
