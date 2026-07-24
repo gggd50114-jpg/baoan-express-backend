@@ -87,7 +87,10 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 .banner-globe-card { padding:14px; display:flex; flex-direction:column; gap:14px; }
 .banner-globe-card .hero-banner-inner { position:relative; height:300px; border-radius:12px; overflow:hidden; box-shadow:0 8px 20px -6px rgba(127,29,29,.3); animation: floatY 4s ease-in-out infinite; }
 .banner-globe-card .hero-banner-inner img { width:100%; height:100%; display:block; object-fit:cover; object-position:center 30%; }
-.banner-admin-upload { position:absolute; right:8px; bottom:8px; z-index:2; }
+/* Video tải từ thiết bị: object-fit:cover tự động cắt/co giãn để LUÔN vừa khít khung banner,
+   dù video dọc (điện thoại quay) hay ngang, không cần chỉnh zoom thủ công như YouTube. */
+.banner-globe-card .hero-banner-inner video { width:100%; height:100%; display:block; object-fit:cover; object-position:center center; position:relative; z-index:1; background:#000; }
+.banner-admin-upload { position:absolute; right:8px; bottom:8px; z-index:2; display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
 .banner-upload-btn { font-size:11px; font-weight:700; padding:6px 10px; border-radius:8px; border:1px solid rgba(255,255,255,.4); background:rgba(15,23,42,.65); color:#fde68a; cursor:pointer; backdrop-filter:blur(3px); transition:all .15s; }
 .banner-upload-btn:hover { background:rgba(220,38,38,.75); border-color:var(--tet-gold); transform:translateY(-1px); }
 .banner-upload-btn:disabled { opacity:.6; cursor:wait; }
@@ -197,19 +200,26 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
             <div class="hero-video-wrap" id="heroVideoWrap" style="display:none;">
                 <iframe id="heroVideoIframe" src="" title="Video banner Bảo An Express" allow="autoplay; encrypted-media" frameborder="0"></iframe>
             </div>
+            <video id="heroBannerVideo" style="display:none;" muted loop autoplay playsinline></video>
             <div class="hero-shine"></div>
             <div class="banner-admin-upload" id="bannerAdminUpload" style="display:none;">
                 <button type="button" class="banner-upload-btn" onclick="document.getElementById('bannerFileInput').click()">📤 Đổi ảnh banner</button>
                 <input type="file" id="bannerFileInput" accept="image/*" style="display:none;" onchange="handleBannerFileSelected(event)">
+                <button type="button" class="banner-upload-btn" onclick="document.getElementById('bannerVideoFileInput').click()">📹 Tải video từ thiết bị</button>
+                <input type="file" id="bannerVideoFileInput" accept="video/*" style="display:none;" onchange="handleBannerVideoFileSelected(event)">
             </div>
         </div>
         <div class="banner-youtube-admin-row" id="bannerYoutubeAdminRow" style="display:none; flex-direction:column; align-items:stretch;">
+            <div id="bannerVideoFileActiveRow" style="display:none; align-items:center; gap:8px; font-size:12px; font-weight:600; color:#166534; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:7px 10px;">
+                <span>📹 Đang dùng video tải từ thiết bị (tự động vừa khung banner).</span>
+                <button type="button" onclick="removeBannerVideo()" style="margin-left:auto; font-size:11px; font-weight:700; padding:5px 10px; border-radius:8px; border:none; background:#dc2626; color:#fff; cursor:pointer;">🗑️ Xoá video</button>
+            </div>
             <div style="display:flex; gap:8px;">
                 <input type="text" id="bannerYoutubeInput" placeholder="Dán link video YouTube cho banner (để trống = không có video)...">
                 <button type="button" onclick="saveBannerYoutubeUrl()">🎬 Lưu video &amp; zoom</button>
             </div>
             <div class="banner-zoom-row">
-                <span>🔍 Zoom video:</span>
+                <span>🔍 Zoom video YouTube:</span>
                 <input type="range" id="bannerZoomSlider" min="1" max="4" step="0.1" value="2.2" oninput="previewBannerZoom(this.value)">
                 <span id="bannerZoomValueLabel">2.2x</span>
             </div>

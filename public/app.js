@@ -77,6 +77,7 @@ document.addEventListener("click", function (e) {
 });
 
 let currentBannerUrl = null;
+let currentBannerVideoUrl = null;
 function applyBannerImage(url) {
     const img = document.getElementById("heroBannerImg");
     if (!img) return;
@@ -101,13 +102,26 @@ function extractYoutubeId(url) {
 
 // Ẩn/hiện ảnh banner tĩnh so với video tự phát, tuỳ theo Admin đã cấu hình
 // link YouTube hợp lệ hay chưa (áp dụng đồng bộ cho MỌI người xem trang).
+// Thứ tự ưu tiên hiển thị trong khung banner: video tải từ thiết bị (bannerVideoUrl)
+// > video YouTube (bannerYoutubeUrl) > ảnh banner tĩnh.
 function applyBannerYoutubeUI() {
-    const videoId = extractYoutubeId(settingsData.bannerYoutubeUrl);
+    const hasFileVideo = !!currentBannerVideoUrl;
+    const videoId = hasFileVideo ? null : extractYoutubeId(settingsData.bannerYoutubeUrl);
     const img = document.getElementById("heroBannerImg");
     const videoWrap = document.getElementById("heroVideoWrap");
     const iframe = document.getElementById("heroVideoIframe");
+    const fileVideo = document.getElementById("heroBannerVideo");
 
-    if (videoId) {
+    if (hasFileVideo) {
+        if (iframe) iframe.src = "";
+        if (videoWrap) videoWrap.style.display = "none";
+        if (fileVideo) {
+            if (fileVideo.getAttribute("src") !== currentBannerVideoUrl) fileVideo.setAttribute("src", currentBannerVideoUrl);
+            fileVideo.style.display = "block";
+            fileVideo.play().catch(() => { /* trình duyệt có thể chặn tự phát tới khi người dùng tương tác - bỏ qua */ });
+        }
+        if (img) img.style.display = "none";
+    } else if (videoId) {
         // autoplay=1&mute=1: tự phát (bắt buộc tắt tiếng mới được trình duyệt cho tự phát)
         // loop=1&playlist=id: lặp lại vô hạn 1 video
         // controls=0&modestbranding=1&rel=0&fs=0&disablekb=1: ẩn hết giao diện điều khiển/gợi ý của YouTube
@@ -115,12 +129,17 @@ function applyBannerYoutubeUI() {
         const src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0&fs=0&disablekb=1&cc_load_policy=0&iv_load_policy=3&playsinline=1`;
         if (iframe && iframe.src !== src) iframe.src = src;
         if (videoWrap) videoWrap.style.display = "block";
+        if (fileVideo) { fileVideo.pause(); fileVideo.style.display = "none"; }
         if (img) img.style.display = "none";
     } else {
         if (iframe) iframe.src = "";
         if (videoWrap) videoWrap.style.display = "none";
+        if (fileVideo) { fileVideo.pause(); fileVideo.style.display = "none"; }
         if (img) img.style.display = "block";
     }
+
+    const activeRow = document.getElementById("bannerVideoFileActiveRow");
+    if (activeRow) activeRow.style.display = hasFileVideo ? "flex" : "none";
 
     const input = document.getElementById("bannerYoutubeInput");
     if (input && document.activeElement !== input) input.value = settingsData.bannerYoutubeUrl || "";
@@ -195,6 +214,65 @@ async function handleBannerFileSelected(event) {
     }
 }
 
+// Admin bấm nút "Tải video từ thiết bị" -> chọn file -> đọc base64 -> gửi server để đẩy lên Cloudinary.
+// Video sau khi tải lên sẽ TỰ ĐỘNG vừa khít khung banner (object-fit:cover trong CSS), không cần
+// chỉnh zoom thủ công như video YouTube.
+async function handleBannerVideoFileSelected(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    if (!isAdminMode || !adminToken) { alert("Bạn cần đăng nhập Admin."); return; }
+    if (!file.type.startsWith("video/")) { alert("Vui lòng chọn một file video."); return; }
+    if (file.size > 45 * 1024 * 1024) { alert("Video quá lớn (tối đa 45MB). Vui lòng chọn video ngắn hơn hoặc nén lại."); return; }
+
+    const btns = document.querySelectorAll("#bannerAdminUpload .banner-upload-btn");
+    const videoBtn = btns && btns[1] ? btns[1] : null;
+    if (videoBtn) { videoBtn.disabled = true; videoBtn.textContent = "⏳ Đang tải video lên..."; }
+
+    try {
+        const base64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(new Error("Đọc file thất bại"));
+            reader.readAsDataURL(file);
+        });
+
+        const res = await fetch("/api/upload-banner-video", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: "Bearer " + adminToken },
+            body: JSON.stringify({ videoBase64: base64 })
+        });
+        const data = await res.json();
+        if (!res.ok) { alert("❌ " + (data.error || "Tải video lên thất bại.")); return; }
+
+        currentBannerVideoUrl = data.url;
+        applyBannerYoutubeUI();
+        alert("✅ Đã đổi video banner thành công! Mọi người xem trang sẽ tự thấy video mới.");
+    } catch (e) {
+        alert("❌ Lỗi khi tải video lên: " + e.message);
+    } finally {
+        if (videoBtn) { videoBtn.disabled = false; videoBtn.textContent = "📹 Tải video từ thiết bị"; }
+        event.target.value = ""; // cho phép chọn lại cùng 1 file lần sau nếu cần
+    }
+}
+
+// Admin bấm "Xoá video" -> quay lại dùng video YouTube (nếu có) hoặc ảnh banner tĩnh
+async function removeBannerVideo() {
+    if (!isAdminMode || !adminToken) { alert("Bạn cần đăng nhập Admin."); return; }
+    if (!confirm("Xoá video banner đang dùng? Khung banner sẽ quay lại dùng video YouTube (nếu có) hoặc ảnh tĩnh.")) return;
+    try {
+        const res = await fetch("/api/remove-banner-video", {
+            method: "POST",
+            headers: { Authorization: "Bearer " + adminToken }
+        });
+        const data = await res.json();
+        if (!res.ok) { alert("❌ " + (data.error || "Xoá video thất bại.")); return; }
+        currentBannerVideoUrl = null;
+        applyBannerYoutubeUI();
+    } catch (e) {
+        alert("❌ Lỗi khi xoá video: " + e.message);
+    }
+}
+
 async function loadFromServer() {
     try {
         const res = await fetch("/api/data");
@@ -206,6 +284,7 @@ async function loadFromServer() {
         surchargeData = db.surcharge || { percent: 5 };
         settingsData = db.settings || { showTableToViewers: true, bannerYoutubeUrl: null, bannerVideoZoom: 2.2 };
         currentBannerUrl = db.bannerImageUrl || null;
+        currentBannerVideoUrl = db.bannerVideoUrl || null;
         applyBannerImage(currentBannerUrl);
         applyBannerYoutubeUI();
         applySurchargeToUI();
@@ -346,6 +425,10 @@ async function refreshSilently() {
         if ((db.bannerImageUrl || null) !== currentBannerUrl) {
             currentBannerUrl = db.bannerImageUrl || null;
             applyBannerImage(currentBannerUrl);
+        }
+        if ((db.bannerVideoUrl || null) !== currentBannerVideoUrl) {
+            currentBannerVideoUrl = db.bannerVideoUrl || null;
+            applyBannerYoutubeUI();
         }
         weightBrackets = db.weightBrackets || weightBrackets;
         setSyncBanner(`🌐 Đã đồng bộ. Cập nhật lần cuối: ${formatDateTime(db.updatedAt)}`, true);
