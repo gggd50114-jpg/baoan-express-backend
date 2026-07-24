@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BẢO AN EXPRESS - HỆ THỐNG QUẢN LÝ & TÍNH CƯỚC TOÀN DIỆN</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 :root {
     --primary-color: #d97706; --primary-hover: #b45309; --primary-light: #fef3c7;
@@ -24,8 +23,8 @@ header h1 { margin:0; font-size:26px; text-transform:uppercase; letter-spacing:.
 header p { margin:6px 0 0 0; font-size:14px; opacity:.95; }
 .header-stats { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:14px; }
 .header-stat-pill { background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.35); backdrop-filter:blur(4px); padding:6px 14px; border-radius:999px; font-size:12.5px; font-weight:600; }
-.main-layout { display:grid; grid-template-columns:350px 1fr; gap:25px; max-width:1720px; margin:25px auto; padding:0 20px; }
-.main-layout.top-pair-layout { grid-template-columns:1fr 2.1fr; max-width:none; width:100%; margin-top:20px; }
+.main-layout { display:grid; grid-template-columns:350px 1fr; gap:25px; max-width:1600px; margin:25px auto; padding:0 20px; }
+.main-layout.top-pair-layout { grid-template-columns:1fr 2fr; max-width:none; width:100%; margin-top:20px; }
 @media (min-width:1300px) { .main-layout.top-pair-layout { grid-template-columns:minmax(360px,1fr) 2fr; } }
 #topLayout.single-col { grid-template-columns:1fr !important; max-width:560px !important; }
 .main-layout.single-col .card { border:2px solid var(--tet-gold); box-shadow:0 10px 26px -8px rgba(245,158,11,.3); }
@@ -41,7 +40,6 @@ select:focus, input:focus, textarea:focus { outline:none; border-color:var(--pri
 .btn-secondary { background:#475569; color:#fff; } .btn-secondary:hover { background:#334155; }
 .btn-accent { background:var(--accent-color); color:#fff; } .btn-accent:hover { background:var(--accent-hover); }
 .btn-success { background:#16a34a; color:#fff; } .btn-success:hover { background:#15803d; }
-.btn-sm { padding:6px 12px; font-size:12.5px; }
 .calc-result { background:var(--primary-light); border-radius:8px; padding:15px; margin-top:20px; border:1px solid #bbf7d0; }
 .calc-row { display:flex; justify-content:space-between; font-size:13px; margin-bottom:8px; color:var(--text-muted); }
 .calc-row.highlight { font-weight:600; color:var(--text-main); }
@@ -87,8 +85,26 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 
 /* ============ THẺ BANNER NHỎ (đối xứng với card tính cước) ============ */
 .banner-globe-card { padding:14px; display:flex; flex-direction:column; gap:14px; }
-.banner-globe-card .hero-banner-inner { position:relative; border-radius:12px; overflow:hidden; box-shadow:0 8px 20px -6px rgba(127,29,29,.3); animation: floatY 4s ease-in-out infinite; }
-.banner-globe-card .hero-banner-inner img { width:100%; display:block; max-height:180px; object-fit:cover; object-position:center 30%; }
+.banner-globe-card .hero-banner-inner { position:relative; height:230px; border-radius:12px; overflow:hidden; box-shadow:0 8px 20px -6px rgba(127,29,29,.3); animation: floatY 4s ease-in-out infinite; }
+.banner-globe-card .hero-banner-inner img { width:100%; height:100%; display:block; object-fit:cover; object-position:center 30%; }
+.banner-admin-upload { position:absolute; right:8px; bottom:8px; z-index:2; }
+.banner-upload-btn { font-size:11px; font-weight:700; padding:6px 10px; border-radius:8px; border:1px solid rgba(255,255,255,.4); background:rgba(15,23,42,.65); color:#fde68a; cursor:pointer; backdrop-filter:blur(3px); transition:all .15s; }
+.banner-upload-btn:hover { background:rgba(220,38,38,.75); border-color:var(--tet-gold); transform:translateY(-1px); }
+.banner-upload-btn:disabled { opacity:.6; cursor:wait; }
+.banner-play-btn { display:none; } /* không dùng nữa - video giờ tự phát ngay trong banner */
+.hero-video-wrap { position:absolute; inset:0; overflow:hidden; background:#000; z-index:1; }
+/* Video dọc (kiểu TikTok/Shorts) nhét vào khung ngang sẽ có viền đen 2 bên vì iframe
+   không hỗ trợ object-fit như ảnh/video thường - phóng to (scale) từ tâm để cắt bớt
+   viền đen. Nếu dùng video ngang (16:9) bình thường, có thể giảm số --hero-video-zoom
+   xuống 1 để không bị zoom quá mức. */
+.hero-video-wrap iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:0; pointer-events:none; transform:scale(var(--hero-video-zoom, 2.2)); transform-origin:center center; }
+.banner-youtube-admin-row { display:flex; gap:8px; margin-top:2px; }
+.banner-youtube-admin-row input { flex:1; padding:7px 10px; border-radius:8px; border:1px solid var(--border-color); font-size:12px; }
+.banner-youtube-admin-row button { font-size:12px; font-weight:700; padding:7px 12px; border-radius:8px; border:none; background:var(--primary-color); color:#fff; cursor:pointer; white-space:nowrap; }
+.banner-youtube-admin-row button:hover { filter:brightness(1.1); }
+.banner-zoom-row { display:flex; align-items:center; gap:8px; margin-top:6px; font-size:11.5px; color:var(--text-muted); font-weight:600; }
+.banner-zoom-row input[type="range"] { flex:1; accent-color:var(--primary-color); }
+#bannerZoomValueLabel { min-width:34px; text-align:right; color:var(--primary-color); font-weight:800; }
 .hero-shine { position:absolute; top:0; left:-60%; width:35%; height:100%; background:linear-gradient(120deg, transparent, rgba(255,255,255,.4), transparent); transform:skewX(-20deg); animation: shineSweep 3.4s ease-in-out infinite; }
 @keyframes shineSweep { 0%{ left:-60%; } 55%{ left:120%; } 100%{ left:120%; } }
 @keyframes floatY { 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-5px);} }
@@ -104,7 +120,7 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 .globe-wrap { position:relative; display:flex; justify-content:center; border-radius:14px; overflow:hidden; background:radial-gradient(ellipse at 50% 30%, #0b1330 0%, #05070f 65%, #000 100%); box-shadow:inset 0 0 30px rgba(0,0,0,.6), 0 8px 20px -6px rgba(127,29,29,.35); }
 .globe-wrap::before { content:""; position:absolute; inset:0; background-image:radial-gradient(1.5px 1.5px at 20% 30%, rgba(255,255,255,.9) 0, transparent 60%), radial-gradient(1.5px 1.5px at 70% 60%, rgba(255,255,255,.7) 0, transparent 60%), radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,.6) 0, transparent 60%), radial-gradient(1px 1px at 85% 20%, rgba(255,255,255,.8) 0, transparent 60%), radial-gradient(1.5px 1.5px at 55% 45%, rgba(255,255,255,.6) 0, transparent 60%), radial-gradient(1px 1px at 10% 65%, rgba(255,255,255,.5) 0, transparent 60%); pointer-events:none; opacity:.8; animation: starsTwinkle 4s ease-in-out infinite; }
 @keyframes starsTwinkle { 0%,100%{ opacity:.55; } 50%{ opacity:.95; } }
-#globeContainer { width:100%; max-width:440px; height:440px; margin:0 auto; position:relative; z-index:1; cursor:grab; }
+#globeContainer { width:100%; max-width:380px; height:380px; margin:0 auto; position:relative; z-index:1; cursor:grab; }
 #globeContainer:active { cursor:grabbing; }
 .globe-zoom-controls { position:absolute; top:10px; right:10px; z-index:3; display:flex; flex-direction:column; gap:6px; }
 .globe-zoom-btn { width:28px; height:28px; border-radius:8px; border:1.5px solid rgba(255,255,255,.3); background:rgba(15,23,42,.55); color:#fde68a; font-size:16px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(3px); transition:all .15s; line-height:1; }
@@ -117,26 +133,7 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 .globe-dest-label { text-align:center; font-size:13px; font-weight:800; color:var(--text-main); margin-top:8px; transition:transform .3s cubic-bezier(.34,1.56,.64,1); }
 .globe-dest-label.pop { animation: globeDestPop .5s cubic-bezier(.34,1.56,.64,1); }
 @keyframes globeDestPop { 0%{ transform:scale(.85); opacity:.4; } 60%{ transform:scale(1.08); } 100%{ transform:scale(1); opacity:1; } }
-.site-image-edit-btn { position:absolute; z-index:5; border:none; cursor:pointer; font-weight:700; box-shadow:0 4px 10px -3px rgba(0,0,0,.4); transition:transform .15s ease, background .2s ease; }
-.site-image-edit-btn:hover { transform:translateY(-1px) scale(1.04); }
-.site-image-edit-btn.logo-edit-btn { bottom:-3px; right:-3px; width:26px; height:26px; border-radius:50%; background:var(--accent-color); color:#fff; font-size:12px; display:flex; align-items:center; justify-content:center; padding:0; }
-.site-image-edit-btn.banner-edit-btn { bottom:10px; right:10px; padding:6px 12px; border-radius:999px; background:rgba(15,23,42,.72); color:#fde68a; font-size:12px; backdrop-filter:blur(3px); border:1px solid rgba(255,255,255,.3); }
 .globe-3d-label { transform:translate(-50%, -160%); white-space:nowrap; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size:13px; font-weight:800; color:#fff7d6; text-shadow:0 0 4px #000, 0 0 8px rgba(220,38,38,.9), 0 1px 2px #000; pointer-events:none; user-select:none; }
-
-/* ---- Hiệu ứng zoom "chi tiết như Google Maps": khi zoom sâu, quả địa cầu 3D
-   tan chảy (crossfade) sang bản đồ phẳng thật (đường phố, tên địa danh) ---- */
-#globeContainer { transition: opacity .5s ease, filter .5s ease; }
-#globeContainer.gm-fading { filter: blur(1.5px) brightness(1.15); }
-.globe-flatmap-layer { position:absolute; inset:0; z-index:2; opacity:0; pointer-events:none; transition: opacity .55s cubic-bezier(.4,0,.2,1); border-radius:14px; overflow:hidden; }
-.globe-flatmap-layer.active { opacity:1; }
-.globe-flatmap-layer.interactive { pointer-events:auto; }
-.globe-flatmap-layer .leaflet-container { width:100%; height:100%; background:#0b1330; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-.globe-flatmap-layer .leaflet-control-attribution { font-size:9px; opacity:.75; }
-.globe-flatmap-exit { position:absolute; left:10px; bottom:10px; z-index:4; display:flex; align-items:center; gap:6px; padding:7px 12px; border-radius:999px; border:1.5px solid rgba(255,255,255,.4); background:rgba(15,23,42,.72); color:#fde68a; font-size:12px; font-weight:800; cursor:pointer; backdrop-filter:blur(3px); opacity:0; pointer-events:none; transition: opacity .3s ease, transform .2s ease; }
-.globe-flatmap-exit.show { opacity:1; pointer-events:auto; }
-.globe-flatmap-exit:hover { background:rgba(220,38,38,.6); transform:translateY(-1px); }
-.globe-zoom-depth-hint { position:absolute; top:10px; left:10px; z-index:3; font-size:10.5px; font-weight:700; color:#fde68a; background:rgba(15,23,42,.55); border:1px solid rgba(255,255,255,.25); padding:4px 9px; border-radius:999px; backdrop-filter:blur(3px); opacity:0; transition:opacity .3s ease; pointer-events:none; }
-.globe-zoom-depth-hint.show { opacity:1; }
 
 /* ============ HIỆU ỨNG SỐNG ĐỘNG BỔ SUNG ============ */
 
@@ -169,7 +166,6 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 .toast-show { opacity:1; transform:translateY(0) scale(1); }
 .toast-success { background:linear-gradient(120deg,#15803d,#16a34a); }
 .toast-error { background:linear-gradient(120deg,#b91c1c,#dc2626); }
-.toast-info { background:linear-gradient(120deg,#1e3a8a,#2563eb); }
 
 /* Pháo hoa mini khi lưu thành công */
 .confetti-layer { position:fixed; inset:0; pointer-events:none; z-index:998; overflow:hidden; }
@@ -184,11 +180,7 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 
 <header>
     <button class="header-admin-btn" onclick="openLoginModal()" title="Đăng nhập Admin">🔑</button>
-    <div class="header-logo-badge" style="position:relative;">
-        <img id="heroLogoImg" src="assets/tet-logo.jpg" alt="Bảo An Express - Xuân Bính Ngọ">
-        <button type="button" class="site-image-edit-btn logo-edit-btn" id="logoEditBtn" style="display:none;" onclick="document.getElementById('logoFileInput').click()" title="Đổi ảnh logo">🖼️</button>
-        <input type="file" id="logoFileInput" accept="image/*" style="display:none;" onchange="onSiteImageFileChosen(event, 'logo')">
-    </div>
+    <div class="header-logo-badge"><img src="assets/tet-logo.jpg" alt="Bảo An Express - Xuân Bính Ngọ"></div>
     <h1>🚚 Bảo An Express - Hệ Thống Tra Cứu &amp; Tính Cước Toàn Quốc</h1>
     <p>🧧 Mừng Xuân Bính Ngọ - Backend/server riêng, mọi người mở link đều thấy cước mới nhất theo thời gian thực</p>
     <div class="header-stats">
@@ -200,11 +192,27 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 
 <div class="main-layout top-pair-layout" id="topLayout">
     <div class="card banner-globe-card">
-        <div class="hero-banner-inner">
+        <div class="hero-banner-inner" id="heroBannerInner">
             <img id="heroBannerImg" src="assets/tet-banner.jpg" alt="Bảo An Express - Mừng Xuân Bính Ngọ">
+            <div class="hero-video-wrap" id="heroVideoWrap" style="display:none;">
+                <iframe id="heroVideoIframe" src="" title="Video banner Bảo An Express" allow="autoplay; encrypted-media" frameborder="0"></iframe>
+            </div>
             <div class="hero-shine"></div>
-            <button type="button" class="site-image-edit-btn banner-edit-btn" id="bannerEditBtn" style="display:none;" onclick="document.getElementById('bannerFileInput').click()" title="Đổi ảnh banner">🖼️ Đổi ảnh</button>
-            <input type="file" id="bannerFileInput" accept="image/*" style="display:none;" onchange="onSiteImageFileChosen(event, 'banner')">
+            <div class="banner-admin-upload" id="bannerAdminUpload" style="display:none;">
+                <button type="button" class="banner-upload-btn" onclick="document.getElementById('bannerFileInput').click()">📤 Đổi ảnh banner</button>
+                <input type="file" id="bannerFileInput" accept="image/*" style="display:none;" onchange="handleBannerFileSelected(event)">
+            </div>
+        </div>
+        <div class="banner-youtube-admin-row" id="bannerYoutubeAdminRow" style="display:none; flex-direction:column; align-items:stretch;">
+            <div style="display:flex; gap:8px;">
+                <input type="text" id="bannerYoutubeInput" placeholder="Dán link video YouTube cho banner (để trống = không có video)...">
+                <button type="button" onclick="saveBannerYoutubeUrl()">🎬 Lưu video &amp; zoom</button>
+            </div>
+            <div class="banner-zoom-row">
+                <span>🔍 Zoom video:</span>
+                <input type="range" id="bannerZoomSlider" min="1" max="4" step="0.1" value="2.2" oninput="previewBannerZoom(this.value)">
+                <span id="bannerZoomValueLabel">2.2x</span>
+            </div>
         </div>
         <div class="truck-road">
             <div class="truck-drive">🚚</div>
@@ -214,9 +222,6 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
             <p class="globe-title">🌐 Định Vị Tuyến Đang Chọn (Quả Địa Cầu 3D)</p>
             <div class="globe-wrap">
                 <div id="globeContainer"></div>
-                <div class="globe-flatmap-layer" id="globeFlatMap"></div>
-                <div class="globe-zoom-depth-hint" id="globeZoomHint">🌐 Toàn cầu</div>
-                <button type="button" class="globe-flatmap-exit" id="globeFlatMapExit" onclick="vnGlobeExitFlatMap()">🌐 Quay lại quả địa cầu</button>
                 <div class="globe-zoom-controls">
                     <button type="button" class="globe-zoom-btn" onclick="vnGlobeZoomIn()" title="Phóng to">+</button>
                     <button type="button" class="globe-zoom-btn" onclick="vnGlobeZoomOut()" title="Thu nhỏ">−</button>
@@ -227,7 +232,7 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
                 </div>
             </div>
             <div class="globe-dest-label" id="globeDestLabel">📍 Điểm đến</div>
-            <div style="text-align:center; font-size:10.5px; color:var(--text-muted); margin-top:3px;">🔍 Cuộn chuột / chụm 2 ngón hoặc bấm +/− để phóng to đến tận bản đồ chi tiết như Google Maps • Kéo để xoay</div>
+            <div style="text-align:center; font-size:10.5px; color:var(--text-muted); margin-top:3px;">🔍 Cuộn chuột / chụm 2 ngón hoặc bấm +/− để phóng to • Kéo để xoay</div>
         </div>
     </div>
 
@@ -296,35 +301,6 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
             <div style="font-size:28px;">🚫</div>
             <div style="font-weight:800; color:var(--accent-color); font-size:15px; margin-top:4px;">KHU VỰC NÀY KHÔNG NHẬN VẬN CHUYỂN</div>
             <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">Vui lòng liên hệ tổng đài để được tư vấn tuyến thay thế gần nhất.</div>
-        </div>
-    </div>
-</div>
-
-<div class="main-layout full-width" id="mediaLayout" style="margin-top:0;">
-    <div class="card" id="mediaCard">
-        <div class="card-title">🎬 Video / TikTok Mừng Xuân Bính Ngọ</div>
-
-        <div id="mediaAdminControls" style="display:none; margin-bottom:14px; padding:12px 14px; background:var(--primary-light); border:1px solid var(--border-color); border-radius:10px;">
-            <div style="display:flex; gap:8px; margin-bottom:10px;">
-                <button type="button" class="btn btn-secondary btn-sm" id="mediaModeTiktokBtn" onclick="setMediaAdminMode('tiktok')">🔗 Dán link TikTok</button>
-                <button type="button" class="btn btn-secondary btn-sm" id="mediaModeVideoBtn" onclick="setMediaAdminMode('video')">💻 Tải video từ máy tính</button>
-                <button type="button" class="btn btn-sm" style="background:#fff; color:var(--accent-color); border:1px solid var(--accent-color);" onclick="clearMedia()">🗑️ Gỡ video</button>
-            </div>
-            <div id="mediaTiktokInputRow" style="display:none; gap:8px;">
-                <input type="text" id="tiktokUrlInput" placeholder="Dán link TikTok, ví dụ: https://www.tiktok.com/@baoanexpress/video/1234567890" style="flex:1; padding:9px 12px; border-radius:8px; border:1px solid var(--border-color);">
-                <button type="button" class="btn btn-primary" onclick="saveTiktokLink()">💾 Lưu</button>
-            </div>
-            <div id="mediaVideoInputRow" style="display:none; gap:8px; align-items:center;">
-                <input type="file" id="videoFileInput" accept="video/*" onchange="onVideoFileChosen(event)">
-                <span style="font-size:11.5px; color:var(--text-muted);">Video tối đa ~15MB (nên nén/cắt ngắn video trước khi tải lên)</span>
-            </div>
-            <div id="mediaUploadStatus" style="font-size:12px; margin-top:8px; display:none;"></div>
-        </div>
-
-        <div id="mediaViewerArea" style="display:flex; justify-content:center;">
-            <div id="mediaEmptyNote" style="text-align:center; padding:20px; color:var(--text-muted); font-size:13px;">🎬 Chưa có video nào được thêm.</div>
-            <div id="mediaTiktokEmbed" style="display:none; max-width:325px; width:100%;"></div>
-            <video id="mediaVideoPlayer" style="display:none; width:100%; max-width:520px; border-radius:12px; box-shadow:0 8px 20px -6px rgba(127,29,29,.3);" controls playsinline></video>
         </div>
     </div>
 </div>
@@ -514,7 +490,6 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 </div>
 
 <script src="https://unpkg.com/globe.gl@2"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
