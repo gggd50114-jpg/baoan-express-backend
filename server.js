@@ -256,10 +256,17 @@ const server = http.createServer(async (req, res) => {
                 return sendJson(res, 400, { error: pickupFeeCheck.error });
             }
 
-            // Chặn phụ thu (%) âm hoặc vượt quá 100%
+            // Phụ thu (%) âm hoặc vượt quá 100% -> chặn
             const surchargeCheck = validateSurcharge(body.surcharge);
             if (!surchargeCheck.ok) {
                 return sendJson(res, 400, { error: surchargeCheck.error });
+            }
+
+            // Link video YouTube cho khung banner (tuỳ chọn) - chỉ chấp nhận chuỗi hợp lý, không bắt buộc phải có
+            let bannerYoutubeUrl = current.settings ? current.settings.bannerYoutubeUrl : null;
+            if (body.settings && (typeof body.settings.bannerYoutubeUrl === "string" || body.settings.bannerYoutubeUrl === null)) {
+                const raw = body.settings.bannerYoutubeUrl;
+                bannerYoutubeUrl = (typeof raw === "string" && raw.trim().length > 0 && raw.trim().length <= 300) ? raw.trim() : null;
             }
 
             const next = {
@@ -267,16 +274,10 @@ const server = http.createServer(async (req, res) => {
                 weightBrackets: current.weightBrackets, // khung cân cố định, không cho sửa qua API
                 pickupFee: pickupFeeCheck.value !== undefined ? pickupFeeCheck.value : current.pickupFee,
                 surcharge: surchargeCheck.value !== undefined ? surchargeCheck.value : current.surcharge,
-                // QUAN TRỌNG: gộp (merge) settings thay vì ghi đè toàn bộ - nếu không, mỗi lần "Lưu &
-                // Đồng Bộ" bảng giá sẽ vô tình XOÁ MẤT bannerImageUrl (ảnh banner đã đổi qua imgbb sẽ
-                // bị reset về ảnh mặc định). Banner chỉ được đổi qua /api/upload-banner và /api/reset-banner,
-                // không bao giờ qua endpoint này.
-                settings: {
-                    showTableToViewers: body.settings && typeof body.settings.showTableToViewers === "boolean"
-                        ? body.settings.showTableToViewers
-                        : current.settings.showTableToViewers,
-                    bannerImageUrl: current.settings.bannerImageUrl
-                },
+                settings: body.settings && typeof body.settings.showTableToViewers === "boolean"
+                    ? { showTableToViewers: body.settings.showTableToViewers, bannerYoutubeUrl }
+                    : { ...current.settings, bannerYoutubeUrl },
+                bannerImageUrl: current.bannerImageUrl || null,
                 updatedAt: new Date().toISOString(),
                 updatedBy: "admin"
             };
@@ -296,78 +297,53 @@ const server = http.createServer(async (req, res) => {
             return sendJson(res, 200, { ok: true, updatedAt: seed.updatedAt });
         }
 
-        // ---------------- API: Admin đổi ảnh banner "Mừng Xuân", đồng bộ qua imgbb ----------------
+        // ---------------- API: kiểm tra token còn hạn không (để giữ trạng thái đăng nhập khi F5) ----------------
+        if (urlPath === "/api/whoami" && req.method === "GET") {
+            const admin = requireAdmin(req);
+            return sendJson(res, 200, { isAdmin: !!admin });
+        }
+
+        // ---------------- API: admin tải ảnh banner mới lên (lưu trên ImgBB, không lưu trên server) ----------------
         if (urlPath === "/api/upload-banner" && req.method === "POST") {
             const admin = requireAdmin(req);
             if (!admin) return sendJson(res, 401, { error: "Bạn cần đăng nhập Admin (token hết hạn hoặc không hợp lệ)." });
 
             if (!process.env.IMGBB_API_KEY) {
-                return sendJson(res, 500, { error: "Server chưa cấu hình IMGBB_API_KEY trong file .env. Hãy lấy API key miễn phí tại https://api.imgbb.com/ rồi thêm vào .env." });
+                return sendJson(res, 400, { error: "Server chưa được cấu hình IMGBB_API_KEY trong file .env - liên hệ người quản trị server." });
             }
 
-            // Ảnh gửi lên dạng base64 nên payload có thể khá lớn -> cho phép tối đa ~9MB (ảnh gốc ~6-6.5MB sau khi mã hoá base64).
-            let body;
-            try {
-                body = await readBody(req, 9 * 1024 * 1024);
-            } catch (e) {
-                return sendJson(res, 400, { error: e.message === "Payload quá lớn" ? "Ảnh quá lớn (tối đa khoảng 6MB). Vui lòng chọn ảnh nhỏ hơn." : e.message });
+            // Ảnh sau khi mã hoá base64 lớn hơn file gốc ~33%, cho phép tới ~8MB để đủ dùng ảnh banner thông thường.
+            const body = await readBody(req, 8 * 1024 * 1024);
+            let imageBase64 = typeof body.imageBase64 === "string" ? body.imageBase64 : "";
+            const commaIdx = imageBase64.indexOf(",");
+            if (imageBase64.startsWith("data:") && commaIdx !== -1) {
+                imageBase64 = imageBase64.slice(commaIdx + 1); // bỏ phần tiền tố "data:image/png;base64,"
+            }
+            if (!imageBase64) {
+                return sendJson(res, 400, { error: "Thiếu dữ liệu ảnh." });
             }
 
-            let base64 = (body.imageBase64 || "").trim();
-            if (!base64) return sendJson(res, 400, { error: "Thiếu dữ liệu ảnh (imageBase64)." });
-            // Bỏ tiền tố "data:image/xxx;base64," nếu có, imgbb chỉ cần phần base64 thuần
-            const commaIdx = base64.indexOf(",");
-            if (base64.startsWith("data:") && commaIdx !== -1) base64 = base64.slice(commaIdx + 1);
-
             try {
-                const imgbbRes = await fetch(`https://api.imgbb.com/1/upload?key=${encodeURIComponent(process.env.IMGBB_API_KEY)}`, {
+                const imgbbRes = await fetch("https://api.imgbb.com/1/upload", {
                     method: "POST",
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: new URLSearchParams({ image: base64 }).toString()
+                    body: new URLSearchParams({ key: process.env.IMGBB_API_KEY, image: imageBase64 })
                 });
-                const imgbbData = await imgbbRes.json();
-                if (!imgbbRes.ok || !imgbbData || !imgbbData.success) {
-                    const msg = (imgbbData && imgbbData.error && imgbbData.error.message) || "imgbb từ chối ảnh này (có thể sai định dạng hoặc quá lớn).";
-                    return sendJson(res, 502, { error: "Tải ảnh lên imgbb thất bại: " + msg });
+                const imgbbJson = await imgbbRes.json();
+                if (!imgbbRes.ok || !imgbbJson.success || !imgbbJson.data || !imgbbJson.data.url) {
+                    const msg = (imgbbJson && imgbbJson.error && imgbbJson.error.message) || "ImgBB từ chối ảnh này.";
+                    return sendJson(res, 502, { error: "Tải ảnh lên ImgBB thất bại: " + msg });
                 }
 
-                const imageUrl = imgbbData.data && (imgbbData.data.url || imgbbData.data.display_url);
-                if (!imageUrl) return sendJson(res, 502, { error: "imgbb không trả về link ảnh hợp lệ." });
-
+                const bannerUrl = imgbbJson.data.url;
                 const current = readDb();
-                current.settings = current.settings || { showTableToViewers: true };
-                current.settings.bannerImageUrl = imageUrl;
-                current.updatedAt = new Date().toISOString();
-                current.updatedBy = "admin";
-                writeDb(current);
+                const next = { ...current, bannerImageUrl: bannerUrl, updatedAt: new Date().toISOString(), updatedBy: "admin" };
+                writeDb(next);
                 broadcastUpdate();
-
-                return sendJson(res, 200, { ok: true, url: imageUrl });
+                return sendJson(res, 200, { ok: true, url: bannerUrl });
             } catch (e) {
-                console.error("Lỗi upload imgbb:", e);
-                return sendJson(res, 502, { error: "Không kết nối được tới imgbb. Kiểm tra lại kết nối mạng của server." });
+                return sendJson(res, 502, { error: "Không kết nối được tới ImgBB: " + e.message });
             }
-        }
-
-        // ---------------- API: Admin khôi phục banner về ảnh gốc mặc định ----------------
-        if (urlPath === "/api/reset-banner" && req.method === "POST") {
-            const admin = requireAdmin(req);
-            if (!admin) return sendJson(res, 401, { error: "Bạn cần đăng nhập Admin (token hết hạn hoặc không hợp lệ)." });
-
-            const current = readDb();
-            current.settings = current.settings || { showTableToViewers: true };
-            current.settings.bannerImageUrl = null;
-            current.updatedAt = new Date().toISOString();
-            current.updatedBy = "admin";
-            writeDb(current);
-            broadcastUpdate();
-            return sendJson(res, 200, { ok: true });
-        }
-
-        // ---------------- API: kiểm tra token còn hạn không (để giữ trạng thái đăng nhập khi F5) ----------------
-        if (urlPath === "/api/whoami" && req.method === "GET") {
-            const admin = requireAdmin(req);
-            return sendJson(res, 200, { isAdmin: !!admin });
         }
 
         // ---------------- Còn lại: phục vụ file tĩnh (giao diện web) ----------------
