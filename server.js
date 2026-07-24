@@ -16,8 +16,10 @@ const { validateRoutes, validatePickupFee, validateSurcharge } = require("./lib/
 
 const PORT = parseInt(process.env.PORT || "3000", 10);
 const PUBLIC_DIR = path.join(__dirname, "public");
+const UPLOADS_VIDEO_DIR = path.join(PUBLIC_DIR, "uploads", "videos");
 
 ensureDb();
+fs.mkdirSync(UPLOADS_VIDEO_DIR, { recursive: true });
 
 // ---- Giới hạn số lần đăng nhập sai (chống dò mật khẩu) ----
 const loginAttempts = new Map(); // ip -> { count, firstAt }
@@ -135,7 +137,11 @@ const MIME_TYPES = {
     ".png": "image/png",
     ".jpg": "image/jpeg",
     ".svg": "image/svg+xml",
-    ".ico": "image/x-icon"
+    ".ico": "image/x-icon",
+    ".mp4": "video/mp4",
+    ".webm": "video/webm",
+    ".mov": "video/quicktime",
+    ".m4v": "video/x-m4v"
 };
 
 function serveStatic(req, res) {
@@ -256,23 +262,10 @@ const server = http.createServer(async (req, res) => {
                 return sendJson(res, 400, { error: pickupFeeCheck.error });
             }
 
-            // Phụ thu (%) âm hoặc vượt quá 100% -> chặn
+            // Chặn phụ thu (%) âm hoặc vượt quá 100%
             const surchargeCheck = validateSurcharge(body.surcharge);
             if (!surchargeCheck.ok) {
                 return sendJson(res, 400, { error: surchargeCheck.error });
-            }
-
-            // Link video YouTube cho khung banner (tuỳ chọn) - chỉ chấp nhận chuỗi hợp lý, không bắt buộc phải có
-            let bannerYoutubeUrl = current.settings ? current.settings.bannerYoutubeUrl : null;
-            if (body.settings && (typeof body.settings.bannerYoutubeUrl === "string" || body.settings.bannerYoutubeUrl === null)) {
-                const raw = body.settings.bannerYoutubeUrl;
-                bannerYoutubeUrl = (typeof raw === "string" && raw.trim().length > 0 && raw.trim().length <= 300) ? raw.trim() : null;
-            }
-
-            // Mức zoom video banner (1 = không zoom, 4 = zoom rất sát) - chặn ngoài khoảng hợp lệ để tránh phá giao diện
-            let bannerVideoZoom = (current.settings && typeof current.settings.bannerVideoZoom === "number") ? current.settings.bannerVideoZoom : 2.2;
-            if (body.settings && typeof body.settings.bannerVideoZoom === "number" && !Number.isNaN(body.settings.bannerVideoZoom)) {
-                bannerVideoZoom = Math.min(4, Math.max(1, body.settings.bannerVideoZoom));
             }
 
             const next = {
@@ -281,9 +274,8 @@ const server = http.createServer(async (req, res) => {
                 pickupFee: pickupFeeCheck.value !== undefined ? pickupFeeCheck.value : current.pickupFee,
                 surcharge: surchargeCheck.value !== undefined ? surchargeCheck.value : current.surcharge,
                 settings: body.settings && typeof body.settings.showTableToViewers === "boolean"
-                    ? { showTableToViewers: body.settings.showTableToViewers, bannerYoutubeUrl, bannerVideoZoom }
-                    : { ...current.settings, bannerYoutubeUrl, bannerVideoZoom },
-                bannerImageUrl: current.bannerImageUrl || null,
+                    ? { showTableToViewers: body.settings.showTableToViewers }
+                    : current.settings,
                 updatedAt: new Date().toISOString(),
                 updatedBy: "admin"
             };
@@ -303,53 +295,149 @@ const server = http.createServer(async (req, res) => {
             return sendJson(res, 200, { ok: true, updatedAt: seed.updatedAt });
         }
 
-        // ---------------- API: kiểm tra token còn hạn không (để giữ trạng thái đăng nhập khi F5) ----------------
-        if (urlPath === "/api/whoami" && req.method === "GET") {
-            const admin = requireAdmin(req);
-            return sendJson(res, 200, { isAdmin: !!admin });
-        }
-
-        // ---------------- API: admin tải ảnh banner mới lên (lưu trên ImgBB, không lưu trên server) ----------------
-        if (urlPath === "/api/upload-banner" && req.method === "POST") {
+        // ---------------- API: admin đổi ảnh banner/logo Tết - upload lên imgbb rồi lưu link để đồng bộ realtime ----------------
+        if (urlPath === "/api/upload-image" && req.method === "POST") {
             const admin = requireAdmin(req);
             if (!admin) return sendJson(res, 401, { error: "Bạn cần đăng nhập Admin (token hết hạn hoặc không hợp lệ)." });
 
             if (!process.env.IMGBB_API_KEY) {
-                return sendJson(res, 400, { error: "Server chưa được cấu hình IMGBB_API_KEY trong file .env - liên hệ người quản trị server." });
+                return sendJson(res, 400, { error: "Server chưa cấu hình IMGBB_API_KEY trong file .env. Vào https://api.imgbb.com/ lấy API key miễn phí rồi thêm vào .env, sau đó khởi động lại server." });
             }
 
-            // Ảnh sau khi mã hoá base64 lớn hơn file gốc ~33%, cho phép tới ~8MB để đủ dùng ảnh banner thông thường.
-            const body = await readBody(req, 8 * 1024 * 1024);
-            let imageBase64 = typeof body.imageBase64 === "string" ? body.imageBase64 : "";
-            const commaIdx = imageBase64.indexOf(",");
-            if (imageBase64.startsWith("data:") && commaIdx !== -1) {
-                imageBase64 = imageBase64.slice(commaIdx + 1); // bỏ phần tiền tố "data:image/png;base64,"
+            const body = await readBody(req, 8 * 1024 * 1024); // ảnh base64 có thể khá lớn - cho phép tới ~8MB
+            const target = body.target === "logo" ? "logo" : (body.target === "banner" ? "banner" : null);
+            if (!target) return sendJson(res, 400, { error: "Thiếu hoặc sai 'target' (phải là 'banner' hoặc 'logo')." });
+
+            const current = readDb();
+            const siteAssets = current.siteAssets && typeof current.siteAssets === "object"
+                ? { ...current.siteAssets } : { bannerUrl: null, logoUrl: null };
+            const key = target === "logo" ? "logoUrl" : "bannerUrl";
+
+            // Khôi phục về ảnh mặc định (không upload gì, chỉ xoá link đang lưu)
+            if (body.clear === true) {
+                siteAssets[key] = null;
+                const next = { ...current, siteAssets, updatedAt: new Date().toISOString(), updatedBy: "admin" };
+                writeDb(next);
+                broadcastUpdate();
+                return sendJson(res, 200, { ok: true, siteAssets });
             }
-            if (!imageBase64) {
+
+            if (!body.imageBase64 || typeof body.imageBase64 !== "string") {
                 return sendJson(res, 400, { error: "Thiếu dữ liệu ảnh." });
+            }
+            // Phòng khi client lỡ gửi kèm tiền tố "data:image/...;base64," thì cắt bỏ cho đúng chuẩn imgbb
+            const cleanBase64 = body.imageBase64.replace(/^data:[^,]+;base64,/, "").trim();
+            if (cleanBase64.length > 7_000_000) {
+                return sendJson(res, 400, { error: "Ảnh quá lớn (giới hạn khoảng 5MB). Vui lòng chọn ảnh nhỏ hơn." });
             }
 
             try {
-                const imgbbRes = await fetch("https://api.imgbb.com/1/upload", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: new URLSearchParams({ key: process.env.IMGBB_API_KEY, image: imageBase64 })
-                });
+                const params = new URLSearchParams();
+                params.append("key", process.env.IMGBB_API_KEY);
+                params.append("image", cleanBase64);
+
+                const imgbbRes = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: params });
                 const imgbbJson = await imgbbRes.json();
-                if (!imgbbRes.ok || !imgbbJson.success || !imgbbJson.data || !imgbbJson.data.url) {
-                    const msg = (imgbbJson && imgbbJson.error && imgbbJson.error.message) || "ImgBB từ chối ảnh này.";
-                    return sendJson(res, 502, { error: "Tải ảnh lên ImgBB thất bại: " + msg });
+
+                if (!imgbbRes.ok || !imgbbJson.success) {
+                    const msg = (imgbbJson.error && imgbbJson.error.message) || "imgbb từ chối ảnh này (có thể sai định dạng hoặc quá lớn).";
+                    return sendJson(res, 400, { error: "Tải ảnh lên imgbb thất bại: " + msg });
                 }
 
-                const bannerUrl = imgbbJson.data.url;
-                const current = readDb();
-                const next = { ...current, bannerImageUrl: bannerUrl, updatedAt: new Date().toISOString(), updatedBy: "admin" };
+                const url = imgbbJson.data.display_url || imgbbJson.data.url;
+                siteAssets[key] = url;
+
+                const next = { ...current, siteAssets, updatedAt: new Date().toISOString(), updatedBy: "admin" };
                 writeDb(next);
-                broadcastUpdate();
-                return sendJson(res, 200, { ok: true, url: bannerUrl });
+                broadcastUpdate(); // đẩy realtime cho mọi người xem thấy ảnh mới ngay, giống khi admin lưu bảng giá
+                return sendJson(res, 200, { ok: true, siteAssets });
             } catch (e) {
-                return sendJson(res, 502, { error: "Không kết nối được tới ImgBB: " + e.message });
+                return sendJson(res, 500, { error: "Lỗi khi gọi imgbb: " + e.message });
             }
+        }
+
+        // ---------------- API: admin đặt video Tết - dán link TikTok, hoặc tải file video từ máy tính lên server ----------------
+        if (urlPath === "/api/media" && req.method === "POST") {
+            const admin = requireAdmin(req);
+            if (!admin) return sendJson(res, 401, { error: "Bạn cần đăng nhập Admin (token hết hạn hoặc không hợp lệ)." });
+
+            const body = await readBody(req, 24 * 1024 * 1024); // video base64 có thể khá nặng - cho phép tới ~24MB (~18MB file gốc)
+            const current = readDb();
+            const oldMedia = current.media && typeof current.media === "object"
+                ? current.media : { type: null, tiktokUrl: null, videoUrl: null };
+
+            function removeOldVideoFileIfAny() {
+                if (oldMedia.type === "video" && oldMedia.videoUrl) {
+                    const oldFile = path.join(PUBLIC_DIR, oldMedia.videoUrl.replace(/^\//, ""));
+                    if (oldFile.startsWith(UPLOADS_VIDEO_DIR + path.sep) && fs.existsSync(oldFile)) {
+                        try { fs.unlinkSync(oldFile); } catch (e) { /* không sao nếu xoá lỗi - không chặn thao tác chính */ }
+                    }
+                }
+            }
+
+            // Gỡ video/TikTok hiện tại, quay về không có video nào
+            if (body.type === "clear") {
+                removeOldVideoFileIfAny();
+                const media = { type: null, tiktokUrl: null, videoUrl: null };
+                writeDb({ ...current, media, updatedAt: new Date().toISOString(), updatedBy: "admin" });
+                broadcastUpdate();
+                return sendJson(res, 200, { ok: true, media });
+            }
+
+            // Dán link TikTok
+            if (body.type === "tiktok") {
+                const url = typeof body.tiktokUrl === "string" ? body.tiktokUrl.trim() : "";
+                if (!/^https?:\/\/([a-z0-9-]+\.)*tiktok\.com\//i.test(url)) {
+                    return sendJson(res, 400, { error: "Link không hợp lệ. Vui lòng dán đúng link TikTok (bắt đầu bằng https://www.tiktok.com/... hoặc https://vt.tiktok.com/...)." });
+                }
+                removeOldVideoFileIfAny();
+                const media = { type: "tiktok", tiktokUrl: url, videoUrl: null };
+                writeDb({ ...current, media, updatedAt: new Date().toISOString(), updatedBy: "admin" });
+                broadcastUpdate();
+                return sendJson(res, 200, { ok: true, media });
+            }
+
+            // Tải video từ máy tính lên
+            if (body.type === "video") {
+                if (!body.videoBase64 || typeof body.videoBase64 !== "string") {
+                    return sendJson(res, 400, { error: "Thiếu dữ liệu video." });
+                }
+                const cleanBase64 = body.videoBase64.replace(/^data:[^,]+;base64,/, "").trim();
+                if (cleanBase64.length > 22_000_000) {
+                    return sendJson(res, 400, { error: "Video quá lớn (giới hạn khoảng 15MB). Vui lòng nén nhẹ hoặc cắt ngắn video." });
+                }
+                let ext = "mp4";
+                const nameMatch = typeof body.fileName === "string" && body.fileName.match(/\.([a-zA-Z0-9]{2,5})$/);
+                if (nameMatch && ["mp4", "webm", "mov", "m4v"].includes(nameMatch[1].toLowerCase())) {
+                    ext = nameMatch[1].toLowerCase();
+                }
+                let buffer;
+                try {
+                    buffer = Buffer.from(cleanBase64, "base64");
+                } catch (e) {
+                    return sendJson(res, 400, { error: "Dữ liệu video không hợp lệ." });
+                }
+                if (!buffer || buffer.length === 0) {
+                    return sendJson(res, 400, { error: "Dữ liệu video không hợp lệ." });
+                }
+
+                removeOldVideoFileIfAny();
+                const fileName = `tet-${Date.now()}-${crypto.randomBytes(6).toString("hex")}.${ext}`;
+                fs.writeFileSync(path.join(UPLOADS_VIDEO_DIR, fileName), buffer);
+
+                const media = { type: "video", tiktokUrl: null, videoUrl: `/uploads/videos/${fileName}` };
+                writeDb({ ...current, media, updatedAt: new Date().toISOString(), updatedBy: "admin" });
+                broadcastUpdate();
+                return sendJson(res, 200, { ok: true, media });
+            }
+
+            return sendJson(res, 400, { error: "Thiếu hoặc sai 'type' (phải là 'tiktok', 'video' hoặc 'clear')." });
+        }
+
+        // ---------------- API: kiểm tra token còn hạn không (để giữ trạng thái đăng nhập khi F5) ----------------
+        if (urlPath === "/api/whoami" && req.method === "GET") {
+            const admin = requireAdmin(req);
+            return sendJson(res, 200, { isAdmin: !!admin });
         }
 
         // ---------------- Còn lại: phục vụ file tĩnh (giao diện web) ----------------
@@ -384,5 +472,8 @@ server.listen(PORT, () => {
     }
     if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 16) {
         console.warn("⚠️  CẢNH BÁO: Chưa đặt JWT_SECRET đủ mạnh (>=16 ký tự) trong file .env.");
+    }
+    if (!process.env.IMGBB_API_KEY) {
+        console.warn("ℹ️  Chưa đặt IMGBB_API_KEY trong .env - Admin sẽ chưa đổi được ảnh banner/logo Tết. Lấy key miễn phí tại https://api.imgbb.com/");
     }
 });
