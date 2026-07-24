@@ -3,3 +3,4 @@ data/db.json
 data/admin.json
 node_modules/
 *.log
+public/uploads/
