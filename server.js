@@ -156,7 +156,14 @@ function serveStatic(req, res) {
             return res.end("Không tìm thấy trang.");
         }
         const ext = path.extname(filePath);
-        res.writeHead(200, { "Content-Type": MIME_TYPES[ext] || "application/octet-stream" });
+        const headers = { "Content-Type": MIME_TYPES[ext] || "application/octet-stream" };
+        // HTML/CSS/JS luôn phải lấy bản mới nhất mỗi khi Admin cập nhật code - không để
+        // trình duyệt tự cache lại bản cũ (đây là nguyên nhân phổ biến khiến người dùng
+        // thấy giao diện "chưa cập nhật" dù server đã có file mới).
+        if (ext === ".html" || ext === ".js" || ext === ".css") {
+            headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+        }
+        res.writeHead(200, headers);
         res.end(content);
     });
 }
