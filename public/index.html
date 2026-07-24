@@ -87,9 +87,12 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 .banner-globe-card { padding:14px; display:flex; flex-direction:column; gap:14px; }
 .banner-globe-card .hero-banner-inner { position:relative; height:300px; border-radius:12px; overflow:hidden; box-shadow:0 8px 20px -6px rgba(127,29,29,.3); animation: floatY 4s ease-in-out infinite; }
 .banner-globe-card .hero-banner-inner img { width:100%; height:100%; display:block; object-fit:cover; object-position:center 30%; }
-/* Video tải từ thiết bị: object-fit:cover tự động cắt/co giãn để LUÔN vừa khít khung banner,
-   dù video dọc (điện thoại quay) hay ngang, không cần chỉnh zoom thủ công như YouTube. */
-.banner-globe-card .hero-banner-inner video { width:100%; height:100%; display:block; object-fit:cover; object-position:center center; position:relative; z-index:1; background:#000; }
+/* Video tải từ thiết bị: hiển thị kiểu "Instagram Story" - video GỐC luôn thấy TRỌN VẸN
+   (object-fit:contain, không bị cắt mất phần nào dù quay dọc hay ngang), phần trống 2 bên/
+   trên-dưới được lấp bằng chính video đó phóng to + làm mờ làm nền, để không có khoảng đen trống. */
+.hero-video-file-wrap { position:absolute; inset:0; overflow:hidden; background:#000; z-index:1; }
+.hero-video-file-wrap .hero-video-bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:blur(24px) brightness(0.55) saturate(1.15); transform:scale(1.15); }
+.hero-video-file-wrap .hero-video-fg { position:relative; width:100%; height:100%; object-fit:contain; display:block; z-index:1; }
 .banner-admin-upload { position:absolute; right:8px; bottom:8px; z-index:2; display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
 .banner-upload-btn { font-size:11px; font-weight:700; padding:6px 10px; border-radius:8px; border:1px solid rgba(255,255,255,.4); background:rgba(15,23,42,.65); color:#fde68a; cursor:pointer; backdrop-filter:blur(3px); transition:all .15s; }
 .banner-upload-btn:hover { background:rgba(220,38,38,.75); border-color:var(--tet-gold); transform:translateY(-1px); }
@@ -200,7 +203,10 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
             <div class="hero-video-wrap" id="heroVideoWrap" style="display:none;">
                 <iframe id="heroVideoIframe" src="" title="Video banner Bảo An Express" allow="autoplay; encrypted-media" frameborder="0"></iframe>
             </div>
-            <video id="heroBannerVideo" style="display:none;" muted loop autoplay playsinline></video>
+            <div class="hero-video-file-wrap" id="heroVideoFileWrap" style="display:none;">
+                <video id="heroBannerVideoBg" class="hero-video-bg" muted loop autoplay playsinline aria-hidden="true" tabindex="-1"></video>
+                <video id="heroBannerVideoFg" class="hero-video-fg" muted loop autoplay playsinline></video>
+            </div>
             <div class="hero-shine"></div>
             <div class="banner-admin-upload" id="bannerAdminUpload" style="display:none;">
                 <button type="button" class="banner-upload-btn" onclick="document.getElementById('bannerFileInput').click()">📤 Đổi ảnh banner</button>

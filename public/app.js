@@ -110,15 +110,21 @@ function applyBannerYoutubeUI() {
     const img = document.getElementById("heroBannerImg");
     const videoWrap = document.getElementById("heroVideoWrap");
     const iframe = document.getElementById("heroVideoIframe");
-    const fileVideo = document.getElementById("heroBannerVideo");
+    const fileWrap = document.getElementById("heroVideoFileWrap");
+    const fileVideoBg = document.getElementById("heroBannerVideoBg");
+    const fileVideoFg = document.getElementById("heroBannerVideoFg");
 
     if (hasFileVideo) {
         if (iframe) iframe.src = "";
         if (videoWrap) videoWrap.style.display = "none";
-        if (fileVideo) {
-            if (fileVideo.getAttribute("src") !== currentBannerVideoUrl) fileVideo.setAttribute("src", currentBannerVideoUrl);
-            fileVideo.style.display = "block";
-            fileVideo.play().catch(() => { /* trình duyệt có thể chặn tự phát tới khi người dùng tương tác - bỏ qua */ });
+        if (fileWrap) {
+            if (fileVideoFg && fileVideoFg.getAttribute("src") !== currentBannerVideoUrl) {
+                fileVideoFg.setAttribute("src", currentBannerVideoUrl);
+                if (fileVideoBg) fileVideoBg.setAttribute("src", currentBannerVideoUrl);
+            }
+            fileWrap.style.display = "block";
+            if (fileVideoFg) fileVideoFg.play().catch(() => { /* trình duyệt có thể chặn tự phát tới khi người dùng tương tác - bỏ qua */ });
+            if (fileVideoBg) fileVideoBg.play().catch(() => { /* ignore */ });
         }
         if (img) img.style.display = "none";
     } else if (videoId) {
@@ -129,12 +135,12 @@ function applyBannerYoutubeUI() {
         const src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0&fs=0&disablekb=1&cc_load_policy=0&iv_load_policy=3&playsinline=1`;
         if (iframe && iframe.src !== src) iframe.src = src;
         if (videoWrap) videoWrap.style.display = "block";
-        if (fileVideo) { fileVideo.pause(); fileVideo.style.display = "none"; }
+        if (fileWrap) { if (fileVideoFg) fileVideoFg.pause(); if (fileVideoBg) fileVideoBg.pause(); fileWrap.style.display = "none"; }
         if (img) img.style.display = "none";
     } else {
         if (iframe) iframe.src = "";
         if (videoWrap) videoWrap.style.display = "none";
-        if (fileVideo) { fileVideo.pause(); fileVideo.style.display = "none"; }
+        if (fileWrap) { if (fileVideoFg) fileVideoFg.pause(); if (fileVideoBg) fileVideoBg.pause(); fileWrap.style.display = "none"; }
         if (img) img.style.display = "block";
     }
 
