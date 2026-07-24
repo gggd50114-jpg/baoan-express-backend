@@ -99,26 +99,29 @@ function extractYoutubeId(url) {
     return null;
 }
 
-// Hiện/ẩn nút ▶ phát video trên khung banner tuỳ theo đã cấu hình link YouTube hay chưa (áp dụng cho MỌI người xem)
+// Ẩn/hiện ảnh banner tĩnh so với video tự phát, tuỳ theo Admin đã cấu hình
+// link YouTube hợp lệ hay chưa (áp dụng đồng bộ cho MỌI người xem trang).
 function applyBannerYoutubeUI() {
-    const playBtn = document.getElementById("bannerPlayBtn");
-    const hasVideo = !!(settingsData.bannerYoutubeUrl && extractYoutubeId(settingsData.bannerYoutubeUrl));
-    if (playBtn) playBtn.style.display = hasVideo ? "flex" : "none";
+    const videoId = extractYoutubeId(settingsData.bannerYoutubeUrl);
+    const img = document.getElementById("heroBannerImg");
+    const videoWrap = document.getElementById("heroVideoWrap");
+    const iframe = document.getElementById("heroVideoIframe");
+
+    if (videoId) {
+        // Video tự động phát (autoplay), tắt tiếng (bắt buộc để trình duyệt cho autoplay),
+        // lặp lại vô hạn (loop) và ẩn thanh điều khiển để trông giống banner động, không phải video thường.
+        const src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0&playsinline=1`;
+        if (iframe && iframe.src !== src) iframe.src = src;
+        if (videoWrap) videoWrap.style.display = "block";
+        if (img) img.style.display = "none";
+    } else {
+        if (iframe) iframe.src = "";
+        if (videoWrap) videoWrap.style.display = "none";
+        if (img) img.style.display = "block";
+    }
+
     const input = document.getElementById("bannerYoutubeInput");
     if (input && document.activeElement !== input) input.value = settingsData.bannerYoutubeUrl || "";
-}
-
-function openBannerYoutubeVideo() {
-    const videoId = extractYoutubeId(settingsData.bannerYoutubeUrl);
-    if (!videoId) { alert("Chưa cấu hình link YouTube hợp lệ cho banner này."); return; }
-    const iframe = document.getElementById("youtubeModalIframe");
-    if (iframe) iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
-    document.getElementById("youtubeModal").style.display = "flex";
-}
-function closeYoutubeModal() {
-    document.getElementById("youtubeModal").style.display = "none";
-    const iframe = document.getElementById("youtubeModalIframe");
-    if (iframe) iframe.src = ""; // dừng phát video khi đóng modal
 }
 
 // Admin dán link YouTube rồi bấm lưu -> áp dụng ngay cho mọi người xem qua cơ chế đồng bộ có sẵn
