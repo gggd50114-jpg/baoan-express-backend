@@ -267,9 +267,16 @@ const server = http.createServer(async (req, res) => {
                 weightBrackets: current.weightBrackets, // khung cân cố định, không cho sửa qua API
                 pickupFee: pickupFeeCheck.value !== undefined ? pickupFeeCheck.value : current.pickupFee,
                 surcharge: surchargeCheck.value !== undefined ? surchargeCheck.value : current.surcharge,
-                settings: body.settings && typeof body.settings.showTableToViewers === "boolean"
-                    ? { showTableToViewers: body.settings.showTableToViewers }
-                    : current.settings,
+                // QUAN TRỌNG: gộp (merge) settings thay vì ghi đè toàn bộ - nếu không, mỗi lần "Lưu &
+                // Đồng Bộ" bảng giá sẽ vô tình XOÁ MẤT bannerImageUrl (ảnh banner đã đổi qua imgbb sẽ
+                // bị reset về ảnh mặc định). Banner chỉ được đổi qua /api/upload-banner và /api/reset-banner,
+                // không bao giờ qua endpoint này.
+                settings: {
+                    showTableToViewers: body.settings && typeof body.settings.showTableToViewers === "boolean"
+                        ? body.settings.showTableToViewers
+                        : current.settings.showTableToViewers,
+                    bannerImageUrl: current.settings.bannerImageUrl
+                },
                 updatedAt: new Date().toISOString(),
                 updatedBy: "admin"
             };
