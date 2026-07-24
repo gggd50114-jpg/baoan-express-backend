@@ -108,9 +108,11 @@ function applyBannerYoutubeUI() {
     const iframe = document.getElementById("heroVideoIframe");
 
     if (videoId) {
-        // Video tự động phát (autoplay), tắt tiếng (bắt buộc để trình duyệt cho autoplay),
-        // lặp lại vô hạn (loop) và ẩn thanh điều khiển để trông giống banner động, không phải video thường.
-        const src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0&playsinline=1`;
+        // autoplay=1&mute=1: tự phát (bắt buộc tắt tiếng mới được trình duyệt cho tự phát)
+        // loop=1&playlist=id: lặp lại vô hạn 1 video
+        // controls=0&modestbranding=1&rel=0&fs=0&disablekb=1: ẩn hết giao diện điều khiển/gợi ý của YouTube
+        // cc_load_policy=0&iv_load_policy=3: ẩn phụ đề & chú thích/annotation mặc định của YouTube
+        const src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0&fs=0&disablekb=1&cc_load_policy=0&iv_load_policy=3&playsinline=1`;
         if (iframe && iframe.src !== src) iframe.src = src;
         if (videoWrap) videoWrap.style.display = "block";
         if (img) img.style.display = "none";
@@ -122,9 +124,25 @@ function applyBannerYoutubeUI() {
 
     const input = document.getElementById("bannerYoutubeInput");
     if (input && document.activeElement !== input) input.value = settingsData.bannerYoutubeUrl || "";
+
+    // Áp dụng mức zoom đã lưu cho khung video, và đồng bộ thanh trượt (nếu admin không đang kéo dở)
+    const zoom = (typeof settingsData.bannerVideoZoom === "number") ? settingsData.bannerVideoZoom : 2.2;
+    if (videoWrap) videoWrap.style.setProperty("--hero-video-zoom", zoom);
+    const slider = document.getElementById("bannerZoomSlider");
+    const zoomLabel = document.getElementById("bannerZoomValueLabel");
+    if (slider && document.activeElement !== slider) slider.value = zoom;
+    if (zoomLabel) zoomLabel.textContent = zoom.toFixed(1) + "x";
 }
 
-// Admin dán link YouTube rồi bấm lưu -> áp dụng ngay cho mọi người xem qua cơ chế đồng bộ có sẵn
+// Kéo thanh trượt -> xem trước ngay lập tức (chưa lưu vào server), để admin canh đúng mức zoom rồi mới bấm Lưu
+function previewBannerZoom(val) {
+    const videoWrap = document.getElementById("heroVideoWrap");
+    const zoomLabel = document.getElementById("bannerZoomValueLabel");
+    if (videoWrap) videoWrap.style.setProperty("--hero-video-zoom", val);
+    if (zoomLabel) zoomLabel.textContent = parseFloat(val).toFixed(1) + "x";
+}
+
+// Admin dán link YouTube + chỉnh zoom rồi bấm lưu -> áp dụng ngay cho mọi người xem qua cơ chế đồng bộ có sẵn
 async function saveBannerYoutubeUrl() {
     if (!isAdminMode || !adminToken) { alert("Bạn cần đăng nhập Admin."); return; }
     const input = document.getElementById("bannerYoutubeInput");
@@ -133,7 +151,9 @@ async function saveBannerYoutubeUrl() {
         alert("Link YouTube không hợp lệ. Hãy dán đúng link video (vd: https://www.youtube.com/watch?v=xxxx hoặc https://youtu.be/xxxx).");
         return;
     }
+    const slider = document.getElementById("bannerZoomSlider");
     settingsData.bannerYoutubeUrl = url || null;
+    settingsData.bannerVideoZoom = slider ? parseFloat(slider.value) : 2.2;
     applyBannerYoutubeUI();
     await saveDataToServer();
 }
@@ -184,7 +204,7 @@ async function loadFromServer() {
         weightBrackets = db.weightBrackets || [];
         pickupFeeData = db.pickupFee || { note: "", tiers: [] };
         surchargeData = db.surcharge || { percent: 5 };
-        settingsData = db.settings || { showTableToViewers: true, bannerYoutubeUrl: null };
+        settingsData = db.settings || { showTableToViewers: true, bannerYoutubeUrl: null, bannerVideoZoom: 2.2 };
         currentBannerUrl = db.bannerImageUrl || null;
         applyBannerImage(currentBannerUrl);
         applyBannerYoutubeUI();
