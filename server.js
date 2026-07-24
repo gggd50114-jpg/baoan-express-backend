@@ -291,6 +291,7 @@ const server = http.createServer(async (req, res) => {
                     ? { showTableToViewers: body.settings.showTableToViewers, bannerYoutubeUrl, bannerVideoZoom }
                     : { ...current.settings, bannerYoutubeUrl, bannerVideoZoom },
                 bannerImageUrl: current.bannerImageUrl || null,
+                bannerVideoUrl: current.bannerVideoUrl || null,
                 updatedAt: new Date().toISOString(),
                 updatedBy: "admin"
             };
@@ -357,6 +358,71 @@ const server = http.createServer(async (req, res) => {
             } catch (e) {
                 return sendJson(res, 502, { error: "Không kết nối được tới ImgBB: " + e.message });
             }
+        }
+
+        // ---------------- API: admin tải VIDEO từ thiết bị lên cho khung banner (lưu trên Cloudinary, không lưu trên server) ----------------
+        if (urlPath === "/api/upload-banner-video" && req.method === "POST") {
+            const admin = requireAdmin(req);
+            if (!admin) return sendJson(res, 401, { error: "Bạn cần đăng nhập Admin (token hết hạn hoặc không hợp lệ)." });
+
+            if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+                return sendJson(res, 400, { error: "Server chưa được cấu hình CLOUDINARY_CLOUD_NAME/CLOUDINARY_API_KEY/CLOUDINARY_API_SECRET trong file .env - liên hệ người quản trị server." });
+            }
+
+            // Video sau khi mã hoá base64 lớn hơn file gốc ~33%. Cho phép tới ~60MB dữ liệu đã mã hoá
+            // (~45MB video gốc) - đủ dùng cho 1 đoạn clip ngắn làm banner, không để chiếm hết bộ nhớ server.
+            const body = await readBody(req, 60 * 1024 * 1024);
+            let videoBase64 = typeof body.videoBase64 === "string" ? body.videoBase64 : "";
+            if (!videoBase64.startsWith("data:video/")) {
+                return sendJson(res, 400, { error: "Thiếu dữ liệu video hoặc định dạng không hợp lệ (chỉ chấp nhận file video)." });
+            }
+
+            try {
+                // Cloudinary yêu cầu upload có chữ ký (signed upload) để không lộ api_secret ra
+                // phía trình duyệt: ký bằng SHA1 trên các tham số đã sắp xếp theo alphabet + api_secret.
+                const timestamp = Math.floor(Date.now() / 1000);
+                const folder = "baoan-banner";
+                const paramsToSign = `folder=${folder}&timestamp=${timestamp}`;
+                const signature = crypto.createHash("sha1").update(paramsToSign + process.env.CLOUDINARY_API_SECRET).digest("hex");
+
+                const cloudinaryRes = await fetch(`https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/video/upload`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams({
+                        file: videoBase64,
+                        api_key: process.env.CLOUDINARY_API_KEY,
+                        timestamp: String(timestamp),
+                        folder,
+                        signature
+                    })
+                });
+                const cloudinaryJson = await cloudinaryRes.json();
+                if (!cloudinaryRes.ok || !cloudinaryJson.secure_url) {
+                    const msg = (cloudinaryJson && cloudinaryJson.error && cloudinaryJson.error.message) || "Cloudinary từ chối video này.";
+                    return sendJson(res, 502, { error: "Tải video lên Cloudinary thất bại: " + msg });
+                }
+
+                const videoUrl = cloudinaryJson.secure_url;
+                const current = readDb();
+                const next = { ...current, bannerVideoUrl: videoUrl, updatedAt: new Date().toISOString(), updatedBy: "admin" };
+                writeDb(next);
+                broadcastUpdate();
+                return sendJson(res, 200, { ok: true, url: videoUrl });
+            } catch (e) {
+                return sendJson(res, 502, { error: "Không kết nối được tới Cloudinary: " + e.message });
+            }
+        }
+
+        // ---------------- API: admin xoá video banner đã tải lên (quay lại dùng ảnh/YouTube) ----------------
+        if (urlPath === "/api/remove-banner-video" && req.method === "POST") {
+            const admin = requireAdmin(req);
+            if (!admin) return sendJson(res, 401, { error: "Bạn cần đăng nhập Admin (token hết hạn hoặc không hợp lệ)." });
+
+            const current = readDb();
+            const next = { ...current, bannerVideoUrl: null, updatedAt: new Date().toISOString(), updatedBy: "admin" };
+            writeDb(next);
+            broadcastUpdate();
+            return sendJson(res, 200, { ok: true });
         }
 
         // ---------------- Còn lại: phục vụ file tĩnh (giao diện web) ----------------
