@@ -76,6 +76,102 @@ document.addEventListener("click", function (e) {
     ripple.addEventListener("animationend", () => ripple.remove());
 });
 
+let currentBannerUrl = null;
+function applyBannerImage(url) {
+    const img = document.getElementById("heroBannerImg");
+    if (!img) return;
+    img.src = url || "assets/tet-banner.jpg"; // không có ảnh tuỳ chỉnh -> dùng ảnh mặc định có sẵn
+}
+
+// ---------------- KHUNG BANNER: TUỲ CHỌN MỞ VIDEO YOUTUBE ----------------
+function extractYoutubeId(url) {
+    if (!url) return null;
+    const patterns = [
+        /youtu\.be\/([A-Za-z0-9_-]{6,})/,
+        /youtube\.com\/watch\?[^#]*v=([A-Za-z0-9_-]{6,})/,
+        /youtube\.com\/embed\/([A-Za-z0-9_-]{6,})/,
+        /youtube\.com\/shorts\/([A-Za-z0-9_-]{6,})/
+    ];
+    for (const re of patterns) {
+        const m = url.match(re);
+        if (m) return m[1];
+    }
+    return null;
+}
+
+// Hiện/ẩn nút ▶ phát video trên khung banner tuỳ theo đã cấu hình link YouTube hay chưa (áp dụng cho MỌI người xem)
+function applyBannerYoutubeUI() {
+    const playBtn = document.getElementById("bannerPlayBtn");
+    const hasVideo = !!(settingsData.bannerYoutubeUrl && extractYoutubeId(settingsData.bannerYoutubeUrl));
+    if (playBtn) playBtn.style.display = hasVideo ? "flex" : "none";
+    const input = document.getElementById("bannerYoutubeInput");
+    if (input && document.activeElement !== input) input.value = settingsData.bannerYoutubeUrl || "";
+}
+
+function openBannerYoutubeVideo() {
+    const videoId = extractYoutubeId(settingsData.bannerYoutubeUrl);
+    if (!videoId) { alert("Chưa cấu hình link YouTube hợp lệ cho banner này."); return; }
+    const iframe = document.getElementById("youtubeModalIframe");
+    if (iframe) iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+    document.getElementById("youtubeModal").style.display = "flex";
+}
+function closeYoutubeModal() {
+    document.getElementById("youtubeModal").style.display = "none";
+    const iframe = document.getElementById("youtubeModalIframe");
+    if (iframe) iframe.src = ""; // dừng phát video khi đóng modal
+}
+
+// Admin dán link YouTube rồi bấm lưu -> áp dụng ngay cho mọi người xem qua cơ chế đồng bộ có sẵn
+async function saveBannerYoutubeUrl() {
+    if (!isAdminMode || !adminToken) { alert("Bạn cần đăng nhập Admin."); return; }
+    const input = document.getElementById("bannerYoutubeInput");
+    const url = (input ? input.value.trim() : "");
+    if (url && !extractYoutubeId(url)) {
+        alert("Link YouTube không hợp lệ. Hãy dán đúng link video (vd: https://www.youtube.com/watch?v=xxxx hoặc https://youtu.be/xxxx).");
+        return;
+    }
+    settingsData.bannerYoutubeUrl = url || null;
+    applyBannerYoutubeUI();
+    await saveDataToServer();
+}
+
+// Admin bấm nút "Đổi ảnh banner" -> chọn file -> đọc base64 -> gửi server để đẩy lên ImgBB
+async function handleBannerFileSelected(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    if (!isAdminMode || !adminToken) { alert("Bạn cần đăng nhập Admin."); return; }
+    if (file.size > 6 * 1024 * 1024) { alert("Ảnh quá lớn (tối đa 6MB). Vui lòng chọn ảnh nhỏ hơn."); return; }
+
+    const btn = document.querySelector("#bannerAdminUpload .banner-upload-btn");
+    if (btn) { btn.disabled = true; btn.textContent = "⏳ Đang tải lên..."; }
+
+    try {
+        const base64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(new Error("Đọc file thất bại"));
+            reader.readAsDataURL(file);
+        });
+
+        const res = await fetch("/api/upload-banner", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: "Bearer " + adminToken },
+            body: JSON.stringify({ imageBase64: base64 })
+        });
+        const data = await res.json();
+        if (!res.ok) { alert("❌ " + (data.error || "Tải ảnh lên thất bại.")); return; }
+
+        currentBannerUrl = data.url;
+        applyBannerImage(currentBannerUrl);
+        alert("✅ Đã đổi ảnh banner thành công! Mọi người xem trang sẽ tự thấy ảnh mới.");
+    } catch (e) {
+        alert("❌ Lỗi khi tải ảnh lên: " + e.message);
+    } finally {
+        if (btn) { btn.disabled = false; btn.textContent = "📤 Đổi ảnh banner"; }
+        event.target.value = ""; // cho phép chọn lại cùng 1 file lần sau nếu cần
+    }
+}
+
 async function loadFromServer() {
     try {
         const res = await fetch("/api/data");
@@ -85,9 +181,11 @@ async function loadFromServer() {
         weightBrackets = db.weightBrackets || [];
         pickupFeeData = db.pickupFee || { note: "", tiers: [] };
         surchargeData = db.surcharge || { percent: 5 };
-        settingsData = db.settings || { showTableToViewers: true };
+        settingsData = db.settings || { showTableToViewers: true, bannerYoutubeUrl: null };
+        currentBannerUrl = db.bannerImageUrl || null;
+        applyBannerImage(currentBannerUrl);
+        applyBannerYoutubeUI();
         applySurchargeToUI();
-        applyBannerImage();
         setSyncBanner(`🌐 Đã kết nối server. Cập nhật lần cuối: ${formatDateTime(db.updatedAt)}`, true);
         document.getElementById("syncStatusPill").textContent = "🟢 Server đang hoạt động";
     } catch (e) {
@@ -102,70 +200,6 @@ function applySurchargeToUI() {
     if (input) input.value = surchargeData.percent;
     const label = document.getElementById("outTaxLabel");
     if (label) label.textContent = `Phụ thu (${surchargeData.percent}%):`;
-}
-
-// ---------------- BANNER "MỪNG XUÂN" - ĐỔI ẢNH & ĐỒNG BỘ QUA IMGBB ----------------
-function applyBannerImage() {
-    const img = document.getElementById("heroBannerImg");
-    if (img) {
-        const url = settingsData.bannerImageUrl || "assets/tet-banner.jpg";
-        if (img.getAttribute("src") !== url) img.src = url;
-    }
-    const bannerResetBtn = document.getElementById("bannerResetBtn");
-    if (bannerResetBtn) bannerResetBtn.classList.toggle("show", isAdminMode && !!settingsData.bannerImageUrl);
-}
-
-function onBannerFileSelected(input) {
-    const file = input.files && input.files[0];
-    input.value = ""; // cho phép chọn lại cùng 1 file lần sau nếu cần
-    if (!file) return;
-    if (!isAdminMode || !adminToken) { alert("Bạn cần đăng nhập Admin."); return; }
-    if (!file.type.startsWith("image/")) { alert("Vui lòng chọn 1 file ảnh (jpg, png, webp...)."); return; }
-    if (file.size > 6.5 * 1024 * 1024) { alert("Ảnh quá lớn (tối đa khoảng 6MB). Vui lòng chọn ảnh nhỏ hơn hoặc nén lại."); return; }
-
-    const overlay = document.getElementById("bannerUploadOverlay");
-    if (overlay) overlay.classList.add("show");
-
-    const reader = new FileReader();
-    reader.onload = async () => {
-        try {
-            const res = await fetch("/api/upload-banner", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", Authorization: "Bearer " + adminToken },
-                body: JSON.stringify({ imageBase64: reader.result })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Tải ảnh lên thất bại.");
-            settingsData.bannerImageUrl = data.url;
-            applyBannerImage();
-        } catch (e) {
-            alert("❌ " + e.message);
-        } finally {
-            if (overlay) overlay.classList.remove("show");
-        }
-    };
-    reader.onerror = () => {
-        if (overlay) overlay.classList.remove("show");
-        alert("Không đọc được file ảnh này. Vui lòng thử ảnh khác.");
-    };
-    reader.readAsDataURL(file);
-}
-
-async function resetBannerImage() {
-    if (!isAdminMode || !adminToken) { alert("Bạn cần đăng nhập Admin."); return; }
-    if (!confirm("Khôi phục về ảnh banner mặc định (bỏ ảnh đã tải lên)?")) return;
-    try {
-        const res = await fetch("/api/reset-banner", {
-            method: "POST",
-            headers: { Authorization: "Bearer " + adminToken }
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Khôi phục ảnh thất bại.");
-        settingsData.bannerImageUrl = null;
-        applyBannerImage();
-    } catch (e) {
-        alert("❌ " + e.message);
-    }
 }
 
 // ---------------- ẨN/HIỆN BẢNG GIÁ CHI TIẾT CHO NGƯỜI XEM ----------------
@@ -284,7 +318,11 @@ async function refreshSilently() {
         if (JSON.stringify(db.settings) !== JSON.stringify(settingsData)) {
             settingsData = db.settings || settingsData;
             applyTableVisibility();
-            applyBannerImage();
+            applyBannerYoutubeUI();
+        }
+        if ((db.bannerImageUrl || null) !== currentBannerUrl) {
+            currentBannerUrl = db.bannerImageUrl || null;
+            applyBannerImage(currentBannerUrl);
         }
         weightBrackets = db.weightBrackets || weightBrackets;
         setSyncBanner(`🌐 Đã đồng bộ. Cập nhật lần cuối: ${formatDateTime(db.updatedAt)}`, true);
@@ -420,15 +458,15 @@ function applyAdminUI() {
     document.getElementById("adminControls").style.display = isAdminMode ? "flex" : "none";
     document.getElementById("viewerControls").style.display = isAdminMode ? "none" : "flex";
     document.getElementById("pickupAdminControls").style.display = isAdminMode ? "flex" : "none";
+    const bannerUpload = document.getElementById("bannerAdminUpload");
+    if (bannerUpload) bannerUpload.style.display = isAdminMode ? "flex" : "none";
+    const bannerYtRow = document.getElementById("bannerYoutubeAdminRow");
+    if (bannerYtRow) bannerYtRow.style.display = isAdminMode ? "flex" : "none";
+    applyBannerYoutubeUI();
     const delBtn = document.getElementById("deleteRouteBtn");
     if (delBtn) delBtn.style.display = isAdminMode ? "inline-flex" : "none";
     const surchargeInput = document.getElementById("surchargePercentInput");
     if (surchargeInput) surchargeInput.disabled = !isAdminMode;
-
-    const bannerChangeBtn = document.getElementById("bannerChangeBtn");
-    if (bannerChangeBtn) bannerChangeBtn.classList.toggle("show", isAdminMode);
-    const bannerResetBtn = document.getElementById("bannerResetBtn");
-    if (bannerResetBtn) bannerResetBtn.classList.toggle("show", isAdminMode && !!settingsData.bannerImageUrl);
 }
 
 function updateSurchargePercent(val) {
@@ -650,15 +688,9 @@ function initVNGlobe() {
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.6;
     controls.enableZoom = true;
-    controls.minDistance = 100.6; // cho phép zoom rất sát bề mặt - để "tan chảy" mượt sang bản đồ phẳng chi tiết
+    controls.minDistance = 135;   // zoom gần nhất - vẫn thấy rõ bề mặt, không lọt vào trong
     controls.maxDistance = 520;   // zoom xa nhất - không bị trôi mất hình ra ngoài khung
-    controls.zoomSpeed = 0.75;
-
-    // Theo dõi liên tục độ cao camera (dù zoom bằng cuộn chuột, chụm tay hay kéo) để đồng bộ
-    // hiệu ứng "tan chảy" sang bản đồ phẳng chi tiết - giống cách Google Maps/Google Earth
-    // hiển thị thêm chi tiết (đường, tên địa danh) khi camera tiến gần mặt đất.
-    controls.addEventListener("change", () => vnGlobeUpdateZoomVisual());
-    setInterval(() => { if (vnGlobeReady) vnGlobeUpdateZoomVisual(); }, 220);
+    controls.zoomSpeed = 0.7;
 
     // Khi người dùng kéo/zoom bằng tay thì tạm dừng tự xoay, xoay lại sau vài giây ngừng thao tác
     controls.addEventListener("start", () => {
@@ -679,148 +711,21 @@ function initVNGlobe() {
         const s = Math.min(Math.max(r.width || 260, 180), 380);
         el.style.height = s + "px";
         vnGlobe.width(s).height(s);
-        if (vnFlatMap) vnFlatMap.invalidateSize();
     });
 }
 
 // Zoom bằng nút bấm (+/-): giữ nguyên hướng nhìn hiện tại, chỉ thay đổi khoảng cách camera
-// (khi đã "tan chảy" hẳn sang bản đồ phẳng thì +/- sẽ điều khiển zoom của bản đồ phẳng thay vì quả cầu)
 function vnGlobeZoomBy(factor) {
     if (!vnGlobe) return;
     const cur = vnGlobe.pointOfView();
-    const nextAltitude = Math.max(0.015, Math.min(4, cur.altitude * factor));
+    const nextAltitude = Math.max(0.35, Math.min(4, cur.altitude * factor));
     vnGlobe.controls().autoRotate = false;
     if (vnGlobeResumeTimer) clearTimeout(vnGlobeResumeTimer);
     vnGlobe.pointOfView({ lat: cur.lat, lng: cur.lng, altitude: nextAltitude }, 300);
     vnGlobeResumeTimer = setTimeout(() => { if (vnGlobe) vnGlobe.controls().autoRotate = true; }, 4500);
-    setTimeout(() => vnGlobeUpdateZoomVisual(), 60);
 }
-function vnGlobeZoomIn() {
-    if (vnFlatMapInteractive && vnFlatMap) { vnFlatMap.zoomIn(); return; }
-    vnGlobeZoomBy(0.7);
-}
-function vnGlobeZoomOut() {
-    if (vnFlatMapInteractive && vnFlatMap) { vnFlatMap.zoomOut(); return; }
-    vnGlobeZoomBy(1.4);
-}
-
-// ---------------- HIỆU ỨNG "TAN CHẢY" TỪ QUẢ ĐỊA CẦU 3D SANG BẢN ĐỒ PHẲNG CHI TIẾT ----------------
-// Mô phỏng đúng cảm giác zoom của Google Maps/Google Earth: càng phóng to (camera càng
-// tiến gần mặt đất), quả địa cầu càng mờ dần và một bản đồ phẳng THẬT (tile OpenStreetMap
-// với tên đường, tên địa danh thật) hiện rõ dần lên, đến khi chiếm trọn khung và nhận thao
-// tác chuột/chạm y như Google Maps. Zoom ra lại (hoặc bấm nút quay lại) sẽ trả về quả cầu 3D.
-const GM_FADE_START_ALT = 0.55; // độ cao camera bắt đầu mờ dần sang bản đồ phẳng
-const GM_FADE_FULL_ALT  = 0.14; // độ cao camera đã "sang hẳn" bản đồ phẳng, chiếm trọn khung
-const GM_EXIT_LEAFLET_ZOOM = 3; // zoom bản đồ phẳng xuống dưới mức này -> tự động quay lại quả cầu
-
-let vnFlatMap = null;
-let vnFlatMapMarker = null;
-let vnFlatMapInteractive = false;
-let vnFlatMapCenter = { lat: GLOBE_DEST_DEFAULT.lat, lng: GLOBE_DEST_DEFAULT.lng };
-let vnGlobeVisualPending = false;
-
-function initFlatMapIfNeeded() {
-    if (vnFlatMap || typeof L === "undefined") return;
-    const el = document.getElementById("globeFlatMap");
-    if (!el) return;
-    vnFlatMap = L.map(el, {
-        zoomControl: false,
-        attributionControl: true,
-        scrollWheelZoom: true,
-        fadeAnimation: true,
-        worldCopyJump: true
-    }).setView([vnFlatMapCenter.lat, vnFlatMapCenter.lng], 5);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 18,
-        attribution: "© OpenStreetMap"
-    }).addTo(vnFlatMap);
-
-    vnFlatMapMarker = L.marker([vnFlatMapCenter.lat, vnFlatMapCenter.lng]).addTo(vnFlatMap);
-
-    // Nếu người dùng zoom bản đồ phẳng ra quá xa (muốn quay lại góc nhìn toàn cầu) -> tự chuyển về quả cầu 3D
-    vnFlatMap.on("zoomend", () => {
-        if (vnFlatMapInteractive && vnFlatMap.getZoom() <= GM_EXIT_LEAFLET_ZOOM) {
-            vnGlobeExitFlatMap();
-        }
-    });
-}
-
-// Đọc độ cao camera hiện tại của quả cầu và cập nhật độ mờ/hiển thị của lớp bản đồ phẳng tương ứng
-function vnGlobeUpdateZoomVisual() {
-    if (!vnGlobe || vnFlatMapInteractive) return; // đã ở hẳn chế độ bản đồ phẳng thì không cần tính lại theo camera quả cầu nữa
-    if (vnGlobeVisualPending) return;
-    vnGlobeVisualPending = true;
-    requestAnimationFrame(() => {
-        vnGlobeVisualPending = false;
-        const cur = vnGlobe.pointOfView();
-        const alt = cur.altitude;
-        const globeEl = document.getElementById("globeContainer");
-        const flatEl = document.getElementById("globeFlatMap");
-        const hintEl = document.getElementById("globeZoomHint");
-        if (!globeEl || !flatEl) return;
-
-        const t = Math.max(0, Math.min(1, (GM_FADE_START_ALT - alt) / (GM_FADE_START_ALT - GM_FADE_FULL_ALT)));
-
-        if (t > 0.02) {
-            initFlatMapIfNeeded();
-            flatEl.classList.add("active");
-            flatEl.style.opacity = t.toFixed(3);
-            globeEl.classList.add("gm-fading");
-            globeEl.style.opacity = String(1 - t * 0.6);
-            if (vnFlatMap) {
-                const zoomLevel = 4 + t * 11; // 4 (khu vực) -> 15 (chi tiết đường phố, toà nhà)
-                vnFlatMap.setView([vnFlatMapCenter.lat, vnFlatMapCenter.lng], zoomLevel, { animate: false });
-                setTimeout(() => { if (vnFlatMap) vnFlatMap.invalidateSize(); }, 0);
-            }
-        } else {
-            flatEl.classList.remove("active");
-            flatEl.style.opacity = "0";
-            globeEl.classList.remove("gm-fading");
-            globeEl.style.opacity = "1";
-        }
-
-        if (hintEl) {
-            hintEl.textContent = alt > 1.3 ? "🌐 Toàn cầu" : (alt > GM_FADE_START_ALT ? "🗺️ Khu vực" : (t < 1 ? "🔍 Đang phóng vào bản đồ chi tiết..." : "📍 Bản đồ chi tiết"));
-            hintEl.classList.add("show");
-            clearTimeout(vnGlobeUpdateZoomVisual._hintTimer);
-            vnGlobeUpdateZoomVisual._hintTimer = setTimeout(() => hintEl.classList.remove("show"), 1800);
-        }
-
-        if (t >= 1 && !vnFlatMapInteractive) vnGlobeEnterFlatMap();
-    });
-}
-
-// Đã zoom đủ sâu: chuyển hẳn quyền điều khiển chuột/chạm sang bản đồ phẳng chi tiết (như Google Maps)
-function vnGlobeEnterFlatMap() {
-    vnFlatMapInteractive = true;
-    const globeEl = document.getElementById("globeContainer");
-    const flatEl = document.getElementById("globeFlatMap");
-    const exitBtn = document.getElementById("globeFlatMapExit");
-    if (globeEl) { globeEl.style.pointerEvents = "none"; globeEl.style.opacity = "0.001"; }
-    if (flatEl) { flatEl.classList.add("interactive"); flatEl.style.opacity = "1"; }
-    if (exitBtn) exitBtn.classList.add("show");
-    if (vnGlobe) vnGlobe.controls().autoRotate = false;
-    initFlatMapIfNeeded();
-    if (vnFlatMap) setTimeout(() => vnFlatMap.invalidateSize(), 60);
-}
-
-// Quay lại quả địa cầu 3D (bấm nút "Quay lại quả địa cầu" hoặc tự động khi zoom bản đồ phẳng ra xa)
-function vnGlobeExitFlatMap() {
-    vnFlatMapInteractive = false;
-    const globeEl = document.getElementById("globeContainer");
-    const flatEl = document.getElementById("globeFlatMap");
-    const exitBtn = document.getElementById("globeFlatMapExit");
-    if (globeEl) { globeEl.style.pointerEvents = "auto"; globeEl.style.opacity = "1"; globeEl.classList.remove("gm-fading"); }
-    if (flatEl) { flatEl.classList.remove("interactive", "active"); flatEl.style.opacity = "0"; }
-    if (exitBtn) exitBtn.classList.remove("show");
-    if (vnGlobe) {
-        vnGlobe.controls().autoRotate = false;
-        vnGlobe.pointOfView({ lat: vnFlatMapCenter.lat, lng: vnFlatMapCenter.lng, altitude: 0.85 }, 700);
-        if (vnGlobeResumeTimer) clearTimeout(vnGlobeResumeTimer);
-        vnGlobeResumeTimer = setTimeout(() => { if (vnGlobe) vnGlobe.controls().autoRotate = true; }, 4500);
-    }
-}
+function vnGlobeZoomIn() { vnGlobeZoomBy(0.7); }
+function vnGlobeZoomOut() { vnGlobeZoomBy(1.4); }
 
 function updateVNGlobe(route) {
     const destLabelEl = document.getElementById("globeDestLabel");
@@ -836,12 +741,6 @@ function updateVNGlobe(route) {
     if (!vnGlobe) return; // thư viện 3D chưa sẵn sàng (vd. mất mạng CDN) -> chỉ cập nhật chữ, không lỗi trang
 
     const dest = GLOBE_ROUTE_COORDS[route.id] || GLOBE_DEST_DEFAULT;
-
-    // Đổi tuyến -> cập nhật điểm đến cho bản đồ phẳng, và nếu đang ở chế độ bản đồ phẳng chi tiết thì quay lại quả cầu 3D trước
-    vnFlatMapCenter = { lat: dest.lat, lng: dest.lng };
-    if (vnFlatMapInteractive) vnGlobeExitFlatMap();
-    if (vnFlatMapMarker) vnFlatMapMarker.setLatLng([dest.lat, dest.lng]);
-    if (vnFlatMap && !vnFlatMapInteractive) vnFlatMap.setView([dest.lat, dest.lng], vnFlatMap.getZoom(), { animate: false });
 
     vnGlobe
         .pointsData([
@@ -1138,7 +1037,6 @@ async function discardUnsavedChanges() {
         clearDirty();
         applySurchargeToUI();
         applyTableVisibility();
-        applyBannerImage();
         renderRegionChips(); renderRouteTabs(); initCalculatorOptions(); renderMainTable(); renderPickupFeeTable(); updateHeaderStats();
         setSyncBanner(`🌐 Đã hoàn tác, lấy lại bản đang lưu trên server. Cập nhật lần cuối: ${formatDateTime(db.updatedAt)}`, true);
         alert("↩️ Đã hoàn tác các thay đổi chưa lưu.");
