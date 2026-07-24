@@ -33,7 +33,6 @@ window.addEventListener("beforeunload", function (e) {
 
 // ---------------- KHỞI CHẠY ----------------
 window.onload = async function () {
-    initVNGlobe();
     await loadFromServer();
     if (adminToken) {
         const ok = await checkTokenValid();
@@ -87,6 +86,7 @@ async function loadFromServer() {
         surchargeData = db.surcharge || { percent: 5 };
         settingsData = db.settings || { showTableToViewers: true };
         applySurchargeToUI();
+        applyBannerImage();
         setSyncBanner(`🌐 Đã kết nối server. Cập nhật lần cuối: ${formatDateTime(db.updatedAt)}`, true);
         document.getElementById("syncStatusPill").textContent = "🟢 Server đang hoạt động";
     } catch (e) {
@@ -103,6 +103,70 @@ function applySurchargeToUI() {
     if (label) label.textContent = `Phụ thu (${surchargeData.percent}%):`;
 }
 
+// ---------------- BANNER "MỪNG XUÂN" - ĐỔI ẢNH & ĐỒNG BỘ QUA IMGBB ----------------
+function applyBannerImage() {
+    const img = document.getElementById("heroBannerImg");
+    if (img) {
+        const url = settingsData.bannerImageUrl || "assets/tet-banner.jpg";
+        if (img.getAttribute("src") !== url) img.src = url;
+    }
+    const bannerResetBtn = document.getElementById("bannerResetBtn");
+    if (bannerResetBtn) bannerResetBtn.classList.toggle("show", isAdminMode && !!settingsData.bannerImageUrl);
+}
+
+function onBannerFileSelected(input) {
+    const file = input.files && input.files[0];
+    input.value = ""; // cho phép chọn lại cùng 1 file lần sau nếu cần
+    if (!file) return;
+    if (!isAdminMode || !adminToken) { alert("Bạn cần đăng nhập Admin."); return; }
+    if (!file.type.startsWith("image/")) { alert("Vui lòng chọn 1 file ảnh (jpg, png, webp...)."); return; }
+    if (file.size > 6.5 * 1024 * 1024) { alert("Ảnh quá lớn (tối đa khoảng 6MB). Vui lòng chọn ảnh nhỏ hơn hoặc nén lại."); return; }
+
+    const overlay = document.getElementById("bannerUploadOverlay");
+    if (overlay) overlay.classList.add("show");
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+        try {
+            const res = await fetch("/api/upload-banner", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Authorization: "Bearer " + adminToken },
+                body: JSON.stringify({ imageBase64: reader.result })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Tải ảnh lên thất bại.");
+            settingsData.bannerImageUrl = data.url;
+            applyBannerImage();
+        } catch (e) {
+            alert("❌ " + e.message);
+        } finally {
+            if (overlay) overlay.classList.remove("show");
+        }
+    };
+    reader.onerror = () => {
+        if (overlay) overlay.classList.remove("show");
+        alert("Không đọc được file ảnh này. Vui lòng thử ảnh khác.");
+    };
+    reader.readAsDataURL(file);
+}
+
+async function resetBannerImage() {
+    if (!isAdminMode || !adminToken) { alert("Bạn cần đăng nhập Admin."); return; }
+    if (!confirm("Khôi phục về ảnh banner mặc định (bỏ ảnh đã tải lên)?")) return;
+    try {
+        const res = await fetch("/api/reset-banner", {
+            method: "POST",
+            headers: { Authorization: "Bearer " + adminToken }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Khôi phục ảnh thất bại.");
+        settingsData.bannerImageUrl = null;
+        applyBannerImage();
+    } catch (e) {
+        alert("❌ " + e.message);
+    }
+}
+
 // ---------------- ẨN/HIỆN BẢNG GIÁ CHI TIẾT CHO NGƯỜI XEM ----------------
 // Admin luôn thấy đầy đủ bảng giá + bảng phí lấy hàng để chỉnh sửa. Người
 // xem thường (chưa đăng nhập Admin) chỉ thấy 2 bảng này nếu Admin bật công
@@ -112,16 +176,12 @@ function applyTableVisibility() {
     const toggle = document.getElementById("showTableToggle");
     if (toggle) toggle.checked = !!settingsData.showTableToViewers;
 
-    const topLayout = document.getElementById("topLayout");
     const priceTableCard = document.getElementById("priceTableCard");
     const pickupSection = document.getElementById("pickupFeeSection");
     const calcNote = document.getElementById("calcHiddenTableNote");
 
     const shouldShowToThisUser = isAdminMode || settingsData.showTableToViewers;
 
-    // Lưu ý: KHÔNG đổi bố cục của topLayout (quả địa cầu + hộp tính cước) dù bảng giá
-    // chi tiết đang ẩn hay hiện - giao diện lấp đầy màn hình theo tỉ lệ 1/3-2/3 phải
-    // giữ nguyên như nhau trong mọi trường hợp, chỉ ẩn/hiện phần bảng giá bên dưới.
     if (shouldShowToThisUser) {
         if (priceTableCard) priceTableCard.style.display = "block";
         if (pickupSection) pickupSection.style.display = "grid";
@@ -219,6 +279,7 @@ async function refreshSilently() {
         if (JSON.stringify(db.settings) !== JSON.stringify(settingsData)) {
             settingsData = db.settings || settingsData;
             applyTableVisibility();
+            applyBannerImage();
         }
         weightBrackets = db.weightBrackets || weightBrackets;
         setSyncBanner(`🌐 Đã đồng bộ. Cập nhật lần cuối: ${formatDateTime(db.updatedAt)}`, true);
@@ -358,6 +419,11 @@ function applyAdminUI() {
     if (delBtn) delBtn.style.display = isAdminMode ? "inline-flex" : "none";
     const surchargeInput = document.getElementById("surchargePercentInput");
     if (surchargeInput) surchargeInput.disabled = !isAdminMode;
+
+    const bannerChangeBtn = document.getElementById("bannerChangeBtn");
+    if (bannerChangeBtn) bannerChangeBtn.classList.toggle("show", isAdminMode);
+    const bannerResetBtn = document.getElementById("bannerResetBtn");
+    if (bannerResetBtn) bannerResetBtn.classList.toggle("show", isAdminMode && !!settingsData.bannerImageUrl);
 }
 
 function updateSurchargePercent(val) {
@@ -481,346 +547,67 @@ function onCalcRouteChange() {
         opt.value = idx; opt.textContent = zone.name;
         zoneSelect.appendChild(opt);
     });
-    updateVNGlobe(appData[routeIdx]); // ghim luôn quả địa cầu theo tuyến vừa chọn ở hộp tính cước nhanh
     runCalculation();
 }
 
-// ---------------- QUẢ ĐỊA CẦU 3D THẬT (globe.gl / three.js) - GHIM ĐỊNH VỊ TUYẾN ĐANG CHỌN ----------------
-// Toạ độ thật (lat/lng) của kho tổng và từng tỉnh/thành theo route id, để ghim đúng vị trí thật trên quả địa cầu.
-const GLOBE_HQ = { lat: 21.0285, lng: 105.8542, name: "Hà Nội (Kho tổng)" };
-const GLOBE_ROUTE_COORDS = {
-    route_hni:            { lat: 21.0285, lng: 105.8542 },
-    route_bckn:           { lat: 22.1477, lng: 105.8348 },
-    route_caobng:         { lat: 22.6666, lng: 106.2639 },
-    route_locai:          { lat: 22.4809, lng: 103.9755 },
-    route_hgiang:         { lat: 22.8025, lng: 104.9784 },
-    route_hiphng:         { lat: 20.8449, lng: 106.6881 },
-    route_tuynquang:      { lat: 21.8233, lng: 105.2280 },
-    route_lngsn:          { lat: 21.8530, lng: 106.7610 },
-    route_hobnh:          { lat: 20.8156, lng: 105.3373 },
-    route_ynbi:           { lat: 21.7168, lng: 104.8986 },
-    route_thibnh:         { lat: 20.4463, lng: 106.3365 },
-    route_hnam:           { lat: 20.5835, lng: 105.9230 },
-    route_bcninh:         { lat: 21.1861, lng: 106.0763 },
-    route_bcgiang:        { lat: 21.2731, lng: 106.1946 },
-    route_thinguyn:       { lat: 21.5942, lng: 105.8480 },
-    route_ninhbnh:        { lat: 20.2506, lng: 105.9744 },
-    route_namnh:          { lat: 20.4388, lng: 106.1621 },
-    route_hidng:          { lat: 20.9373, lng: 106.3145 },
-    route_vnhphc:         { lat: 21.3608, lng: 105.5474 },
-    route_phth:           { lat: 21.4208, lng: 105.2306 },
-    route_hngyn:          { lat: 20.6464, lng: 106.0511 },
-    route_qungninh:       { lat: 20.9527, lng: 107.0700 },
-    route_hu:             { lat: 16.4637, lng: 107.5909 },
-    route_nng:            { lat: 16.0544, lng: 108.2022 },
-    route_qungnamhian:    { lat: 15.8801, lng: 108.3380 },
-    route_qungngi:        { lat: 15.1214, lng: 108.8044 },
-    route_bnhnh:          { lat: 13.7757, lng: 109.2237 },
-    route_kontum:         { lat: 14.3497, lng: 108.0005 },
-    route_phyn:           { lat: 13.0882, lng: 109.0929 },
-    route_khnhho:         { lat: 12.2388, lng: 109.1967 },
-    route_gialaipleiku:   { lat: 13.9833, lng: 108.0000 },
-    route_klk:            { lat: 12.6667, lng: 108.0500 },
-    route_knng:           { lat: 12.2646, lng: 107.6098 },
-    route_ngnai:          { lat: 10.9574, lng: 106.8426 },
-    route_vngtu:          { lat: 10.3460, lng: 107.0843 },
-    route_bnhdng:         { lat: 10.9804, lng: 106.6519 },
-    route_sign:           { lat: 10.7769, lng: 106.7009 },
-    route_longan:         { lat: 10.5333, lng: 106.4167 },
-    route_tingiang:       { lat: 10.3600, lng: 106.3600 },
-    route_vnhlong:        { lat: 10.2397, lng: 105.9722 },
-    route_lmng:           { lat: 11.9404, lng: 108.4583 },
-    route_cnth:           { lat: 10.0452, lng: 105.7469 },
-    route_bntre:          { lat: 10.2433, lng: 106.3756 },
-    route_tyninh:         { lat: 11.3100, lng: 106.0983 },
-    route_trvinh:         { lat: 9.9349,  lng: 106.3452 },
-    route_angiang:        { lat: 10.5216, lng: 105.1259 },
-    route_hugiang:        { lat: 9.7845,  lng: 105.4700 },
-    route_sctrng:         { lat: 9.6025,  lng: 105.9739 },
-    route_bcliu:          { lat: 9.2940,  lng: 105.7215 },
-    route_kingiangphqu:   { lat: 10.2270, lng: 103.9670 },
-    route_ngthp:          { lat: 10.4938, lng: 105.6882 },
-    route_cmau:           { lat: 9.1768,  lng: 105.1524 },
-    route_hphn_qn_lienlinh:{ lat: 11.5357, lng: 106.9078 }
+// ---------------- QUẢ ĐỊA CẦU XOAY - GHIM ĐỊNH VỊ TUYẾN ĐANG CHỌN ----------------
+// Toạ độ ghim (trên viewBox 200x200 của SVG địa cầu) ứng với từng miền,
+// mô phỏng vị trí tương đối theo bản đồ Việt Nam (Bắc ở trên, Nam ở dưới):
+const GLOBE_ORIGIN_POINT = { x: 100, y: 58 }; // Hà Nội - cố định
+const GLOBE_DEST_POINT_BY_REGION = {
+    "Miền Bắc":   { x: 78,  y: 80  },
+    "Miền Trung": { x: 118, y: 104 },
+    "Tây Nguyên": { x: 86,  y: 128 },
+    "Miền Nam":   { x: 112, y: 150 }
 };
-const GLOBE_DEST_DEFAULT = { lat: 16.0, lng: 108.0 };
+const GLOBE_DEST_POINT_DEFAULT = GLOBE_DEST_POINT_BY_REGION["Miền Nam"];
 
-let vnGlobe = null;
-let vnGlobeReady = false;
-let vnGlobeResumeTimer = null;
-
-function initVNGlobe() {
-    const el = document.getElementById("globeContainer");
-    const overlay = document.getElementById("globeLoadingOverlay");
-    if (!el || typeof Globe === "undefined") return; // thư viện 3D chưa tải xong / lỗi mạng -> bỏ qua an toàn
-
-    const rect = el.getBoundingClientRect();
-    const size = Math.min(Math.max(rect.width || 260, 180), 380);
-    el.style.height = size + "px"; // đảm bảo khung luôn là hình vuông đúng bằng canvas 3D, không bị cắt/lệch
-
-    vnGlobe = Globe()(el)
-        .width(size)
-        .height(size)
-        .backgroundColor("rgba(0,0,0,0)")
-        .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
-        .bumpImageUrl("https://unpkg.com/three-globe/example/img/earth-topology.png")
-        .showAtmosphere(true)
-        .atmosphereColor("#fbbf24")
-        .atmosphereAltitude(0.2)
-        .pointOfView({ lat: 16, lng: 106, altitude: 2.1 }, 0)
-        .onGlobeReady(() => {
-            vnGlobeReady = true;
-            if (overlay) overlay.classList.add("hidden");
-        });
-
-    // Xoay nhẹ tự động khi không thao tác. Bật zoom bằng cuộn chuột / chụm 2 ngón (mobile),
-    // giới hạn khoảng cách zoom để không zoom lọt vào trong lòng đất hoặc ra quá xa mất hình.
-    const controls = vnGlobe.controls();
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.6;
-    controls.enableZoom = true;
-    controls.minDistance = 100.6; // cho phép zoom rất sát bề mặt - để "tan chảy" mượt sang bản đồ phẳng chi tiết
-    controls.maxDistance = 520;   // zoom xa nhất - không bị trôi mất hình ra ngoài khung
-    controls.zoomSpeed = 0.75;
-
-    // Theo dõi liên tục độ cao camera (dù zoom bằng cuộn chuột, chụm tay hay kéo) để đồng bộ
-    // hiệu ứng "tan chảy" sang bản đồ phẳng chi tiết - giống cách Google Maps/Google Earth
-    // hiển thị thêm chi tiết (đường, tên địa danh) khi camera tiến gần mặt đất.
-    controls.addEventListener("change", () => vnGlobeUpdateZoomVisual());
-    setInterval(() => { if (vnGlobeReady) vnGlobeUpdateZoomVisual(); }, 220);
-
-    // Khi người dùng kéo/zoom bằng tay thì tạm dừng tự xoay, xoay lại sau vài giây ngừng thao tác
-    controls.addEventListener("start", () => {
-        controls.autoRotate = false;
-        if (vnGlobeResumeTimer) clearTimeout(vnGlobeResumeTimer);
-    });
-    controls.addEventListener("end", () => {
-        if (vnGlobeResumeTimer) clearTimeout(vnGlobeResumeTimer);
-        vnGlobeResumeTimer = setTimeout(() => { if (vnGlobe) vnGlobe.controls().autoRotate = true; }, 4500);
-    });
-
-    // Phòng khi ảnh tải quá lâu / mạng chậm: vẫn ẩn overlay sau tối đa 4s để không che khuất quả cầu mãi
-    setTimeout(() => { if (overlay) overlay.classList.add("hidden"); }, 4000);
-
-    window.addEventListener("resize", () => {
-        if (!vnGlobe) return;
-        const r = el.getBoundingClientRect();
-        const s = Math.min(Math.max(r.width || 260, 180), 380);
-        el.style.height = s + "px";
-        vnGlobe.width(s).height(s);
-        if (vnFlatMap) vnFlatMap.invalidateSize();
-    });
+// Tính đường cong (cung) nối 2 điểm trên mặt địa cầu, để vẽ path SVG
+function buildGlobeArcPath(origin, dest) {
+    const mx = (origin.x + dest.x) / 2;
+    const my = (origin.y + dest.y) / 2;
+    const dx = dest.x - origin.x;
+    const dy = dest.y - origin.y;
+    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+    const nx = -dy / len, ny = dx / len; // vector pháp tuyến để bẻ cong path
+    const bulge = 16;
+    const cx = mx + nx * bulge, cy = my + ny * bulge;
+    return `M ${origin.x},${origin.y} Q ${cx},${cy} ${dest.x},${dest.y}`;
 }
 
-// Zoom bằng nút bấm (+/-): giữ nguyên hướng nhìn hiện tại, chỉ thay đổi khoảng cách camera
-// (khi đã "tan chảy" hẳn sang bản đồ phẳng thì +/- sẽ điều khiển zoom của bản đồ phẳng thay vì quả cầu)
-function vnGlobeZoomBy(factor) {
-    if (!vnGlobe) return;
-    const cur = vnGlobe.pointOfView();
-    const nextAltitude = Math.max(0.015, Math.min(4, cur.altitude * factor));
-    vnGlobe.controls().autoRotate = false;
-    if (vnGlobeResumeTimer) clearTimeout(vnGlobeResumeTimer);
-    vnGlobe.pointOfView({ lat: cur.lat, lng: cur.lng, altitude: nextAltitude }, 300);
-    vnGlobeResumeTimer = setTimeout(() => { if (vnGlobe) vnGlobe.controls().autoRotate = true; }, 4500);
-    setTimeout(() => vnGlobeUpdateZoomVisual(), 60);
-}
-function vnGlobeZoomIn() {
-    if (vnFlatMapInteractive && vnFlatMap) { vnFlatMap.zoomIn(); return; }
-    vnGlobeZoomBy(0.7);
-}
-function vnGlobeZoomOut() {
-    if (vnFlatMapInteractive && vnFlatMap) { vnFlatMap.zoomOut(); return; }
-    vnGlobeZoomBy(1.4);
-}
-
-// ---------------- HIỆU ỨNG "TAN CHẢY" TỪ QUẢ ĐỊA CẦU 3D SANG BẢN ĐỒ PHẲNG CHI TIẾT ----------------
-// Mô phỏng đúng cảm giác zoom của Google Maps/Google Earth: càng phóng to (camera càng
-// tiến gần mặt đất), quả địa cầu càng mờ dần và một bản đồ phẳng THẬT (tile OpenStreetMap
-// với tên đường, tên địa danh thật) hiện rõ dần lên, đến khi chiếm trọn khung và nhận thao
-// tác chuột/chạm y như Google Maps. Zoom ra lại (hoặc bấm nút quay lại) sẽ trả về quả cầu 3D.
-const GM_FADE_START_ALT = 0.55; // độ cao camera bắt đầu mờ dần sang bản đồ phẳng
-const GM_FADE_FULL_ALT  = 0.14; // độ cao camera đã "sang hẳn" bản đồ phẳng, chiếm trọn khung
-const GM_EXIT_LEAFLET_ZOOM = 3; // zoom bản đồ phẳng xuống dưới mức này -> tự động quay lại quả cầu
-
-let vnFlatMap = null;
-let vnFlatMapMarker = null;
-let vnFlatMapInteractive = false;
-let vnFlatMapCenter = { lat: GLOBE_DEST_DEFAULT.lat, lng: GLOBE_DEST_DEFAULT.lng };
-let vnGlobeVisualPending = false;
-
-function initFlatMapIfNeeded() {
-    if (vnFlatMap || typeof L === "undefined") return;
-    const el = document.getElementById("globeFlatMap");
-    if (!el) return;
-    vnFlatMap = L.map(el, {
-        zoomControl: false,
-        attributionControl: true,
-        scrollWheelZoom: true,
-        fadeAnimation: true,
-        worldCopyJump: true
-    }).setView([vnFlatMapCenter.lat, vnFlatMapCenter.lng], 5);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 18,
-        attribution: "© OpenStreetMap"
-    }).addTo(vnFlatMap);
-
-    vnFlatMapMarker = L.marker([vnFlatMapCenter.lat, vnFlatMapCenter.lng]).addTo(vnFlatMap);
-
-    // Nếu người dùng zoom bản đồ phẳng ra quá xa (muốn quay lại góc nhìn toàn cầu) -> tự chuyển về quả cầu 3D
-    vnFlatMap.on("zoomend", () => {
-        if (vnFlatMapInteractive && vnFlatMap.getZoom() <= GM_EXIT_LEAFLET_ZOOM) {
-            vnGlobeExitFlatMap();
-        }
-    });
-}
-
-// Đọc độ cao camera hiện tại của quả cầu và cập nhật độ mờ/hiển thị của lớp bản đồ phẳng tương ứng
-function vnGlobeUpdateZoomVisual() {
-    if (!vnGlobe || vnFlatMapInteractive) return; // đã ở hẳn chế độ bản đồ phẳng thì không cần tính lại theo camera quả cầu nữa
-    if (vnGlobeVisualPending) return;
-    vnGlobeVisualPending = true;
-    requestAnimationFrame(() => {
-        vnGlobeVisualPending = false;
-        const cur = vnGlobe.pointOfView();
-        const alt = cur.altitude;
-        const globeEl = document.getElementById("globeContainer");
-        const flatEl = document.getElementById("globeFlatMap");
-        const hintEl = document.getElementById("globeZoomHint");
-        if (!globeEl || !flatEl) return;
-
-        const t = Math.max(0, Math.min(1, (GM_FADE_START_ALT - alt) / (GM_FADE_START_ALT - GM_FADE_FULL_ALT)));
-
-        if (t > 0.02) {
-            initFlatMapIfNeeded();
-            flatEl.classList.add("active");
-            flatEl.style.opacity = t.toFixed(3);
-            globeEl.classList.add("gm-fading");
-            globeEl.style.opacity = String(1 - t * 0.6);
-            if (vnFlatMap) {
-                const zoomLevel = 4 + t * 11; // 4 (khu vực) -> 15 (chi tiết đường phố, toà nhà)
-                vnFlatMap.setView([vnFlatMapCenter.lat, vnFlatMapCenter.lng], zoomLevel, { animate: false });
-                setTimeout(() => { if (vnFlatMap) vnFlatMap.invalidateSize(); }, 0);
-            }
-        } else {
-            flatEl.classList.remove("active");
-            flatEl.style.opacity = "0";
-            globeEl.classList.remove("gm-fading");
-            globeEl.style.opacity = "1";
-        }
-
-        if (hintEl) {
-            hintEl.textContent = alt > 1.3 ? "🌐 Toàn cầu" : (alt > GM_FADE_START_ALT ? "🗺️ Khu vực" : (t < 1 ? "🔍 Đang phóng vào bản đồ chi tiết..." : "📍 Bản đồ chi tiết"));
-            hintEl.classList.add("show");
-            clearTimeout(vnGlobeUpdateZoomVisual._hintTimer);
-            vnGlobeUpdateZoomVisual._hintTimer = setTimeout(() => hintEl.classList.remove("show"), 1800);
-        }
-
-        if (t >= 1 && !vnFlatMapInteractive) vnGlobeEnterFlatMap();
-    });
-}
-
-// Đã zoom đủ sâu: chuyển hẳn quyền điều khiển chuột/chạm sang bản đồ phẳng chi tiết (như Google Maps)
-function vnGlobeEnterFlatMap() {
-    vnFlatMapInteractive = true;
-    const globeEl = document.getElementById("globeContainer");
-    const flatEl = document.getElementById("globeFlatMap");
-    const exitBtn = document.getElementById("globeFlatMapExit");
-    if (globeEl) { globeEl.style.pointerEvents = "none"; globeEl.style.opacity = "0.001"; }
-    if (flatEl) { flatEl.classList.add("interactive"); flatEl.style.opacity = "1"; }
-    if (exitBtn) exitBtn.classList.add("show");
-    if (vnGlobe) vnGlobe.controls().autoRotate = false;
-    initFlatMapIfNeeded();
-    if (vnFlatMap) setTimeout(() => vnFlatMap.invalidateSize(), 60);
-}
-
-// Quay lại quả địa cầu 3D (bấm nút "Quay lại quả địa cầu" hoặc tự động khi zoom bản đồ phẳng ra xa)
-function vnGlobeExitFlatMap() {
-    vnFlatMapInteractive = false;
-    const globeEl = document.getElementById("globeContainer");
-    const flatEl = document.getElementById("globeFlatMap");
-    const exitBtn = document.getElementById("globeFlatMapExit");
-    if (globeEl) { globeEl.style.pointerEvents = "auto"; globeEl.style.opacity = "1"; globeEl.classList.remove("gm-fading"); }
-    if (flatEl) { flatEl.classList.remove("interactive", "active"); flatEl.style.opacity = "0"; }
-    if (exitBtn) exitBtn.classList.remove("show");
-    if (vnGlobe) {
-        vnGlobe.controls().autoRotate = false;
-        vnGlobe.pointOfView({ lat: vnFlatMapCenter.lat, lng: vnFlatMapCenter.lng, altitude: 0.85 }, 700);
-        if (vnGlobeResumeTimer) clearTimeout(vnGlobeResumeTimer);
-        vnGlobeResumeTimer = setTimeout(() => { if (vnGlobe) vnGlobe.controls().autoRotate = true; }, 4500);
-    }
-}
-
-function updateVNGlobe(route) {
+function updateGlobeMap(route) {
     const destLabelEl = document.getElementById("globeDestLabel");
+    const destPin = document.getElementById("globeDestPin");
+    const destPinAnim = document.getElementById("globeDestPinAnim");
+    const arcEl = document.getElementById("globeRouteArc");
+    const globeBody = document.getElementById("globeBody");
     if (!destLabelEl || !route) return;
 
     // Lấy tên điểm đến từ tên tuyến, bỏ chữ "Tuyến " ở đầu (VD: "Tuyến Sài Gòn" -> "Sài Gòn")
     const destName = (route.name || "").replace(/^\s*Tuyến\s+/i, "").trim() || route.name;
     destLabelEl.textContent = `📍 ${destName}`;
-    destLabelEl.classList.remove("pop");
-    void destLabelEl.offsetWidth;
-    destLabelEl.classList.add("pop");
 
-    if (!vnGlobe) return; // thư viện 3D chưa sẵn sàng (vd. mất mạng CDN) -> chỉ cập nhật chữ, không lỗi trang
+    const destPoint = GLOBE_DEST_POINT_BY_REGION[route.region] || GLOBE_DEST_POINT_DEFAULT;
 
-    const dest = GLOBE_ROUTE_COORDS[route.id] || GLOBE_DEST_DEFAULT;
+    // Di chuyển ghim đến vị trí mới
+    if (destPin) destPin.setAttribute("transform", `translate(${destPoint.x},${destPoint.y})`);
 
-    // Đổi tuyến -> cập nhật điểm đến cho bản đồ phẳng, và nếu đang ở chế độ bản đồ phẳng chi tiết thì quay lại quả cầu 3D trước
-    vnFlatMapCenter = { lat: dest.lat, lng: dest.lng };
-    if (vnFlatMapInteractive) vnGlobeExitFlatMap();
-    if (vnFlatMapMarker) vnFlatMapMarker.setLatLng([dest.lat, dest.lng]);
-    if (vnFlatMap && !vnFlatMapInteractive) vnFlatMap.setView([dest.lat, dest.lng], vnFlatMap.getZoom(), { animate: false });
+    // Vẽ lại cung đường nối Hà Nội -> điểm đến mới
+    if (arcEl) arcEl.setAttribute("d", buildGlobeArcPath(GLOBE_ORIGIN_POINT, destPoint));
 
-    vnGlobe
-        .pointsData([
-            { lat: GLOBE_HQ.lat, lng: GLOBE_HQ.lng, size: 0.55, color: "#fde68a", label: GLOBE_HQ.name },
-            { lat: dest.lat, lng: dest.lng, size: 0.85, color: "#dc2626", label: "📍 " + destName }
-        ])
-        .pointAltitude(0.012)
-        .pointColor("color")
-        .pointRadius("size")
-        .pointLabel("label")
-        .pointResolution(24)
+    // Khởi động lại hiệu ứng "ghim rơi xuống" (pin drop) mỗi khi đổi tuyến
+    if (destPinAnim) {
+        destPinAnim.style.animation = "none";
+        void destPinAnim.offsetWidth; // ép trình duyệt reflow để reset animation
+        destPinAnim.style.animation = "";
+    }
 
-        // Nhãn tên điểm đến: dùng phần tử HTML thật (không phải chữ vẽ lên texture canvas)
-        // để không bao giờ bị lỗi font/dấu tiếng Việt (vd. "Sài Gòn" hiển thị thành "S?i G?n").
-        .htmlElementsData([{ lat: dest.lat, lng: dest.lng, text: destName }])
-        .htmlElement((d) => {
-            const wrapper = document.createElement("div");
-            const label = document.createElement("div");
-            label.className = "globe-3d-label";
-            label.textContent = d.text;
-            wrapper.appendChild(label);
-            return wrapper;
-        })
-        .htmlAltitude(0.02)
-
-        .arcsData([{ startLat: GLOBE_HQ.lat, startLng: GLOBE_HQ.lng, endLat: dest.lat, endLng: dest.lng }])
-        .arcColor(() => ["#f59e0b", "#dc2626"])
-        .arcDashLength(0.5)
-        .arcDashGap(0.35)
-        .arcDashAnimateTime(1600)
-        .arcStroke(0.55)
-        .arcAltitudeAutoScale(0.4)
-
-        // Vòng sóng "ghim" lan toả tại điểm đến - mô phỏng hiệu ứng ghim định vị đang được chọn
-        .ringsData([{ lat: dest.lat, lng: dest.lng }])
-        .ringColor(() => (t) => `rgba(220,38,38,${1 - t})`)
-        .ringMaxRadius(3.4)
-        .ringPropagationSpeed(2.6)
-        .ringRepeatPeriod(900);
-
-    // Tạm dừng tự xoay, lượn camera bay tới đúng điểm đến vừa chọn (hiệu ứng "bay tới nơi")
-    const controls = vnGlobe.controls();
-    controls.autoRotate = false;
-    vnGlobe.pointOfView({ lat: dest.lat, lng: dest.lng, altitude: 1.6 }, 1400);
-
-    // Sau vài giây, cho quả địa cầu tự xoay nhẹ trở lại để vẫn "sống động"
-    if (vnGlobeResumeTimer) clearTimeout(vnGlobeResumeTimer);
-    vnGlobeResumeTimer = setTimeout(() => {
-        if (vnGlobe) vnGlobe.controls().autoRotate = true;
-    }, 4500);
+    // Khởi động hiệu ứng quả địa cầu xoay 1 vòng mỗi khi chọn tuyến mới
+    if (globeBody) {
+        globeBody.classList.remove("spin-burst");
+        void globeBody.offsetWidth; // ép trình duyệt reflow để reset animation
+        globeBody.classList.add("spin-burst");
+    }
 }
 
 // ---------------- BẢNG GIÁ ĐỘNG (CHỈNH SỬA ĐƯỢC KHI LÀ ADMIN) ----------------
@@ -828,7 +615,7 @@ function renderMainTable() {
     const route = appData[currentRouteIndex];
     if (!route) return;
     document.getElementById("routeDesc").textContent = route.desc;
-    updateVNGlobe(route);
+    updateGlobeMap(route);
 
     const table = document.getElementById("dynamicTable");
     table.innerHTML = "";
