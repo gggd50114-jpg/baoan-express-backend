@@ -269,14 +269,20 @@ const server = http.createServer(async (req, res) => {
                 bannerYoutubeUrl = (typeof raw === "string" && raw.trim().length > 0 && raw.trim().length <= 300) ? raw.trim() : null;
             }
 
+            // Mức zoom video banner (1 = không zoom, 4 = zoom rất sát) - chặn ngoài khoảng hợp lệ để tránh phá giao diện
+            let bannerVideoZoom = (current.settings && typeof current.settings.bannerVideoZoom === "number") ? current.settings.bannerVideoZoom : 2.2;
+            if (body.settings && typeof body.settings.bannerVideoZoom === "number" && !Number.isNaN(body.settings.bannerVideoZoom)) {
+                bannerVideoZoom = Math.min(4, Math.max(1, body.settings.bannerVideoZoom));
+            }
+
             const next = {
                 routes: routesCheck.value,
                 weightBrackets: current.weightBrackets, // khung cân cố định, không cho sửa qua API
                 pickupFee: pickupFeeCheck.value !== undefined ? pickupFeeCheck.value : current.pickupFee,
                 surcharge: surchargeCheck.value !== undefined ? surchargeCheck.value : current.surcharge,
                 settings: body.settings && typeof body.settings.showTableToViewers === "boolean"
-                    ? { showTableToViewers: body.settings.showTableToViewers, bannerYoutubeUrl }
-                    : { ...current.settings, bannerYoutubeUrl },
+                    ? { showTableToViewers: body.settings.showTableToViewers, bannerYoutubeUrl, bannerVideoZoom }
+                    : { ...current.settings, bannerYoutubeUrl, bannerVideoZoom },
                 bannerImageUrl: current.bannerImageUrl || null,
                 updatedAt: new Date().toISOString(),
                 updatedBy: "admin"
