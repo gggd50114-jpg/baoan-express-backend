@@ -859,9 +859,26 @@ function initVNGlobe() {
 
 // Thêm lớp mây trắng bán trong suốt (xoay chậm, độc lập với mặt đất) và đèn thành phố
 // chỉ phát sáng ở nửa tối (dùng hướng đèn hiện có của three-globe để tính "ban đêm").
-// An toàn: nếu THREE chưa tải xong / lỗi ảnh thì bỏ qua, quả cầu vẫn hiển thị bình thường.
+//
+// LƯU Ý QUAN TRỌNG: globe.gl đã đóng gói sẵn 1 bản three.js riêng bên trong nó, và quả địa
+// cầu chính (vnGlobe) được tạo ra hoàn toàn từ bản đó. Nếu ta nạp thêm 1 bản three.js toàn cục
+// (qua thẻ <script src="three.min.js">) TRƯỚC khi globe.gl khởi tạo xong, 2 bản three.js sẽ
+// xung đột và làm quả cầu không khởi tạo được (lỗi "Timer is not a constructor").
+// Để tránh lặp lại lỗi đó, ta CHỈ nạp 1 bản three.js riêng bằng ES Module import() động,
+// và CHỈ làm việc đó SAU KHI quả cầu chính đã khởi tạo xong (hàm này chỉ được gọi trong
+// onGlobeReady). Lúc này quả cầu đã ổn định nên có thêm 1 bản THREE khác để tạo lớp mây/đèn
+// đêm (2 đối tượng Object3D thêm vào scene, không đụng tới lõi khởi tạo của globe.gl) là an
+// toàn. Nếu import lỗi (mất mạng, CDN chặn...) thì bỏ qua, quả cầu chính vẫn hoạt động bình thường.
 function addVNGlobeCloudsAndNightLights(globeInstance, cloudsMapUrl, cloudsAlphaUrl, nightLightsUrl) {
-    if (!globeInstance || typeof THREE === "undefined") return;
+    if (!globeInstance) return;
+
+    import("https://esm.sh/three@0.160.1")
+        .then((THREE) => vnAddCloudsAndNightLightsWithTHREE(THREE, globeInstance, cloudsMapUrl, cloudsAlphaUrl, nightLightsUrl))
+        .catch(() => { /* mất mạng / CDN chặn -> bỏ qua an toàn, quả cầu chính vẫn hiển thị bình thường */ });
+}
+
+function vnAddCloudsAndNightLightsWithTHREE(THREE, globeInstance, cloudsMapUrl, cloudsAlphaUrl, nightLightsUrl) {
+    if (!globeInstance || !THREE) return;
 
     // --- Lớp mây ---
     try {
