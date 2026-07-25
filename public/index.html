@@ -506,7 +506,12 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
 </div>
 
 <script>
-// Tải three.js + globe.gl từ unpkg; nếu bị chặn mạng thì tự động thử lại qua jsDelivr
+// CHÚ Ý: globe.gl@2 trở lên đã đóng gói sẵn three.js bên trong (bundled).
+// KHÔNG được tải thêm three.js riêng như trước đây, vì 2 bản three.js cùng tồn tại
+// trên trang sẽ xung đột instance nội bộ, làm globe.gl lỗi "Timer is not a constructor"
+// và toàn bộ quả địa cầu 3D không khởi tạo được (dù file vẫn tải thành công bình thường).
+//
+// Tải globe.gl từ unpkg; nếu bị chặn mạng thì tự động thử lại qua jsDelivr
 // (một số mạng/ISP hoặc trình chặn quảng cáo chỉ chặn 1 trong 2 CDN, không phải cả hai).
 function vnLoadScriptWithFallback(primaryUrl, fallbackUrl, onDone) {
     const s = document.createElement("script");
@@ -522,18 +527,12 @@ function vnLoadScriptWithFallback(primaryUrl, fallbackUrl, onDone) {
     document.body.appendChild(s);
 }
 vnLoadScriptWithFallback(
-    "https://unpkg.com/three@0.160.1/build/three.min.js",
-    "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js",
+    "https://unpkg.com/globe.gl@2",
+    "https://cdn.jsdelivr.net/npm/globe.gl@2",
     function () {
-        vnLoadScriptWithFallback(
-            "https://unpkg.com/globe.gl@2",
-            "https://cdn.jsdelivr.net/npm/globe.gl@2",
-            function () {
-                const appScript = document.createElement("script");
-                appScript.src = "app.js";
-                document.body.appendChild(appScript);
-            }
-        );
+        const appScript = document.createElement("script");
+        appScript.src = "app.js";
+        document.body.appendChild(appScript);
     }
 );
 </script>
