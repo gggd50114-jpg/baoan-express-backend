@@ -779,11 +779,16 @@ function initVNGlobe() {
     const size = Math.min(Math.max(rect.width || 260, 180), 380);
     el.style.height = size + "px"; // đảm bảo khung luôn là hình vuông đúng bằng canvas 3D, không bị cắt/lệch
 
+    const HD_EARTH_URL = "https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73776/world.topo.bathy.200408.3x5400x2700.jpg";
+    const FALLBACK_EARTH_URL = "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg";
+
     vnGlobe = Globe()(el)
         .width(size)
         .height(size)
         .backgroundColor("rgba(0,0,0,0)")
-        .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
+        // Ảnh NASA gốc 5400x2700 (~1.8x số điểm ảnh so với bản 4096x2048 đóng gói sẵn trong three-globe)
+        // -> quả địa cầu nét hơn khi zoom gần. Nếu ảnh này lỗi/mất mạng thì tự rơi về ảnh cũ (xem bên dưới).
+        .globeImageUrl(HD_EARTH_URL)
         .bumpImageUrl("https://unpkg.com/three-globe/example/img/earth-topology.png")
         .showAtmosphere(true)
         .atmosphereColor("#fbbf24")
@@ -793,6 +798,12 @@ function initVNGlobe() {
             vnGlobeReady = true;
             if (overlay) overlay.classList.add("hidden");
         });
+
+    // Preload ảnh HD ở nền: nếu server NASA lỗi/chặn/mất mạng thì tự động chuyển quả cầu
+    // về ảnh dự phòng (đóng gói sẵn trong three-globe) để không bị trắng/lỗi hiển thị.
+    const hdProbe = new Image();
+    hdProbe.onerror = () => { if (vnGlobe) vnGlobe.globeImageUrl(FALLBACK_EARTH_URL); };
+    hdProbe.src = HD_EARTH_URL;
 
     // Xoay nhẹ tự động khi không thao tác. Bật zoom bằng cuộn chuột / chụm 2 ngón (mobile),
     // giới hạn khoảng cách zoom để không zoom lọt vào trong lòng đất hoặc ra quá xa mất hình.
