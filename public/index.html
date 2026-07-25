@@ -505,8 +505,39 @@ thead th { background:var(--primary-color); color:#fff; font-size:12.5px; }
     </div>
 </div>
 
-<script src="https://unpkg.com/three@0.160.1/build/three.min.js"></script>
-<script src="https://unpkg.com/globe.gl@2"></script>
-<script src="app.js"></script>
+<script>
+// Tải three.js + globe.gl từ unpkg; nếu bị chặn mạng thì tự động thử lại qua jsDelivr
+// (một số mạng/ISP hoặc trình chặn quảng cáo chỉ chặn 1 trong 2 CDN, không phải cả hai).
+function vnLoadScriptWithFallback(primaryUrl, fallbackUrl, onDone) {
+    const s = document.createElement("script");
+    s.src = primaryUrl;
+    s.onload = onDone;
+    s.onerror = function () {
+        const s2 = document.createElement("script");
+        s2.src = fallbackUrl;
+        s2.onload = onDone;
+        s2.onerror = onDone; // vẫn gọi tiếp để app.js không bị treo chờ mãi
+        document.body.appendChild(s2);
+    };
+    document.body.appendChild(s);
+}
+vnLoadScriptWithFallback(
+    "https://unpkg.com/three@0.160.1/build/three.min.js",
+    "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js",
+    function () {
+        vnLoadScriptWithFallback(
+            "https://unpkg.com/globe.gl@2",
+            "https://cdn.jsdelivr.net/npm/globe.gl@2",
+            function () {
+                const appScript = document.createElement("script");
+                appScript.src = "app.js";
+                document.body.appendChild(appScript);
+            }
+        );
+    }
+);
+</script>
+</body>
+</html>
 </body>
 </html>

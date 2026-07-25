@@ -773,7 +773,17 @@ let vnGlobeResumeTimer = null;
 function initVNGlobe() {
     const el = document.getElementById("globeContainer");
     const overlay = document.getElementById("globeLoadingOverlay");
-    if (!el || typeof Globe === "undefined") return; // thư viện 3D chưa tải xong / lỗi mạng -> bỏ qua an toàn
+    if (!el) return;
+
+    if (typeof Globe === "undefined") {
+        // Thư viện 3D (three.js / globe.gl từ unpkg.com) chưa tải xong hoặc bị chặn mạng.
+        // Trước đây hàm return ở đây khiến overlay "Đang tải..." bị kẹt mãi vì đoạn
+        // setTimeout ẩn overlay nằm phía dưới, không bao giờ được chạy tới. Nay báo lỗi rõ ràng.
+        if (overlay) {
+            overlay.innerHTML = '<span style="text-align:center;padding:0 12px;">⚠️ Không tải được quả địa cầu 3D<br><span style="font-weight:500;font-size:11px;opacity:.8;">Vui lòng kiểm tra kết nối mạng và tải lại trang</span></span>';
+        }
+        return;
+    }
 
     const rect = el.getBoundingClientRect();
     const size = Math.min(Math.max(rect.width || 260, 180), 380);
