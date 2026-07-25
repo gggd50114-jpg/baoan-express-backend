@@ -12,40 +12,40 @@
           "time": "Giao giờ hành chính hôm sau",
           "base_rate": 40000,
           "rates": [
-            2000,
-            2000,
-            1900,
-            1800,
-            1700,
-            1600
+            2200,
+            2200,
+            2090,
+            1980,
+            1870,
+            1760
           ]
         },
         {
           "name": "Hoài Đức / Hoàn Kiếm / Đống Đa / Ba Đình / Hai Bà Trưng / Hoàng Mai / Thanh Trì | Thanh...",
           "details": "Giao tận nơi",
           "time": "Giao giờ hành chính hôm sau",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Ba Vì / Chương Mỹ / Phúc Thọ / Đan Phượng / Đông Anh / Mê Linh / Mỹ Đức / Phú Xuyên | Q...",
           "details": "Giao tận nơi",
           "time": "1 - 2 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         }
       ]
@@ -60,14 +60,14 @@
           "name": "Huyện Chợ Mới: Giao dọc QL3 / TP Bắc Kạn: Giao tận nơi / Huyện Bạch Thông (Thị trấn Phủ...",
           "details": "Giao tận nơi",
           "time": "2 ngày",
-          "base_rate": 90000,
+          "base_rate": 95000,
           "rates": [
-            3000,
-            3000,
-            2900,
-            2800,
-            2700,
-            2600
+            3300,
+            3300,
+            3190,
+            3080,
+            2970,
+            2860
           ]
         }
       ]
@@ -82,28 +82,28 @@
           "name": "TP Cao Bằng: Giao tận nơi",
           "details": "Giao tận nơi",
           "time": "2 ngày",
-          "base_rate": 90000,
+          "base_rate": 95000,
           "rates": [
-            3000,
-            3000,
-            2900,
-            2800,
-            2700,
-            2600
+            3300,
+            3300,
+            3190,
+            3080,
+            2970,
+            2860
           ]
         },
         {
           "name": "Thị trấn Đông Khê của huyện Thạch An: Giao tận nơi / Các xã khác của Huyện Thạch An: gi...",
           "details": "Giao tận nơi",
           "time": "2 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            3000,
-            3000,
-            2900,
-            2800,
-            2700,
-            2600
+            3300,
+            3300,
+            3190,
+            3080,
+            2970,
+            2860
           ]
         }
       ]
@@ -118,70 +118,70 @@
           "name": "Phường Bắc Cường / Phường Bắc Lệnh / Phường Bình Minh / Phường Cốc Lếu / Phường Duyên H...",
           "details": "Giao tận nơi",
           "time": "2 ngày",
-          "base_rate": 90000,
+          "base_rate": 95000,
           "rates": [
-            3000,
-            3000,
-            2900,
-            2800,
-            2700,
-            2600
+            3300,
+            3300,
+            3190,
+            3080,
+            2970,
+            2860
           ]
         },
         {
           "name": "Giao tận nơi tại TX Phố Lu / Giao tại nút giao cao tốc Phố Lu",
           "details": "Huyện Bảo Thắng",
           "time": "2 ngày",
-          "base_rate": 90000,
+          "base_rate": 95000,
           "rates": [
-            3000,
-            3000,
-            2900,
-            2800,
-            2700,
-            2600
+            3300,
+            3300,
+            3190,
+            3080,
+            2970,
+            2860
           ]
         },
         {
           "name": "Xã Bảo Hà / Nút giao cao tốc Bảo Hà",
           "details": "Huyện Bảo Yên",
           "time": "2 ngày",
-          "base_rate": 90000,
+          "base_rate": 95000,
           "rates": [
-            3000,
-            3000,
-            2900,
-            2800,
-            2700,
-            2600
+            3300,
+            3300,
+            3190,
+            3080,
+            2970,
+            2860
           ]
         },
         {
           "name": "Giao tại nút giao cao tốc Nội Bài Lào Cai",
           "details": "Huyện Văn Bàn",
           "time": "2 ngày",
-          "base_rate": 90000,
+          "base_rate": 95000,
           "rates": [
-            3000,
-            3000,
-            2900,
-            2800,
-            2700,
-            2600
+            3300,
+            3300,
+            3190,
+            3080,
+            2970,
+            2860
           ]
         },
         {
           "name": "TX Sapa: giao tận nơi (Chỉ giao ở trung tâm Phường Sapa hoặc dọc QL4D, không giao ở các...",
           "details": "TX Sapa",
           "time": "2,5 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            3000,
-            3000,
-            2900,
-            2800,
-            2700,
-            2600
+            3300,
+            3300,
+            3190,
+            3080,
+            2970,
+            2860
           ]
         }
       ]
@@ -196,42 +196,42 @@
           "name": "Phường Minh Khai / Phường Ngọc Hà / Phường Nguyễn Trãi / Phường Quang Trung / Phường Tr...",
           "details": "Giao tận nơi",
           "time": "2,5 ngày",
-          "base_rate": 90000,
+          "base_rate": 95000,
           "rates": [
-            3000,
-            3000,
-            2900,
-            2800,
-            2700,
-            2600
+            3300,
+            3300,
+            3190,
+            3080,
+            2970,
+            2860
           ]
         },
         {
           "name": "Giao tận nơi Thị Trấn Vị Xuyên / Còn lại giao trên QL2",
           "details": "Huyện Vị Xuyên",
           "time": "2,5 ngày",
-          "base_rate": 90000,
+          "base_rate": 95000,
           "rates": [
-            3000,
-            3000,
-            2900,
-            2800,
-            2700,
-            2600
+            3300,
+            3300,
+            3190,
+            3080,
+            2970,
+            2860
           ]
         },
         {
           "name": "Giao tận nơi Thị Trấn Việt Quang + Thị Trấn Tân Quang / Còn lại giao trên QL2",
           "details": "Huyện Bắc Quang",
           "time": "2,5 ngày",
-          "base_rate": 90000,
+          "base_rate": 95000,
           "rates": [
-            3000,
-            3000,
-            2900,
-            2800,
-            2700,
-            2600
+            3300,
+            3300,
+            3190,
+            3080,
+            2970,
+            2860
           ]
         }
       ]
@@ -248,40 +248,40 @@
           "time": "Giao giờ hành chính hôm sau",
           "base_rate": 40000,
           "rates": [
-            2000,
-            2000,
-            1900,
-            1800,
-            1700,
-            1600
+            2200,
+            2200,
+            2090,
+            1980,
+            1870,
+            1760
           ]
         },
         {
           "name": "Hồng Bàng / Lê Chân / Ngô Quyền / An Dương | Hải An / Dương Kinh / Kiến An / An Lão / T...",
           "details": "Giao tận nơi",
           "time": "Giao giờ hành chính hôm sau",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Đồ Sơn / Tiễn Lẵng / Vĩnh Bảo / Kiến Thụy / TT Cát Hải",
           "details": "Giao tận nơi",
           "time": "1 - 2 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         }
       ]
@@ -296,42 +296,42 @@
           "name": "TP Tuyên Quang giao tận nơi",
           "details": "Giao tận nơi",
           "time": "2 ngày",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Thị trấn Sơn Nam: Giao dọc QL2C hoặc giao tận nơi / Thị trấn Sơn Dương: Giao dọc QL2C h...",
           "details": "Giao tận nơi",
           "time": "2 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         },
         {
           "name": "Giao tận nơi ở thị trấn Sơn Dương / Giao dọc QL 2C",
           "details": "Huyện Sơn Dương",
           "time": "2,5 ngày",
-          "base_rate": 90000,
+          "base_rate": 95000,
           "rates": [
-            2700,
-            2700,
-            2650,
-            2600,
-            2550,
-            2500
+            2970,
+            2970,
+            2915,
+            2860,
+            2805,
+            2750
           ]
         }
       ]
@@ -346,28 +346,28 @@
           "name": "TP Lạng Sơn: Giao/nhận tận nơi / Thị trấn Hữu Lũng: Giao/nhận tận nơi / Thị trấn Đồng M...",
           "details": "Giao tận nơi",
           "time": "1 - 2 ngày",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Thị trấn Na Sầm của huyện Văn Lẵng: Giao/nhận tận nơi / Các xã còn lại của Huyện Văn Lẵ...",
           "details": "Giao tận nơi",
           "time": "2 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            3000,
-            3000,
-            2900,
-            2800,
-            2700,
-            2600
+            3300,
+            3300,
+            3190,
+            3080,
+            2970,
+            2860
           ]
         }
       ]
@@ -382,28 +382,28 @@
           "name": "TP Hoà Bình: Giao tận nơi",
           "details": "Giao tận nơi",
           "time": "1 - 2 ngày",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Huyện Kỳ Sơn: Giao tận nơi",
           "details": "Giao tận nơi",
           "time": "1 - 2 ngày",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         }
       ]
@@ -418,42 +418,42 @@
           "name": "TP Yên Bái",
           "details": "Giao tận nơi",
           "time": "1 - 2 ngày",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Thị Trấn Mậu A",
           "details": "Giao tận nơi",
           "time": "1 - 2 ngày",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "IC12: Nút giao với đường Âu Cơ tại Minh Quân, Trấn Yên, Yên Bái đi thành phố Yên Bái, t...",
           "details": "Giao tại các nút giao cao tốc, trạm thu phí",
           "time": "1 - 2 ngày",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         }
       ]
@@ -468,28 +468,28 @@
           "name": "TP Thái Bình / Vũ Thư",
           "details": "Giao tận nơi",
           "time": "- Nhận trong giờ hành chính ngày hôm sau",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Hưng Hà / Đông Hưng",
           "details": "Giao tận nơi",
           "time": "Đang cập nhật",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         },
         {
@@ -518,42 +518,42 @@
           "name": "Phủ Lý / Duy Tiên (Đồng Văn)",
           "details": "Giao tận nơi",
           "time": "Nhận trong giờ hành chính ngày hôm sau",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Lý Nhân / Thanh Liêm / Bình Lục",
           "details": "Giao tận nơi",
           "time": "Đang cập nhật",
-          "base_rate": 95000,
+          "base_rate": 100000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         },
         {
           "name": "Kim Bảng",
           "details": "Giao tận nơi",
           "time": "Đang cập nhật",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         }
       ]
@@ -568,42 +568,42 @@
           "name": "TP Bắc Ninh / TP Từ Sơn",
           "details": "Giao tận nơi",
           "time": "- Nhận trong giờ hành chính ngày hôm sau",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Quế Võ / Yên Phong / Tiên Du",
           "details": "Giao tận nơi",
           "time": "Đang cập nhật",
-          "base_rate": 95000,
+          "base_rate": 100000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         },
         {
           "name": "Lương Tài / Gia Bình / Thuận Thành",
           "details": "Giao tận nơi",
           "time": "Đang cập nhật",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         }
       ]
@@ -618,28 +618,28 @@
           "name": "TP Bắc Giang",
           "details": "Giao tận nơi",
           "time": "- Nhận trong giờ hành chính ngày hôm sau",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Việt Yên / Hiệp Hòa",
           "details": "Giao tận nơi",
           "time": "Đang cập nhật",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         },
         {
@@ -682,28 +682,28 @@
           "name": "TP Thái Nguyên / TP Sông Công / TP Phổ Yên",
           "details": "Giao tận nơi",
           "time": "Nhận trong giờ hành chính ngày hôm sau",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Thị trấn Đu của huyện Phú Lương: Giao tận nơi / Các xã khác của Huyện Phú Lương: Giao d...",
           "details": "Giao tận nơi",
           "time": "2 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         },
         {
@@ -732,28 +732,28 @@
           "name": "TP Hoa Lư / TP Ninh Bình",
           "details": "Giao tận nơi",
           "time": "- Nhận trong giờ hành chính ngày hôm sau",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Gia Viễn, Gián Khẩu",
           "details": "Giao tận nơi",
           "time": "Đang cập nhật",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         }
       ]
@@ -768,28 +768,28 @@
           "name": "TP Nam Định / Mỹ Lộc",
           "details": "Giao tận nơi",
           "time": "- Nhận trong giờ hành chính ngày hôm sau",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Vụ Bản / Ý Yên",
           "details": "Giao tận nơi",
           "time": "Đang cập nhật",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         },
         {
@@ -818,42 +818,42 @@
           "name": "TP Hải Dương / Chí Linh (Sao Đỏ)",
           "details": "Giao tận nơi",
           "time": "Giao trong giờ hành chính ngày hôm sau",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Kinh Môn / Bình Giang / Cẩm Giàng / Gia Lộc / Nam Sách / Kim Thành",
           "details": "Giao tận nơi",
           "time": "Đang cập nhật",
-          "base_rate": 95000,
+          "base_rate": 100000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         },
         {
           "name": "Ninh Giang / Thanh Hà / Thanh Niệm / Tứ Kỳ",
           "details": "Giao tận nơi",
           "time": "Đang cập nhật",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         }
       ]
@@ -868,28 +868,28 @@
           "name": "TP Phúc Yên / TP Vĩnh Yên / Bình Xuyên",
           "details": "Giao tận nơi",
           "time": "Nhận trong giờ hành chính ngày hôm sau",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Tam Dương / Vĩnh Tường / Yên Lạc",
           "details": "Giao tận nơi",
           "time": "Đang cập nhật",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         },
         {
@@ -918,28 +918,28 @@
           "name": "TP Việt Trì / Phù Ninh / TX Phú Thọ",
           "details": "Giao tận nơi",
           "time": "Nhận trong giờ hành chính ngày hôm sau",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Cẩm Khê / Thanh Ba / Hạ Hòa / Lâm Thao / Đoan Hùng / Tam Nông",
           "details": "Giao tận nơi",
           "time": "1 - 2 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         },
         {
@@ -968,42 +968,42 @@
           "name": "Văn Giang / Mỹ Hào / Yên Mỹ / TP Hưng Yên",
           "details": "Giao tận nơi",
           "time": "Giao trong giờ hành chính ngày hôm sau",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Ân Thi / Khoái Châu / Kim Động / Văn Lâm",
           "details": "Giao tận nơi",
           "time": "Đang cập nhật",
-          "base_rate": 95000,
+          "base_rate": 100000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         },
         {
           "name": "Phù Cừ / Tiên Lữ",
           "details": "Giao tận nơi",
           "time": "Đang cập nhật",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         }
       ]
@@ -1020,82 +1020,82 @@
           "time": "Nhận trong giờ hành chính ngày hôm sau",
           "base_rate": 40000,
           "rates": [
-            2000,
-            2000,
-            1900,
-            1800,
-            1700,
-            1600
+            2200,
+            2200,
+            2090,
+            1980,
+            1870,
+            1760
           ]
         },
         {
           "name": "Hạ Long / Đông Triều / Bãi Cháy / Mạo Khê / Hoành Bồ",
           "details": "Giao tận nơi",
           "time": "Nhận trong giờ hành chính ngày hôm sau",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Quảng Yên / Uông Bí",
           "details": "Giao tận nơi",
           "time": "1- 2 ngày",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            2500,
-            2500,
-            2400,
-            2300,
-            2200,
-            2100
+            2750,
+            2750,
+            2640,
+            2530,
+            2420,
+            2310
           ]
         },
         {
           "name": "Vân Đồn (Xã Thắng Lợi, Ngọc Vùng, Quan Lạn, Bản Sen, Minh Châu KHÔNG nhận chở) / Cẩm Phả",
           "details": "Giao tận nơi",
           "time": "1- 2 ngày",
-          "base_rate": 90000,
+          "base_rate": 95000,
           "rates": [
-            2750,
-            2750,
-            2650,
-            2550,
-            2450,
-            2350
+            3025,
+            3025,
+            2915,
+            2805,
+            2695,
+            2585
           ]
         },
         {
           "name": "Móng Cái (Xã Hải Sơn, Bắc Sơn KHÔNG nhận chở) / Tiên Yên / Đầm Hà / Hải Hà (LƯU Ý: 2 xã...",
           "details": "Giao tận nơi",
           "time": "1- 2 ngày",
-          "base_rate": 90000,
+          "base_rate": 95000,
           "rates": [
-            3000,
-            3000,
-            2900,
-            2800,
-            2700,
-            2600
+            3300,
+            3300,
+            3190,
+            3080,
+            2970,
+            2860
           ]
         },
         {
           "name": "Ba Chẽ giao trên QL 18",
           "details": "Giao dọc quốc lộ",
           "time": "Đang cập nhật",
-          "base_rate": 90000,
+          "base_rate": 95000,
           "rates": [
-            3000,
-            3000,
-            2900,
-            2800,
-            2700,
-            2600
+            3300,
+            3300,
+            3190,
+            3080,
+            2970,
+            2860
           ]
         },
         {
@@ -1124,42 +1124,42 @@
           "name": "Hương Trà giao trên QL 1A / Tứ Hạ giao trên QL 1A / Phong Điền giao trên QL 1A / Mỹ Trá...",
           "details": "Giao dọc quốc lộ",
           "time": "1,5 - 2,5 ngày",
-          "base_rate": 70000,
+          "base_rate": 75000,
           "rates": [
-            5000,
-            4750,
-            4500,
-            4150,
-            3750,
-            3500
+            5500,
+            5225,
+            4950,
+            4565,
+            4125,
+            3850
           ]
         },
         {
           "name": "Phường An Cựu / Phường An Đông / Phường An Hòa / Phường An Tây / Phường Hương Long / Ph...",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
+            6050,
+            5775,
             5500,
-            5250,
-            5000,
-            4650,
-            4250,
-            4000
+            5115,
+            4675,
+            4400
           ]
         },
         {
           "name": "Phường Hương Hồ / Phường Thuận An / Xã Hải Dương / Xã Hương Phong / Xã Hương Thọ / Phườ...",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 200000,
+          "base_rate": 210000,
           "rates": [
-            5750,
-            5500,
-            5250,
-            4900,
-            4500,
-            4250
+            6325,
+            6050,
+            5775,
+            5390,
+            4950,
+            4675
           ]
         },
         {
@@ -1180,14 +1180,14 @@
           "name": "Phường Phú Bài / Phường Thủy Châu / Phường Thủy Dương / Phường Thủy Lương / Phường Thủy...",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
+            6050,
+            5775,
             5500,
-            5250,
-            5000,
-            4650,
-            4250,
-            4000
+            5115,
+            4675,
+            4400
           ]
         },
         {
@@ -1208,14 +1208,14 @@
           "name": "Thị trấn Phú Lộc: Giao tận nơi / Thị trấn Lăng Cô: Giao tận nơi / Trị trấn Lộc Tiến: Gi...",
           "details": "Huyện Phú Lộc",
           "time": "2 - 3 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
+            6050,
+            5775,
             5500,
-            5250,
-            5000,
-            4650,
-            4250,
-            4000
+            5115,
+            4675,
+            4400
           ]
         }
       ]
@@ -1230,56 +1230,56 @@
           "name": "VP Đà Nẵng: 209 Trường Chính, Thanh Khê",
           "details": "Giao/nhận tại văn phòng",
           "time": "2 - 3 ngày",
-          "base_rate": 60000,
+          "base_rate": 65000,
           "rates": [
-            5000,
-            4750,
-            4500,
-            4150,
-            3750,
-            3500
+            5500,
+            5225,
+            4950,
+            4565,
+            4125,
+            3850
           ]
         },
         {
           "name": "Quận Hải Châu / Quận Cẩm Lệ / Quận Thanh Khê / Quận Liên Chiểu / Quận Ngũ Hành Sơn / Qu...",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
+            6050,
+            5775,
             5500,
-            5250,
-            5000,
-            4650,
-            4250,
-            4000
+            5115,
+            4675,
+            4400
           ]
         },
         {
           "name": "Hòa Quý / Hòa Vang",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            5750,
-            5500,
-            5250,
-            4900,
-            4500,
-            4250
+            6325,
+            6050,
+            5775,
+            5390,
+            4950,
+            4675
           ]
         },
         {
           "name": "Giao tận nơi tại Hội An",
           "details": "Giao tận nơi",
           "time": "1,5 - 2,5 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            6000,
-            5750,
-            5500,
-            5150,
-            4750,
-            4500
+            6600,
+            6325,
+            6050,
+            5665,
+            5225,
+            4950
           ]
         }
       ]
@@ -1294,42 +1294,42 @@
           "name": "Chu Lai / Núi Thành",
           "details": "Giao dọc quốc lộ",
           "time": "1,5 - 2,5 ngày",
-          "base_rate": 70000,
+          "base_rate": 75000,
           "rates": [
-            5000,
-            4750,
-            4500,
-            4150,
-            3750,
-            3500
+            5500,
+            5225,
+            4950,
+            4565,
+            4125,
+            3850
           ]
         },
         {
           "name": "Điện Bàn / Thăng Bình / Vĩnh Điện / Hà Lam / TP Tam Kỳ / Duy Xuyên / Hội An",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
+            6050,
+            5775,
             5500,
-            5250,
-            5000,
-            4650,
-            4250,
-            4000
+            5115,
+            4675,
+            4400
           ]
         },
         {
           "name": "Quế Sơn / Phú Ninh",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            5750,
-            5500,
-            5250,
-            4900,
-            4500,
-            4250
+            6325,
+            6050,
+            5775,
+            5390,
+            4950,
+            4675
           ]
         }
       ]
@@ -1344,56 +1344,56 @@
           "name": "- Giao dọc QL 1A   - Tư Nghĩa QL 1A  - Sơn Tịnh QL 1A  - Giao tại VP Bảo An Quảng Ngãi",
           "details": "Giao/nhận tại văn phòng",
           "time": "1 - 2 ngày",
-          "base_rate": 70000,
+          "base_rate": 75000,
           "rates": [
-            5000,
-            4750,
-            4500,
-            4150,
-            3750,
-            3500
+            5500,
+            5225,
+            4950,
+            4565,
+            4125,
+            3850
           ]
         },
         {
           "name": "TP Quảng Ngãi",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
+            6050,
+            5775,
             5500,
-            5250,
-            5000,
-            4650,
-            4250,
-            4000
+            5115,
+            4675,
+            4400
           ]
         },
         {
           "name": "Tư Nghĩa",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            5750,
-            5500,
-            5250,
-            4900,
-            4500,
-            4250
+            6325,
+            6050,
+            5775,
+            5390,
+            4950,
+            4675
           ]
         },
         {
           "name": "Sơn Tịnh",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 200000,
+          "base_rate": 210000,
           "rates": [
-            6000,
-            5750,
-            5500,
-            5150,
-            4750,
-            4500
+            6600,
+            6325,
+            6050,
+            5665,
+            5225,
+            4950
           ]
         }
       ]
@@ -1408,56 +1408,56 @@
           "name": "- Giao dọc QL 1A   - Giao tại VP Bảo An Quy Nhơn",
           "details": "Giao/nhận tại văn phòng",
           "time": "2 - 3 ngày",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            6000,
-            5750,
-            5500,
-            5150,
-            4750,
-            4500
+            6600,
+            6325,
+            6050,
+            5665,
+            5225,
+            4950
           ]
         },
         {
           "name": "Đống Đa / Thị Nại / Quang Trung / Nguyễn Văn Cừ / Ngô Mây / Lê Hồng Phong / Lý Thường K...",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 120000,
+          "base_rate": 125000,
           "rates": [
-            6500,
-            6250,
-            6000,
-            5650,
-            5250,
-            5000
+            7150,
+            6875,
+            6600,
+            6215,
+            5775,
+            5500
           ]
         },
         {
           "name": "Bùi Thị Xuân / Ghềnh Ráng / Nhơn Bình / Nhơn Phú",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            6750,
-            6500,
-            6250,
-            5900,
-            5500,
-            5250
+            7425,
+            7150,
+            6875,
+            6490,
+            6050,
+            5775
           ]
         },
         {
           "name": "Nhơn Lý / Nhơn Hải / Nhơn Hội / Hải Cảng",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 200000,
+          "base_rate": 210000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         }
       ]
@@ -1472,28 +1472,28 @@
           "name": "Giao dọc QL 14 / Giao tại văn phòng TP Kon Tum",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            6000,
-            5750,
-            5500,
-            5150,
-            4750,
-            4500
+            6600,
+            6325,
+            6050,
+            5665,
+            5225,
+            4950
           ]
         },
         {
           "name": "Giao tận nơi TP Kon Tum",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 120000,
+          "base_rate": 125000,
           "rates": [
-            6500,
-            6250,
-            6000,
-            5650,
-            5250,
-            5000
+            7150,
+            6875,
+            6600,
+            6215,
+            5775,
+            5500
           ]
         }
       ]
@@ -1508,28 +1508,28 @@
           "name": "Giao dọc QL 1A / Giao tại VP Bảo An Tuy Hoà",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            6000,
-            5750,
-            5500,
-            5150,
-            4750,
-            4500
+            6600,
+            6325,
+            6050,
+            5665,
+            5225,
+            4950
           ]
         },
         {
           "name": "Giao tận nơi ở Tuy Hoà, Đông Hoà",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 120000,
+          "base_rate": 125000,
           "rates": [
-            6500,
-            6250,
-            6000,
-            5650,
-            5250,
-            5000
+            7150,
+            6875,
+            6600,
+            6215,
+            5775,
+            5500
           ]
         }
       ]
@@ -1544,42 +1544,42 @@
           "name": "- Giao tại VP Nha Trang   - Giao dọc QL 1A",
           "details": "Giao/nhận tại văn phòng",
           "time": "2 - 3 ngày",
-          "base_rate": 80000,
+          "base_rate": 85000,
           "rates": [
-            6000,
-            5750,
-            5500,
-            5150,
-            4750,
-            4500
+            6600,
+            6325,
+            6050,
+            5665,
+            5225,
+            4950
           ]
         },
         {
           "name": "TP Nha Trang, Diên Khánh",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 120000,
+          "base_rate": 125000,
           "rates": [
-            6500,
-            6250,
-            6000,
-            5650,
-            5250,
-            5000
+            7150,
+            6875,
+            6600,
+            6215,
+            5775,
+            5500
           ]
         },
         {
           "name": "Vinh Lương (nên để giao trên QL 1A cho rẻ cước)",
           "details": "Giao tận nơi — Nên tư vấn khách nhận trên QL 1A",
           "time": "2 - 3 ngày",
-          "base_rate": 300000,
+          "base_rate": 0,
           "rates": [
-            6850,
+            7535,
+            7260,
+            6985,
             6600,
-            6350,
-            6000,
-            5600,
-            5350
+            6160,
+            5885
           ]
         }
       ]
@@ -1594,28 +1594,28 @@
           "name": "Giao dọc QL 14 / Giao tại văn phòng TP Pleiku",
           "details": "Giao/nhận tại văn phòng",
           "time": "2 - 3 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            6500,
-            6250,
-            6000,
-            5650,
-            5250,
-            5000
+            7150,
+            6875,
+            6600,
+            6215,
+            5775,
+            5500
           ]
         },
         {
           "name": "TP Pleiku giao tận nơi",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         }
       ]
@@ -1630,28 +1630,28 @@
           "name": "Giao dọc QL 14 / Giao tại văn phòng Buôn Ma Thuật",
           "details": "Giao/nhận tại văn phòng",
           "time": "2 - 3 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            6500,
-            6250,
-            6000,
-            5650,
-            5250,
-            5000
+            7150,
+            6875,
+            6600,
+            6215,
+            5775,
+            5500
           ]
         },
         {
           "name": "TP Buôn Ma Thuật",
           "details": "Giao tận nơi",
           "time": "2 - 3 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         }
       ]
@@ -1666,28 +1666,28 @@
           "name": "Giao dọc QL 14 / Giao tại văn phòng Gia Nghĩa",
           "details": "Giao/nhận tại văn phòng",
           "time": "3 - 4 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            6500,
-            6250,
-            6000,
-            5650,
-            5250,
-            5000
+            7150,
+            6875,
+            6600,
+            6215,
+            5775,
+            5500
           ]
         },
         {
           "name": "TP Gia Nghĩa",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         }
       ]
@@ -1702,56 +1702,56 @@
           "name": "Giao tại văn phòng Bảo An Đồng Nai / Xuân Lộc giao trên QL 1A",
           "details": "Giao/nhận tại văn phòng",
           "time": "3 - 4 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            6500,
-            6250,
-            6000,
-            5650,
-            5250,
-            5000
+            7150,
+            6875,
+            6600,
+            6215,
+            5775,
+            5500
           ]
         },
         {
           "name": "TP Biên Hòa / Hố Nai / Nhơn Trạch / Long Thành",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Trảng Bom / Thống Nhất (Dầu Giây, Gia Kiệm) / Gia Tân / Tân Phú / Phú Cường / Định Quán...",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Vĩnh Cửu",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
           "time": "4 - 5 ngày",
-          "base_rate": 400000,
+          "base_rate": 0,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         }
       ]
@@ -1766,56 +1766,56 @@
           "name": "Thành phố Vũng Tàu / Thị xã Bà Rịa / Phú Mỹ / Mỹ Xuân / Tân Thành",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Long Điền / Long Hải",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Châu Đức / Đất Đỏ",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
           "time": "4 - 5 ngày",
-          "base_rate": 300000,
+          "base_rate": 0,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Xuyên Mộc",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
           "time": "4 - 5 ngày",
-          "base_rate": 500000,
+          "base_rate": 0,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         }
       ]
@@ -1830,70 +1830,70 @@
           "name": "VP Thuận An + Dĩ An",
           "details": "Giao/nhận tại văn phòng",
           "time": "3 - 4 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            6500,
-            6250,
-            6000,
-            5650,
-            5250,
-            5000
+            7150,
+            6875,
+            6600,
+            6215,
+            5775,
+            5500
           ]
         },
         {
           "name": "TP Thủ Dầu Một / TP Dĩ An / TP Thuận An",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "TP Tân Uyên / TX Bến Cát",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Huyện Bắc Tân Uyên / Huyện Bàu Bàng",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 250000,
+          "base_rate": 260000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Dầu Tiếng / Huyện Phú Giáo",
           "details": "Chạy nguyên chuyến xe tải đi giao — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
           "time": "3 - 4 ngày",
-          "base_rate": 500000,
+          "base_rate": 0,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         }
       ]
@@ -1908,35 +1908,35 @@
           "name": "Các VP HCM",
           "details": "Giao/nhận tại văn phòng",
           "time": "3 - 4 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            6500,
-            6250,
-            6000,
-            5650,
-            5250,
-            5000
+            7150,
+            6875,
+            6600,
+            6215,
+            5775,
+            5500
           ]
         },
         {
           "name": "Quận 1 / Quận 3 / Quận 4 / Quận 5 / Quận 6 / Quận 8 / Quận 10 | Quận 11 / Quận 12 / Quậ...",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Cần Giờ",
           "details": "Chạy nguyên chuyến xe tải đi giao — Cước về VP + 1,000,000 (hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao)",
           "time": "3 - 4 ngày",
-          "base_rate": -1,
+          "base_rate": 0,
           "rates": [
             0,
             0,
@@ -1958,70 +1958,70 @@
           "name": "Bến Lức / Tân An",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Đức Hoà / Thủ Thừa",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Cần Giuộc / Cần Đước / Châu Thành / Tân Trụ",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
           "time": "3 - 4 ngày",
-          "base_rate": 400000,
+          "base_rate": 0,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         },
         {
           "name": "Đức Huệ",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
           "time": "4 - 5 ngày",
-          "base_rate": 400000,
+          "base_rate": 0,
           "rates": [
-            7750,
-            7500,
-            7250,
-            6900,
-            6500,
-            6250
+            8525,
+            8250,
+            7975,
+            7590,
+            7150,
+            6875
           ]
         },
         {
           "name": "Mộc Hoá / Kiến Tường / Tân Hưng / Thạnh Hoá / Vĩnh Hưng / Tân Thạnh",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
           "time": "4 - 5 ngày",
-          "base_rate": 1000000,
+          "base_rate": 0,
           "rates": [
-            8000,
-            7750,
-            7500,
-            7150,
-            6750,
-            6500
+            8800,
+            8525,
+            8250,
+            7865,
+            7425,
+            7150
           ]
         }
       ]
@@ -2036,70 +2036,70 @@
           "name": "TP Mỹ Tho",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Châu Thành",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Chợ Gạo / Cai Lậy",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
           "time": "4 - 5 ngày",
-          "base_rate": 250000,
+          "base_rate": 0,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         },
         {
           "name": "Cái Bè",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
           "time": "4 - 5 ngày",
-          "base_rate": 300000,
+          "base_rate": 0,
           "rates": [
-            7750,
-            7500,
-            7250,
-            6900,
-            6500,
-            6250
+            8525,
+            8250,
+            7975,
+            7590,
+            7150,
+            6875
           ]
         },
         {
           "name": "Tân Phước (Mỹ Phước) / Gò Công",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
           "time": "4 - 5 ngày",
-          "base_rate": 500000,
+          "base_rate": 0,
           "rates": [
-            7750,
-            7500,
-            7250,
-            6900,
-            6500,
-            6250
+            8525,
+            8250,
+            7975,
+            7590,
+            7150,
+            6875
           ]
         },
         {
@@ -2128,56 +2128,56 @@
           "name": "TP Vĩnh Long",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "TX Bình Minh / Long Hồ",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Mang Thít / Bình Tân / Trà Ôn (KHÔNG giao ở 2 Cồn Lục Sĩ Thành, Phú Thành)",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 250000,
+          "base_rate": 260000,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         },
         {
           "name": "Vũng Liêm / Tam Bình",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
           "time": "4 - 5 ngày",
-          "base_rate": 300000,
+          "base_rate": 0,
           "rates": [
-            7750,
-            7500,
-            7250,
-            6900,
-            6500,
-            6250
+            8525,
+            8250,
+            7975,
+            7590,
+            7150,
+            6875
           ]
         }
       ]
@@ -2192,224 +2192,224 @@
           "name": "Phường 1,2, 6, 8, 9,10, 11, 12.",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Phường 3, 4, 5, 7.",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Xã Tà Nung / Xã Trạm Hành / Xã Xuân Thọ / Xã Xuân Trường",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 200000,
+          "base_rate": 210000,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         },
         {
           "name": "Thị trấn Lạc Dương",
           "details": "Giao tận nơi",
           "time": "3 - 5 ngày",
-          "base_rate": 200000,
+          "base_rate": 210000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Đạ Sar dọc QL 27C / Đạ Nhim dọc QL 27C / Đạ Chais dọc QL 27C",
           "details": "Giao dọc quốc lộ",
           "time": "4 - 5 ngày",
-          "base_rate": 200000,
+          "base_rate": 210000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Đạ Ròn / Thạnh Mỹ / Lạc Lâm / Lạc Xuân / Đran",
           "details": "Giao tận nơi",
           "time": "3 - 5 ngày",
-          "base_rate": 200000,
+          "base_rate": 210000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Hiệp An / Hiệp Thạnh / Liên Nghĩa / Liên Khương",
           "details": "Giao tận nơi",
           "time": "3 - 5 ngày",
-          "base_rate": 200000,
+          "base_rate": 210000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Phường 1, 2 / B'Lao / Lộc Sơn / Lộc Tiến / Lộc Châu / Lộc Nga",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Đại Lào / Lộc Thanh / Lộc Phát / Đạm Bri",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 200000,
+          "base_rate": 210000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Thị trấn Di Linh (huyện lỵ) / Xã Đinh Trang Hòa / Xã Hòa Ninh / Xã Liên Đầm / Xã Tân Châu",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 170000,
+          "base_rate": 180000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Xã Bảo Thuận / Xã Đinh Lạc / Xã Đinh Trang Thượng / Xã Gia Bắc / Xã Gia Hiệp / Xã Gung ...",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 250000,
+          "base_rate": 260000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Xã Hòa Nam / Xã Hòa Trung / Xã Sơn Điền / Xã Tam Bố / Xã Tân Lâm / Xã Tân Nghĩa / Xã Tâ...",
           "details": "Giao tận nơi",
           "time": "Đang cập nhật",
-          "base_rate": 250000,
+          "base_rate": 260000,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         },
         {
           "name": "Thị trấn Ma Đa Guôi / (huyện lỵ) / Thị trấn Đạ M'ri",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 170000,
+          "base_rate": 180000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Xã Đạ Oai / Xã Đạ Ploa / Xã Đạ Tồn / Xã Đoàn Kết / Xã Hà Lâm / Xã Phước Lộc",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 250000,
+          "base_rate": 260000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Đạ Tẻh (tất cả các xã) / Lâm Hà (tất cả các xã)",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện",
           "time": "4 - 5 ngày",
-          "base_rate": 700000,
+          "base_rate": 0,
           "rates": [
-            7500,
-            7300,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            8030,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         },
         {
           "name": "Cát Tiên (tất cả các xã) / Đam Rông (tất cả các xã) / Bảo Lâm (tất cả các xã)",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện",
           "time": "4 - 5 ngày",
-          "base_rate": 800000,
+          "base_rate": 0,
           "rates": [
-            7500,
-            7300,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            8030,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         }
       ]
@@ -2424,56 +2424,56 @@
           "name": "VP Ninh Kiều: 326 Hoàng Quốc Việt, An Bình, Ninh Kiều",
           "details": "Giao/nhận tại văn phòng",
           "time": "3 - 4 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            6500,
-            6250,
-            6000,
-            5650,
-            5250,
-            5000
+            7150,
+            6875,
+            6600,
+            6215,
+            5775,
+            5500
           ]
         },
         {
           "name": "Ninh Kiều / Cái Răng",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Phong Điền / Bình Thuỷ (Trà Nóc)",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Thốt Nốt / Ô Môn / Cầu Vàm Cổng / Vĩnh Thạch / Cờ Đỏ / Thới Lai",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 170000,
+          "base_rate": 180000,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         }
       ]
@@ -2488,56 +2488,56 @@
           "name": "TP Bến Tre",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Châu Thành",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 250000,
+          "base_rate": 260000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Giồng Chôm / Mỏ Cày Bắc / Mỏ Cày Nam",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
           "time": "4 - 5 ngày",
-          "base_rate": 300000,
+          "base_rate": 0,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         },
         {
           "name": "Chợ Lách / Bình Đại / Ba Tri / Thạnh Phú",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
           "time": "4 - 5 ngày",
-          "base_rate": 500000,
+          "base_rate": 0,
           "rates": [
-            7750,
-            7500,
-            7250,
-            6900,
-            6500,
-            6250
+            8525,
+            8250,
+            7975,
+            7590,
+            7150,
+            6875
           ]
         }
       ]
@@ -2552,42 +2552,42 @@
           "name": "Trảng Bàng / Gò Dầu / Hoà Thành / TP Tây Ninh",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Bến Cầu / Dương Minh Châu",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            8250,
-            7750,
-            6750,
-            6400,
-            6000,
-            5750
+            9075,
+            8525,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Châu Thành / Tân Biên / Tân Châu",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện",
           "time": "4 - 5 ngày",
-          "base_rate": 300000,
+          "base_rate": 0,
           "rates": [
-            8500,
-            8000,
-            7000,
-            6650,
-            6250,
-            6000
+            9350,
+            8800,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         }
       ]
@@ -2602,56 +2602,56 @@
           "name": "TP Trà Vinh",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Châu Thành",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Càng Long / Cầu Kè / Tiểu Cầu",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 250000,
+          "base_rate": 260000,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         },
         {
           "name": "Trà Cú / Duyên Hải",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
           "time": "4 - 5 ngày",
-          "base_rate": 500000,
+          "base_rate": 0,
           "rates": [
-            7750,
-            7500,
-            7250,
-            6900,
-            6500,
-            6250
+            8525,
+            8250,
+            7975,
+            7590,
+            7150,
+            6875
           ]
         }
       ]
@@ -2666,42 +2666,42 @@
           "name": "TP Long Xuyên",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Thoại Sơn (Phú Hoà, Núi Sập, Óc Eo)",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 250000,
+          "base_rate": 260000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Châu Đốc / Châu Phú / Phú Tân / Tri Tôn / Châu Thành / Chợ Mới",
           "details": "Nối tuyến giao tại chành xe",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            6500,
-            6300,
-            6000,
-            5650,
-            5250,
-            5000
+            7150,
+            6930,
+            6600,
+            6215,
+            5775,
+            5500
           ]
         }
       ]
@@ -2716,42 +2716,42 @@
           "name": "TP Vị Thanh / Châu Thành A / Vị Thuỷ / Ngã 7",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Châu Thành / Phụng Hiệp",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 170000,
+          "base_rate": 180000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Long Mỹ / Long Mỹ (Thị Xã)",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 250000,
+          "base_rate": 260000,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         }
       ]
@@ -2766,56 +2766,56 @@
           "name": "TP Sóc Trăng",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Châu Thành / Mỹ Xuyên / Thạnh Trị / Ngã 5",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 170000,
+          "base_rate": 180000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Mỹ Tú / Long Phú / Kế Sách",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 250000,
+          "base_rate": 260000,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         },
         {
           "name": "Trần Đề / Vĩnh Châu",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
           "time": "4 - 5 ngày",
-          "base_rate": 500000,
+          "base_rate": 0,
           "rates": [
-            7750,
-            7500,
-            7250,
-            6900,
-            6500,
-            6250
+            8525,
+            8250,
+            7975,
+            7590,
+            7150,
+            6875
           ]
         },
         {
@@ -2844,70 +2844,70 @@
           "name": "TP Bạc Liêu",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Vĩnh Lợi / Hoà Bình",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 200000,
+          "base_rate": 210000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Giá Rai (Hộ Phòng) / Phước Long",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 250000,
+          "base_rate": 260000,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         },
         {
           "name": "Đông Hải",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 250000,
+          "base_rate": 260000,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         },
         {
           "name": "Hồng Dân",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do Bảo An chạy nguyên chuyến xe tải di giao",
           "time": "4 - 5 ngày",
-          "base_rate": 500000,
+          "base_rate": 0,
           "rates": [
-            7750,
-            7500,
-            7250,
-            6900,
-            6500,
-            6250
+            8525,
+            8250,
+            7975,
+            7590,
+            7150,
+            6875
           ]
         }
       ]
@@ -2922,84 +2922,84 @@
           "name": "Rạch Giá / Rạch Sỏi",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Tân Hiệp / Châu Thành (Minh Lương)",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Hòn Đất / Kiên Lương / Hà Tiên",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Phú Quốc giao tận nơi (An Thới, Dương Đông, Bãi Thơm, Cửa Cạn, Cửa Dương, Dương Tơ, Gàn...",
           "details": "Giao tận nơi",
           "time": "4 - 5 ngày   (Không cam kết thời gian trên vì xe vận chuyển có thể bị gián đoạn khi đi qua phà gặp thời tiết xấu)",
-          "base_rate": 160000,
+          "base_rate": 165000,
           "rates": [
-            8500,
-            8250,
-            8000,
-            7650,
-            7250,
-            7000
+            9350,
+            9075,
+            8800,
+            8415,
+            7975,
+            7700
           ]
         },
         {
           "name": "Giồng Riềng / Gò Quao",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện",
           "time": "4 - 5 ngày",
-          "base_rate": 500000,
+          "base_rate": 0,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         },
         {
           "name": "An Biên / An Minh / U Minh Thượng / Vĩnh Thuận",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện",
           "time": "4 - 5 ngày",
-          "base_rate": 600000,
+          "base_rate": 0,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         },
         {
@@ -3028,56 +3028,56 @@
           "name": "TP Cao Lãnh / Sa Đéc",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Châu Thành (Cái Tàu Hạ) / Lai Vung / Lấp Vò",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 170000,
+          "base_rate": 180000,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Hồng Ngự",
           "details": "Nối tuyến giao tại chành xe",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            6500,
-            6300,
-            6000,
-            5650,
-            5250,
-            5000
+            7150,
+            6930,
+            6600,
+            6215,
+            5775,
+            5500
           ]
         },
         {
           "name": "Thanh Bình / Tam Nông / Tháp Mười / Huyện Cao Lãnh",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do địa chỉ này xa Bảo An chạy nguyên chuyến xe tải đi giao không ghép được hàng khác",
           "time": "4 - 5 ngày",
-          "base_rate": 500000,
+          "base_rate": 0,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         }
       ]
@@ -3092,70 +3092,70 @@
           "name": "TP Cà Mau",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 150000,
+          "base_rate": 155000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Cái Nước",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do địa chỉ này xa Bảo An chạy nguyên chuyến xe tải đi giao không ghép được hàng khác",
           "time": "3 - 4 ngày",
-          "base_rate": 500000,
+          "base_rate": 0,
           "rates": [
-            7250,
-            7000,
-            6750,
-            6400,
-            6000,
-            5750
+            7975,
+            7700,
+            7425,
+            7040,
+            6600,
+            6325
           ]
         },
         {
           "name": "Thới Bình / U Minh",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do địa chỉ này xa Bảo An chạy nguyên chuyến xe tải đi giao không ghép được hàng khác",
           "time": "4 - 5 ngày",
-          "base_rate": 800000,
+          "base_rate": 0,
           "rates": [
-            7500,
-            7250,
-            7000,
-            6650,
-            6250,
-            6000
+            8250,
+            7975,
+            7700,
+            7315,
+            6875,
+            6600
           ]
         },
         {
           "name": "Năm Căn",
           "details": "Nối tuyến giao tại chành xe",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            6500,
-            6300,
-            6000,
-            5650,
-            5250,
-            5000
+            7150,
+            6930,
+            6600,
+            6215,
+            5775,
+            5500
           ]
         },
         {
           "name": "Trần Văn Thời / Phú Tân / Đầm Dơi",
           "details": "Giao tận nơi — hàng ít nên gửi bưu điện do địa chỉ này xa Bảo An chạy nguyên chuyến xe tải đi giao không ghép được hàng khác",
           "time": "4 - 5 ngày",
-          "base_rate": 1000000,
+          "base_rate": 0,
           "rates": [
-            7750,
-            7500,
-            7250,
-            6900,
-            6500,
-            6250
+            8525,
+            8250,
+            7975,
+            7590,
+            7150,
+            6875
           ]
         }
       ]
@@ -3170,70 +3170,70 @@
           "name": "Hà Tĩnh QL1A / Quảng Bình QL1A / Quảng Trị QL1A",
           "details": "Giao dọc QL1A",
           "time": "1 - 2 ngày",
-          "base_rate": 70000,
+          "base_rate": 75000,
           "rates": [
-            5000,
-            4750,
-            4500,
-            4150,
-            3750,
-            3500
+            5500,
+            5225,
+            4950,
+            4565,
+            4125,
+            3850
           ]
         },
         {
           "name": "Ninh Thuận QL1A / Bình Thuận QL1A",
           "details": "Giao dọc QL1A",
           "time": "2 - 3 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            6500,
-            6250,
-            6000,
-            5650,
-            5250,
-            5000
+            7150,
+            6875,
+            6600,
+            6215,
+            5775,
+            5500
           ]
         },
         {
           "name": "TP Đồng Xoài Bình Phước",
           "details": "Giao tận nơi",
           "time": "3 - 4 ngày",
-          "base_rate": 130000,
+          "base_rate": 135000,
           "rates": [
-            7000,
-            6750,
-            6500,
-            6150,
-            5750,
-            5500
+            7700,
+            7425,
+            7150,
+            6765,
+            6325,
+            6050
           ]
         },
         {
           "name": "Các huyện Bình Phước: Phú Riềng / Bù Nho / Phước Bình / Bù Đăng",
           "details": "Giao tận nơi",
           "time": "3 - 5 ngày",
-          "base_rate": 200000,
+          "base_rate": 210000,
           "rates": [
-            7800,
-            7600,
-            7500,
-            7150,
-            6750,
-            6500
+            8580,
+            8360,
+            8250,
+            7865,
+            7425,
+            7150
           ]
         },
         {
           "name": "Giao dọc QL 14 / Giao tại văn phòng Đồng Xoài",
           "details": "Giao/nhận tại văn phòng",
           "time": "3 - 4 ngày",
-          "base_rate": 100000,
+          "base_rate": 105000,
           "rates": [
-            6500,
-            6250,
-            6000,
-            5650,
-            5250,
-            5000
+            7150,
+            6875,
+            6600,
+            6215,
+            5775,
+            5500
           ]
         }
       ]
@@ -3298,6 +3298,6 @@
   "surcharge": {
     "percent": 5
   },
-  "updatedAt": "2026-07-17T10:25:12.855Z",
-  "updatedBy": "seed"
+  "updatedAt": "2026-07-25T08:36:17.449Z",
+  "updatedBy": "sync-excel"
 }
