@@ -779,15 +779,17 @@ function initVNGlobe() {
     const size = Math.min(Math.max(rect.width || 260, 180), 380);
     el.style.height = size + "px"; // đảm bảo khung luôn là hình vuông đúng bằng canvas 3D, không bị cắt/lệch
 
-    const HD_EARTH_URL = "https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73776/world.topo.bathy.200408.3x5400x2700.jpg";
+    // Lưu ý: ảnh NASA gốc (eoimages.gsfc.nasa.gov) không gửi header CORS -> WebGL từ chối
+    // dùng làm texture (dù ảnh vẫn tải được để hiển thị bình thường như <img> thường),
+    // khiến quả cầu bị đen/trống. Dùng bản mirror qua jsDelivr (CDN từ GitHub, luôn có CORS chuẩn)
+    // với cùng độ phân giải cao 8192x4096 (~4x số điểm ảnh so với bản 4096x2048 cũ).
+    const HD_EARTH_URL = "https://cdn.jsdelivr.net/gh/franky-adl/threejs-earth@9a98346b5d6a8575dd8837e16fea776f30f7784d/src/assets/Albedo.jpg";
     const FALLBACK_EARTH_URL = "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg";
 
     vnGlobe = Globe()(el)
         .width(size)
         .height(size)
         .backgroundColor("rgba(0,0,0,0)")
-        // Ảnh NASA gốc 5400x2700 (~1.8x số điểm ảnh so với bản 4096x2048 đóng gói sẵn trong three-globe)
-        // -> quả địa cầu nét hơn khi zoom gần. Nếu ảnh này lỗi/mất mạng thì tự rơi về ảnh cũ (xem bên dưới).
         .globeImageUrl(HD_EARTH_URL)
         .bumpImageUrl("https://unpkg.com/three-globe/example/img/earth-topology.png")
         .showAtmosphere(true)
@@ -799,7 +801,7 @@ function initVNGlobe() {
             if (overlay) overlay.classList.add("hidden");
         });
 
-    // Preload ảnh HD ở nền: nếu server NASA lỗi/chặn/mất mạng thì tự động chuyển quả cầu
+    // Preload ảnh HD ở nền: nếu jsDelivr lỗi/chặn/mất mạng thì tự động chuyển quả cầu
     // về ảnh dự phòng (đóng gói sẵn trong three-globe) để không bị trắng/lỗi hiển thị.
     const hdProbe = new Image();
     hdProbe.onerror = () => { if (vnGlobe) vnGlobe.globeImageUrl(FALLBACK_EARTH_URL); };
