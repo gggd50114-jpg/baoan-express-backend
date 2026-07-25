@@ -786,6 +786,13 @@ function initVNGlobe() {
     const HD_EARTH_URL = "https://cdn.jsdelivr.net/gh/franky-adl/threejs-earth@9a98346b5d6a8575dd8837e16fea776f30f7784d/src/assets/Albedo.jpg";
     const FALLBACK_EARTH_URL = "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg";
 
+    // Lớp mây + đèn thành phố ban đêm: lấy qua jsDelivr (GitHub, có CORS chuẩn), độ phân giải 1k
+    // vừa đủ đẹp cho khung quả cầu nhỏ (~380px) mà không nặng tải trang.
+    const EARTH_EXTRA_BASE = "https://cdn.jsdelivr.net/gh/Izaacapp/threejs-earth@a3bc3d5161938113a4c20f79ff0b520c0c5b8825/textures/";
+    const CLOUDS_MAP_URL = EARTH_EXTRA_BASE + "04_earthcloudmap.jpg";
+    const CLOUDS_ALPHA_URL = EARTH_EXTRA_BASE + "05_earthcloudmaptrans.jpg";
+    const NIGHT_LIGHTS_URL = EARTH_EXTRA_BASE + "03_earthlights1k.jpg";
+
     vnGlobe = Globe()(el)
         .width(size)
         .height(size)
@@ -799,6 +806,7 @@ function initVNGlobe() {
         .onGlobeReady(() => {
             vnGlobeReady = true;
             if (overlay) overlay.classList.add("hidden");
+            addVNGlobeCloudsAndNightLights(vnGlobe, CLOUDS_MAP_URL, CLOUDS_ALPHA_URL, NIGHT_LIGHTS_URL);
         });
 
     // Preload ảnh HD ở nền: nếu jsDelivr lỗi/chặn/mất mạng thì tự động chuyển quả cầu
@@ -839,7 +847,66 @@ function initVNGlobe() {
     });
 }
 
-// Zoom bằng nút bấm (+/-): giữ nguyên hướng nhìn hiện tại, chỉ thay đổi khoảng cách camera
+// Thêm lớp mây trắng bán trong suốt (xoay chậm, độc lập với mặt đất) và đèn thành phố
+// chỉ phát sáng ở nửa tối (dùng hướng đèn hiện có của three-globe để tính "ban đêm").
+// An toàn: nếu THREE chưa tải xong / lỗi ảnh thì bỏ qua, quả cầu vẫn hiển thị bình thường.
+function addVNGlobeCloudsAndNightLights(globeInstance, cloudsMapUrl, cloudsAlphaUrl, nightLightsUrl) {
+    if (!globeInstance || typeof THREE === "undefined") return;
+
+    // --- Lớp mây ---
+    try {
+        const cloudsTexLoader = new THREE.TextureLoader();
+        cloudsTexLoader.load(cloudsMapUrl, (mapTex) => {
+            cloudsTexLoader.load(cloudsAlphaUrl, (alphaTex) => {
+                const radius = globeInstance.getGlobeRadius();
+                const cloudsGeo = new THREE.SphereGeometry(radius * 1.006, 64, 64);
+                const cloudsMat = new THREE.MeshLambertMaterial({
+                    map: mapTex,
+                    alphaMap: alphaTex,
+                    transparent: true,
+                    depthWrite: false
+                });
+                const cloudsMesh = new THREE.Mesh(cloudsGeo, cloudsMat);
+                globeInstance.scene().add(cloudsMesh);
+
+                // Mây xoay chậm độc lập với mặt đất - tạo cảm giác khí quyển sống động thật hơn
+                (function animateClouds() {
+                    cloudsMesh.rotation.y += 0.0006;
+                    requestAnimationFrame(animateClouds);
+                })();
+            });
+        });
+    } catch (e) { /* bỏ qua an toàn nếu môi trường không hỗ trợ */ }
+
+    // --- Đèn thành phố ban đêm (chỉ hiện ở nửa tối, dựa theo hướng đèn có sẵn) ---
+    try {
+        const nightTexLoader = new THREE.TextureLoader();
+        nightTexLoader.load(nightLightsUrl, (nightTex) => {
+            const globeMaterial = globeInstance.globeMaterial();
+            globeMaterial.emissiveMap = nightTex;
+            globeMaterial.emissive = new THREE.Color(0xffffff);
+            globeMaterial.emissiveIntensity = 1.1;
+            globeMaterial.onBeforeCompile = (shader) => {
+                shader.fragmentShader = shader.fragmentShader.replace(
+                    "#include <emissivemap_fragment>",
+                    `
+                    #ifdef USE_EMISSIVEMAP
+                        vec4 vnNightColor = texture2D( emissiveMap, vEmissiveMapUv );
+                        float vnNightVisible = 1.0;
+                        #if NUM_DIR_LIGHTS > 0
+                            vnNightVisible = 1.0 - smoothstep( -0.05, 0.15, dot( normal, directionalLights[ 0 ].direction ) );
+                        #endif
+                        totalEmissiveRadiance *= vnNightColor.rgb * vnNightVisible;
+                    #endif
+                    `
+                );
+            };
+            globeMaterial.needsUpdate = true;
+        });
+    } catch (e) { /* bỏ qua an toàn nếu môi trường không hỗ trợ */ }
+}
+
+
 function vnGlobeZoomBy(factor) {
     if (!vnGlobe) return;
     const cur = vnGlobe.pointOfView();
